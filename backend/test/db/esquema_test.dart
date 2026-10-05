@@ -1,11 +1,12 @@
 @TestOn('vm')
 library;
 
-import 'package:backend/config/entorno.dart';
 import 'package:backend/db/conexion.dart';
 import 'package:backend/db/migrador.dart';
 import 'package:postgres/postgres.dart';
 import 'package:test/test.dart';
+
+import '../soporte/base_pruebas.dart';
 
 /// SQLSTATE de violación de unicidad.
 const _unicidad = '23505';
@@ -18,33 +19,6 @@ const _noNulo = '23502';
 
 /// SQLSTATE de un valor que no pertenece al enum.
 const _valorInvalido = '22P02';
-
-/// Borra y vuelve a crear la base de pruebas para empezar desde cero.
-Future<void> _recrearBase(String urlPruebas) async {
-  final uri = Uri.parse(urlPruebas);
-  final base = uri.pathSegments.isEmpty ? '' : uri.pathSegments.first;
-  if (!RegExp(r'^[a-z0-9_]+$').hasMatch(base)) {
-    fail('DATABASE_URL_TEST debe terminar en un nombre de base simple.');
-  }
-  final urlPrincipal = leerEntorno('DATABASE_URL');
-  if (urlPrincipal != null &&
-      Uri.parse(urlPrincipal).pathSegments.firstOrNull == base) {
-    fail(
-      'DATABASE_URL_TEST apunta a la misma base que DATABASE_URL; '
-      'las pruebas la borrarían.',
-    );
-  }
-
-  final admin = await abrirConexion(
-    uri.replace(path: '/postgres').toString(),
-  );
-  try {
-    await admin.execute('DROP DATABASE IF EXISTS "$base" WITH (FORCE)');
-    await admin.execute('CREATE DATABASE "$base"');
-  } finally {
-    await admin.close();
-  }
-}
 
 Matcher _fallaCon(String sqlstate) => throwsA(
   isA<ServerException>().having((e) => e.code, 'SQLSTATE', sqlstate),
@@ -136,8 +110,7 @@ void main() {
   );
 
   setUpAll(() async {
-    final url = exigirEntorno('DATABASE_URL_TEST');
-    await _recrearBase(url);
+    final url = await recrearBaseDePruebas();
     db = await abrirConexion(url);
     migrador = Migrador(db, raizDb: Migrador.buscarRaizDb());
     await migrador.migrar();
@@ -159,7 +132,7 @@ void main() {
       return filas.single[0]! as int;
     }
 
-    expect(await contar('schema_migrations'), 2);
+    expect(await contar('schema_migrations'), 3);
     expect(await contar('puertas'), 2);
     expect(await contar('zonas'), 3);
   });
@@ -297,6 +270,36 @@ void main() {
 
     await expectLater(crearQr(null), _fallaCon(_check));
     await expectLater(crearQr(await crearUsuario()), completes);
+  });
+
+  test('un solo QR activo por cada par usuario-vehículo', () async {
+    final vehiculo = await crearVehiculo();
+    final usuario = await crearUsuario();
+    var emitidos = 0;
+    Future<String> crearQr(String usuarioId) => insertar(
+      'INSERT INTO credenciales (vehiculo_id, usuario_id, tipo, '
+      "identificador) VALUES (@vehiculo:uuid, @usuario:uuid, 'qr', @id)",
+      {
+        'vehiculo': vehiculo,
+        'usuario': usuarioId,
+        'id': 'qr-$vehiculo-${emitidos++}',
+      },
+    );
+
+    final primero = await crearQr(usuario);
+    await expectLater(crearQr(usuario), _fallaCon(_unicidad));
+
+    // Otro usuario autorizado sobre el mismo vehículo sí tiene su propio QR.
+    await expectLater(crearQr(await crearUsuario()), completes);
+
+    // Con el primero revocado se puede emitir uno nuevo para el mismo par.
+    await db.execute(
+      Sql.named(
+        "UPDATE credenciales SET estado = 'revocada' WHERE id = @id:uuid",
+      ),
+      parameters: {'id': primero},
+    );
+    await expectLater(crearQr(usuario), completes);
   });
 
   test('una estancia exige exactamente un vehículo o un pase', () async {
