@@ -4,6 +4,7 @@ library;
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:postgres/postgres.dart';
 import 'package:test/test.dart';
 
 import '../soporte/servidor_pruebas.dart';
@@ -52,8 +53,9 @@ void main() {
 
   setUpAll(() async {
     api = await ServidorPruebas.levantar();
-    yo = await api.crearCuenta();
-    otro = await api.crearCuenta();
+    // El perfil solo se edita mientras la cuenta está pendiente.
+    yo = await api.crearCuenta(estado: 'pendiente');
+    otro = await api.crearCuenta(estado: 'pendiente');
   });
   tearDownAll(() => api.cerrar());
 
@@ -67,7 +69,7 @@ void main() {
       'correo': yo.correo,
       'boleta_o_empleado': isA<String>(),
       'rol': 'usuario',
-      'estado': 'activo',
+      'estado': 'pendiente',
       'foto_titular_id': null,
       'foto_credencial_id': null,
     });
@@ -197,5 +199,97 @@ void main() {
     final igual = await cambiar({});
     expect(igual.estado, HttpStatus.ok);
     expect(_usuario(igual), _usuario(sinFoto));
+  });
+
+  group('cuenta activa', () {
+    late Cuenta activa;
+
+    setUpAll(() async => activa = await api.crearCuenta());
+
+    test('GET /perfil sigue funcionando', () async {
+      final respuesta = await api.get('/perfil', token: activa.token);
+
+      expect(respuesta.estado, HttpStatus.ok);
+      expect(_usuario(respuesta)['id'], activa.id);
+      expect(_usuario(respuesta)['estado'], 'activo');
+    });
+
+    test(
+      'PATCH /perfil → 409 PERFIL_BLOQUEADO y el perfil no cambia',
+      () async {
+        final antes = _usuario(await api.get('/perfil', token: activa.token));
+        final foto = await subir(activa, 'perfil');
+
+        // Tampoco con un cuerpo vacío o inválido: el bloqueo va antes de la
+        // validación de campos.
+        for (final cambios in <Map<String, Object?>>[
+          {'nombre': 'Nombre Nuevo'},
+          {'foto_titular_id': foto},
+          {'foto_credencial_id': null},
+          {'nombre': '   '},
+          {},
+        ]) {
+          final respuesta = await api.patch(
+            '/perfil',
+            cuerpo: cambios,
+            token: activa.token,
+          );
+
+          expect(respuesta.estado, HttpStatus.conflict, reason: '$cambios');
+          expect(_objeto(respuesta)['error'], {
+            'code': 'PERFIL_BLOQUEADO',
+            'message':
+                'Para cambiar tus datos o fotos, contacta a Administración',
+          }, reason: '$cambios');
+        }
+        expect(_usuario(await api.get('/perfil', token: activa.token)), antes);
+      },
+    );
+
+    test('el bloqueo empieza en cuanto se activa la cuenta', () async {
+      final cuenta = await api.crearCuenta(estado: 'pendiente');
+      final editar = {'nombre': 'Antes de Activar'};
+
+      final pendiente = await api.patch(
+        '/perfil',
+        cuerpo: editar,
+        token: cuenta.token,
+      );
+      expect(pendiente.estado, HttpStatus.ok, reason: '${pendiente.json}');
+
+      await api.pool.execute(
+        Sql.named("UPDATE usuarios SET estado = 'activo' WHERE id = @id:uuid"),
+        parameters: {'id': cuenta.id},
+      );
+
+      // Mismo token de acceso: el estado se lee de la base.
+      final activo = await api.patch(
+        '/perfil',
+        cuerpo: {'nombre': 'Después de Activar'},
+        token: cuenta.token,
+      );
+      expect(activo.estado, HttpStatus.conflict);
+      expect(
+        _usuario(await api.get('/perfil', token: cuenta.token))['nombre'],
+        'Antes de Activar',
+      );
+    });
+
+    test('una cuenta de baja → 401, no 409', () async {
+      // Se da de baja con la sesión ya abierta: su token sigue vigente.
+      final cuenta = await api.crearCuenta(estado: 'pendiente');
+      await api.pool.execute(
+        Sql.named("UPDATE usuarios SET estado = 'baja' WHERE id = @id:uuid"),
+        parameters: {'id': cuenta.id},
+      );
+
+      final respuesta = await api.patch(
+        '/perfil',
+        cuerpo: {'nombre': 'Nombre Nuevo'},
+        token: cuenta.token,
+      );
+
+      expect(respuesta.estado, HttpStatus.unauthorized);
+    });
   });
 }
