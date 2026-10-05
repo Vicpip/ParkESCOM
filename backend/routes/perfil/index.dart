@@ -10,7 +10,8 @@ import 'package:dart_frog/dart_frog.dart';
 /// `GET /perfil`: datos del usuario autenticado.
 ///
 /// `PATCH /perfil`: cambia `nombre`, `foto_titular_id` o `foto_credencial_id`
-/// (solo los campos presentes) y responde con el usuario actualizado.
+/// (solo los campos presentes) y responde con el usuario actualizado. Solo
+/// con la cuenta `pendiente`; ya activa responde 409 `PERFIL_BLOQUEADO`.
 Future<Response> onRequest(RequestContext context) =>
     protegida(context, _manejar);
 
