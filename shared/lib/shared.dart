@@ -3,3 +3,6 @@
 ///
 /// Es Dart puro: no depende de Flutter ni de `dart:io`.
 library;
+
+export 'src/validacion/codigos_validacion.dart';
+export 'src/validacion/validadores.dart';
