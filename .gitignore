@@ -1,0 +1,35 @@
+# Secretos: solo se versiona .env.example
+.env
+.env.*
+!.env.example
+
+# Dart y Flutter
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+build/
+coverage/
+.flutter-plugins
+.flutter-plugins-dependencies
+.dart_frog/
+
+# Android
+*.apk
+*.aab
+*.jks
+*.keystore
+key.properties
+local.properties
+.gradle/
+captures/
+
+# IDE y sistema operativo
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
+*.log
+
+# Archivos subidos en desarrollo local
+uploads/
