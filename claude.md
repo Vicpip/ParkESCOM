@@ -74,6 +74,8 @@ dart format .
 El backend lee las variables del entorno del proceso y, si faltan, del `.env` de la raíz (`backend/lib/config/entorno.dart`).
 Para arrancar, la API exige `DATABASE_URL`, `JWT_ACCESS_SECRET` (32 caracteres o más), `ALLOWED_EMAIL_DOMAINS` y
 `APP_WEB_URL`; si falta alguna se detiene con un mensaje claro (`backend/main.dart`).
+**En local hace falta además `ENTORNO=desarrollo`** en el `.env`: sin ella se asume `produccion` y, sin `SMTP_HOST`,
+la API no arranca.
 
 - **`ENTORNO`** es `desarrollo` o `produccion`; si falta se asume `produccion`. En local hay que poner
   `ENTORNO=desarrollo` en el `.env`: sin `SMTP_HOST`, el enlace de recuperación se imprime en la consola de la API.
@@ -341,7 +343,7 @@ Códigos de error (`error.code`):
 
 Códigos por campo dentro de `VALIDACION`: `NOMBRE_VACIO`, `NOMBRE_MUY_LARGO`, `CORREO_INVALIDO`, `DOMINIO_NO_PERMITIDO`,
 `BOLETA_O_EMPLEADO_INVALIDO` (`BOLETA_INVALIDA` y `NUMERO_EMPLEADO_INVALIDO` si se validan por separado),
-`PASSWORD_MUY_CORTA`, `CONTRASENA_MUY_LARGA`, `PASSWORD_SIN_LETRA`, `PASSWORD_SIN_NUMERO`.
+`PASSWORD_MUY_CORTA`, `PASSWORD_MUY_LARGA`, `PASSWORD_SIN_LETRA`, `PASSWORD_SIN_NUMERO`.
 
 ### Archivos y perfil (Fase 1C)
 
@@ -350,7 +352,7 @@ Códigos por campo dentro de `VALIDACION`: `NOMBRE_VACIO`, `NOMBRE_MUY_LARGO`, `
 | `POST /archivos` | `multipart/form-data` con `archivo` y `proposito` (token de acceso) | 201 con `id` |
 | `GET /archivos/{id}` | (token de acceso) | 200 con el binario |
 | `GET /perfil` | (token de acceso) | 200 con `usuario` |
-| `PATCH /perfil` | cualquiera de `nombre`, `foto_titular_id`, `foto_credencial_id` (token de acceso) | 200 con `usuario` |
+| `PATCH /perfil` | cualquiera de `nombre`, `foto_titular_id`, `foto_credencial_id` (token de acceso; solo cuenta `pendiente`) | 200 con `usuario` |
 
 - **Subida:** `proposito` es `perfil`, `credencial_escolar`, `vehiculo`, `placa` o `incidente`. Máximo 2 MB; el
   `Content-Length` se revisa antes de leer el cuerpo (con 16 KB de margen para el formulario) y el tamaño exacto del
@@ -366,6 +368,11 @@ Códigos por campo dentro de `VALIDACION`: `NOMBRE_VACIO`, `NOMBRE_MUY_LARGO`, `
   propio con propósito `perfil` y `foto_credencial_id` uno con `credencial_escolar`; si no, 422 `VALIDACION` con
   `FOTO_INVALIDA` en ese campo (el mismo código si el archivo no existe, es ajeno o tiene otro propósito). Si un
   campo falla no se aplica ninguno.
+- **Perfil bloqueado tras la activación:** `PATCH /perfil` solo funciona mientras la cuenta está `pendiente`. Con la
+  cuenta `activo` responde 409 `PERFIL_BLOQUEADO` ("Para cambiar tus datos o fotos, contacta a Administración"),
+  sin importar el cuerpo: el bloqueo va antes de la validación de campos. El estado se lee de la base dentro de la
+  transacción, no del token, así que aplica en cuanto se activa la cuenta. `GET /perfil` no cambia. Tras la
+  activación, los cambios de nombre y fotos solo los hace un admin (se implementa en la Fase 3, panel web).
 
 | Código | HTTP | Cuándo |
 | --- | --- | --- |
@@ -374,6 +381,7 @@ Códigos por campo dentro de `VALIDACION`: `NOMBRE_VACIO`, `NOMBRE_MUY_LARGO`, `
 | `LONGITUD_REQUERIDA` | 411 | `POST /archivos` sin `Content-Length` (envío por trozos) |
 | `ARCHIVO_NO_ENCONTRADO` | 404 | El id no existe, no es un UUID o el archivo ya no está en disco |
 | `SIN_PERMISO` | 403 | El usuario no puede ver ese archivo |
+| `PERFIL_BLOQUEADO` | 409 | `PATCH /perfil` con la cuenta ya `activo` |
 
 Códigos por campo dentro de `VALIDACION`: `ARCHIVO_FALTANTE`, `PROPOSITO_INVALIDO`, `FOTO_INVALIDA`.
 
@@ -400,7 +408,9 @@ Códigos por campo dentro de `VALIDACION`: `ARCHIVO_FALTANTE`, `PROPOSITO_INVALI
 - `POST /auth/restablecer` no abre sesión: W11 manda al inicio de sesión al terminar.
 - Las fotos se piden con el token de acceso en `Authorization` (no hay URL pública): `cached_network_image` necesita
   recibir esa cabecera.
-- El código nuevo de contraseña es `CONTRASENA_MUY_LARGA` (los demás siguen siendo `PASSWORD_*`).
+- El código de contraseña demasiado larga es `PASSWORD_MUY_LARGA` (todos los de contraseña son `PASSWORD_*`).
+- `PATCH /perfil` responde 409 `PERFIL_BLOQUEADO` con la cuenta activa: M13 solo deja editar nombre y fotos mientras
+  `usuario.estado` es `pendiente`; después muestra el mensaje de contactar a Administración.
 
 ## Base de datos (PostgreSQL)
 
@@ -491,6 +501,7 @@ Función pura en `shared/`, sin IO, con pruebas unitarias para cada rama. Recibe
 - `flutter analyze` y `dart analyze` sin errores ni warnings antes de dar una tarea por terminada.
 - Pruebas obligatorias: motor de validación (todas las ramas), migraciones (los índices parciales rechazan duplicados) y endpoints de auth, movimientos y sync.
 - Commits pequeños y frecuentes, en español, con Conventional Commits: `feat(caseta): lectura RFID por DataWedge`.
+- Un commit por unidad lógica, de unos 10 archivos como máximo. Migración, pruebas y rutas van en commits separados.
 - Documentar con `///` las clases públicas de `shared/` y de los repositorios.
 
 ## Cómo trabajar en este repo
@@ -509,3 +520,10 @@ Función pura en `shared/`, sin IO, con pruebas unitarias para cada rama. Recibe
 - [ ] Fase 5 — offline, sincronización y corte de hardware (1–4 nov)
 - [ ] Fase 6 — NFC, HCE, pases (M11, M12, W6), vehículo compartido, dashboard (W1) (5–9 nov)
 - [ ] Fase 7 — despliegue en VPS, pulido, documentación y ensayo (10–14 nov)
+
+### Pendientes de la Fase 7 (Nginx del VPS)
+
+- **`client_max_body_size 4m`:** el valor por defecto de Nginx es `1m` y rechazaría con 413 las fotos de hasta 2 MB
+  antes de que lleguen a la API.
+- **Rutas desconocidas → `index.html`** en el sitio de la app web (`try_files $uri $uri/ /index.html`), para que
+  enlaces como `/restablecer?token=...` abran la app.
