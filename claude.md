@@ -49,14 +49,15 @@ docker compose up -d db            # [listo] PostgreSQL 16 en 127.0.0.1 (puerto 
 # Paquete compartido
 cd shared && dart pub get          # [listo]
 dart analyze                       # [listo]
-dart test                          # todavía sin pruebas: llegan con el motor de validación (Fase 4)
+dart test                          # [listo] validadores de registro (el motor de validación llega en la Fase 4)
 
 # Backend
 cd backend && dart pub get         # [listo]
 dart run bin/migrate.dart          # [listo] aplica las migraciones pendientes de db/migrations
 dart run bin/migrate.dart --seed   # [listo] además aplica los catálogos de db/seeds (idempotente)
-dart_frog dev --port 8081          # API en http://localhost:8081 (todavía sin rutas: llegan con la API de auth)
-dart test                          # [listo] incluye test/db contra DATABASE_URL_TEST (la base se recrea)
+dart run bin/seed_usuarios.dart    # [listo] cuentas de demostración con la contraseña de SEED_PASSWORD (idempotente)
+dart_frog dev --port 8081          # [listo] API en http://localhost:8081 con las rutas de /auth
+dart test                          # [listo] test/db y test/routes contra DATABASE_URL_TEST (la base se recrea)
 dart analyze                       # [listo]
 
 # App
@@ -71,6 +72,13 @@ dart format .
 ```
 
 El backend lee las variables del entorno del proceso y, si faltan, del `.env` de la raíz (`backend/lib/config/entorno.dart`).
+Para arrancar, la API exige `DATABASE_URL`, `JWT_ACCESS_SECRET` (32 caracteres o más), `ALLOWED_EMAIL_DOMAINS` y
+`APP_WEB_URL`; si falta alguna se detiene con un mensaje claro (`backend/main.dart`).
+
+Cuentas de demostración de `seed_usuarios.dart` (todas activas, contraseña `SEED_PASSWORD`): `demo.admin@ipn.mx`,
+`demo.guardia@ipn.mx`, `demo.usuario1@alumno.ipn.mx` y `demo.usuario2@alumno.ipn.mx`.
+
+Las pruebas del backend corren un archivo a la vez (`backend/dart_test.yaml`) porque comparten la base de pruebas.
 
 Puertos en este equipo:
 - La API corre en el **8081** (`dart_frog dev --port 8081`) porque el 8080 está ocupado.
@@ -82,7 +90,7 @@ Si un comando de esta lista todavía no existe, créalo como parte de la fase qu
 
 **shared:** `otp`, `uuid`, `dart_jsonwebtoken`, `meta`, `test`.
 
-**backend:** `dart_frog`, `postgres`, `bcrypt`, `dart_jsonwebtoken`, `mailer`, `uuid`, `shared` (path), `test`, `mocktail`.
+**backend:** `dart_frog`, `postgres`, `bcrypt`, `crypto`, `dart_jsonwebtoken`, `mailer`, `uuid`, `shared` (path), `test`, `mocktail`.
 
 **app:** `flutter_riverpod`, `go_router`, `dio`, `flutter_secure_storage`, `sqflite_sqlcipher`, `workmanager`,
 `flutter_local_notifications`, `qr_flutter`, `otp`, `flutter_datawedge`, `mobile_scanner`, `nfc_manager`,
@@ -242,9 +250,67 @@ Fase 2 y toda pantalla con datos remotos usa los cuatro estados: carga, vacío, 
 - Operaciones de varias tablas (registrar movimiento + abrir/cerrar estancia) en una transacción.
 - Errores en formato uniforme: `{"error": {"code": "SNAKE_CASE", "message": "texto para el usuario"}}` con el código HTTP correcto.
 - Contraseñas con `bcrypt`. JWT de acceso de 15 min y refresh token guardado como hash en `sesiones`.
+- Una ruta protegida se declara con `protegida(context, _manejar, roles: {...})` (`backend/lib/middleware/autenticacion.dart`)
+  y lee al usuario con `context.read<UsuarioAutenticado>()`. El pool se obtiene con `context.read<PoolDb>()`.
+- Las rutas y los servicios lanzan `ErrorApi`; el middleware de errores lo convierte en respuesta. Una excepción no
+  controlada responde 500 `ERROR_INTERNO` y en consola solo quedan método, ruta, tipo de excepción y traza (nunca
+  cuerpo, cabeceras ni mensajes, que pueden traer contraseñas o tokens).
+- CORS solo acepta el origen de `APP_WEB_URL`. La app móvil no manda `Origin` y no le afecta.
 - Pases de visitante firmados con EdDSA; la llave privada solo en variables de entorno, la pública se distribuye a las casetas.
 - Fotos en un volumen del VPS, registradas en `archivos`; solo JPEG o PNG, máximo 2 MB. Las fotos de credencial escolar solo las ve un admin.
 - Toda escritura administrativa registra un renglón en `auditoria` (antes y después en JSONB).
+
+### Autenticación (Fase 1B)
+
+Rutas en `backend/routes/auth/`; cuerpos y respuestas en JSON con nombres en `snake_case`.
+
+| Ruta | Cuerpo | Respuesta |
+| --- | --- | --- |
+| `POST /auth/registro` | `nombre`, `correo`, `boleta_o_empleado`, `password` | 201 con tokens y `usuario` |
+| `POST /auth/login` | `correo`, `password` | 200 con tokens y `usuario` |
+| `POST /auth/refresh` | `refresh_token` | 200 con tokens y `usuario` |
+| `POST /auth/logout` | `refresh_token` | 204 (también si el token ya no servía) |
+| `GET /auth/me` | (token de acceso) | 200 con `usuario` |
+| `POST /auth/cambiar-password` | `password_actual`, `password_nueva` (token de acceso) | 200 con tokens y `usuario` |
+
+"Tokens" es `access_token`, `refresh_token` y `expira_en` (segundos del token de acceso). `usuario` trae `id`, `nombre`,
+`correo`, `boleta_o_empleado`, `rol` y `estado`; nunca el hash.
+
+- **Token de acceso:** JWT HS256 de 15 min con los claims `sub` (id del usuario) y `rol`. No se consulta contra la
+  base en cada petición: un cambio de rol o una baja tardan hasta 15 min en surtir efecto en las rutas protegidas.
+- **Refresh token:** opaco, 32 bytes aleatorios; en `sesiones` solo se guarda su SHA-256. Vigencia de 30 días y
+  rotación: cada uso lo revoca y emite uno nuevo.
+- **Cambiar contraseña** revoca *todas* las sesiones del usuario y responde con un par de tokens nuevo: el dispositivo
+  que hizo el cambio debe guardar esos tokens; los demás quedan fuera.
+- **Usuario pendiente:** el registro crea la cuenta con rol `usuario` y estado `pendiente`, y ya puede iniciar sesión
+  (inicio de sesión automático). Entran `pendiente` y `activo`; `baja` no entra ni renueva sesión. El inicio de
+  sesión no distingue entre pendiente y activo: una ruta que exija cuenta `activo` debe comprobarlo ella misma.
+- **Validación de campos:** los validadores viven en `shared/lib/src/validacion/` y devuelven códigos, no textos; la
+  app los traduce a mensajes. La lista de dominios de correo sale de `ALLOWED_EMAIL_DOMAINS`.
+- **Límite de intentos:** 5 inicios de sesión fallidos por correo en 15 min. Vive en memoria
+  (`LimitadorIntentos`): se pierde al reiniciar la API y no se comparte entre instancias (hay una sola).
+
+Códigos de error (`error.code`):
+
+| Código | HTTP | Cuándo |
+| --- | --- | --- |
+| `VALIDACION` | 422 | Campos inválidos; `error.campos` trae el código de cada campo |
+| `DOMINIO_NO_PERMITIDO` | 422 | El correo es válido pero su dominio no está en `ALLOWED_EMAIL_DOMAINS` |
+| `CORREO_YA_REGISTRADO` | 409 | Registro con un correo existente |
+| `BOLETA_YA_REGISTRADA` | 409 | Registro con una boleta o número de empleado existente |
+| `CREDENCIALES_INVALIDAS` | 401 | Login fallido; el mismo error si el correo no existe, la contraseña no coincide o la cuenta está de baja |
+| `DEMASIADOS_INTENTOS` | 429 | Sexto intento tras 5 fallidos en 15 min |
+| `REFRESH_INVALIDO` | 401 | Refresh token desconocido, vencido, ya usado o revocado |
+| `NO_AUTENTICADO` | 401 | Falta el token de acceso, no es válido o venció |
+| `SIN_PERMISO` | 403 | El rol no alcanza para la ruta |
+| `PASSWORD_ACTUAL_INCORRECTA` | 400 | Cambio de contraseña con la actual equivocada |
+| `SOLICITUD_INVALIDA` | 400 | El cuerpo no es un objeto JSON |
+| `METODO_NO_PERMITIDO` | 405 | Método HTTP distinto al de la ruta |
+| `ERROR_INTERNO` | 500 | Excepción no controlada |
+
+Códigos por campo dentro de `VALIDACION`: `NOMBRE_VACIO`, `NOMBRE_MUY_LARGO`, `CORREO_INVALIDO`, `DOMINIO_NO_PERMITIDO`,
+`BOLETA_O_EMPLEADO_INVALIDO` (`BOLETA_INVALIDA` y `NUMERO_EMPLEADO_INVALIDO` si se validan por separado),
+`PASSWORD_MUY_CORTA`, `PASSWORD_SIN_LETRA`, `PASSWORD_SIN_NUMERO`.
 
 ## Base de datos (PostgreSQL)
 
@@ -258,6 +324,8 @@ Fase 2 y toda pantalla con datos remotos usa los cuatro estados: carga, vacío, 
   - **Estancias de un vehículo o de un pase:** `estancias` tiene `vehiculo_id` y `pase_id` opcionales, con un CHECK
     de que exactamente uno de los dos tenga valor.
   - **Una credencial activa por identificador:** `CREATE UNIQUE INDEX ... ON credenciales (tipo, identificador) WHERE estado = 'activa';`
+  - **Un QR activo por par usuario-vehículo:** índice único parcial en `credenciales (vehiculo_id, usuario_id)
+    WHERE tipo = 'qr' AND estado = 'activa'` (`003_qr_unico.sql`).
   - **Credenciales siempre de un vehículo:** `vehiculo_id` es obligatorio para todos los tipos; si `tipo = 'qr'`,
     `usuario_id` también es obligatorio (un QR por cada par usuario-vehículo).
   - **Placa única entre vehículos vigentes:** índice único parcial en `vehiculos (placa) WHERE estado <> 'baja'`.
