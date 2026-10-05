@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "surface-variant": "#d8e4ed", "on-tertiary-container": "#d1dfe6", "tertiary-fixed": "#d7e5ec", "tertiary-fixed-dim": "#bbc9cf", "on-primary-container": "#bfe0ff", "surface-bright": "#f5faff", "on-error": "#ffffff", "secondary": "#27638a", "on-secondary-container": "#1c5b82", "primary-fixed": "#cce5ff", "tertiary-container": "#566369", "surface-tint": "#006496", "on-primary": "#ffffff", "on-surface": "#111d24", "tertiary": "#3e4b51", "surface-container": "#e3f0f9", "on-primary-fixed-variant": "#004b72", "on-secondary-fixed-variant": "#004b70", "on-primary-fixed": "#001e31", "on-background": "#111d24", "error": "#ba1a1a", "primary-container": "#006699", "secondary-container": "#9bd2ff", "on-secondary-fixed": "#001e30", "surface": "#f5faff", "secondary-fixed": "#cae6ff", "on-tertiary-fixed-variant": "#3c494e", "on-secondary": "#ffffff", "inverse-primary": "#90cdff", "surface-container-lowest": "#ffffff", "error-container": "#ffdad6", "primary": "#004d75", "on-tertiary": "#ffffff", "primary-fixed-dim": "#90cdff", "on-tertiary-fixed": "#101d22", "surface-container-high": "#ddeaf3", "surface-dim": "#cfdce5", "outline-variant": "#c0c7d0", "on-surface-variant": "#40484f", "inverse-surface": "#263239", "surface-container-highest": "#d8e4ed", "secondary-fixed-dim": "#96ccf9", "on-error-container": "#93000a", "outline": "#707880", "surface-container-low": "#e9f5ff", "inverse-on-surface": "#e6f2fc", "background": "#f5faff" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-md": "1rem", "gutter": "1rem", "space-sm": "0.5rem", "margin": "1rem", "space-xs": "0.25rem", "space-lg": "1.5rem", "space-xl": "2rem" }, fontFamily: { "body-lg-medium": ["Inter"], "headline-lg-mobile": ["Inter"], "title-md": ["Inter"], "label-md": ["Inter"], "body-sm": ["Inter"], "headline-lg": ["Inter"], "label-lg": ["Inter"], "code-license-plate": ["Inter"], "headline-sm": ["Inter"], "headline-md": ["Inter"], "body-lg": ["Inter"] }, fontSize: { "body-lg-medium": ["16px", { lineHeight: "24px", fontWeight: "500" }], "headline-lg-mobile": ["26px", { lineHeight: "34px", fontWeight: "700" }], "title-md": ["18px", { lineHeight: "26px", fontWeight: "600" }], "label-md": ["12px", { lineHeight: "16px", fontWeight: "600" }], "body-sm": ["14px", { lineHeight: "20px", fontWeight: "400" }], "headline-lg": ["32px", { lineHeight: "40px", fontWeight: "700" }], "label-lg": ["14px", { lineHeight: "20px", fontWeight: "600" }], "code-license-plate": ["20px", { lineHeight: "24px", letterSpacing: "1.5px", fontWeight: "700" }], "headline-sm": ["20px", { lineHeight: "28px", fontWeight: "600" }], "headline-md": ["24px", { lineHeight: "32px", fontWeight: "700" }], "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }] } } } };</script><style>@layer base{html,body{width:100%;margin:0;padding:0;min-height:100%;}body{overscroll-behavior-y:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style></head><body class="bg-background font-body-lg text-body-lg text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-gutter flex items-center justify-between"><div class="flex items-center gap-space-sm"><button aria-label="Volver" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface hover:bg-surface-container active:bg-surface-container-high transition-colors" onclick="history.back()"><span class="material-symbols-outlined text-[24px]">arrow_back</span></button><h1 class="font-title-md text-title-md text-on-surface tracking-tight">Recuperar Contraseña</h1></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 bg-background min-h-screen"><div class="flex flex-col w-full px-margin pb-safe space-y-space-lg">
+<!-- Tarjeta ilustrativa con microinteracción visual -->
+<div class="flex flex-col items-center justify-center pt-space-md text-center">
+<div class="relative w-24 h-24 rounded-full bg-surface-container flex items-center justify-center shadow-sm">
+<div class="absolute inset-0 rounded-full bg-secondary-container/20 animate-pulse"></div>
+<span class="material-symbols-outlined text-[48px] text-primary" style="font-variation-settings: 'FILL' 1;">
+        lock_reset
+      </span>
+<div class="absolute -bottom-1 -right-1 w-9 h-9 rounded-full bg-primary-container flex items-center justify-center text-on-primary shadow-md">
+<span class="material-symbols-outlined text-[20px]">
+          mark_email_read
+        </span>
+</div>
+</div>
+<h2 class="mt-space-md font-headline-md text-headline-md text-on-surface">
+      ¿Olvidaste tu contraseña?
+    </h2>
+<p class="mt-space-xs font-body-lg text-body-lg text-on-surface-variant max-w-sm">
+      Ingresa tu correo institucional registrado (<span class="font-body-lg-medium text-primary">@alumno.ipn.mx</span> o <span class="font-body-lg-medium text-primary">@ipn.mx</span>). Te enviaremos un enlace seguro para restablecer tu contraseña con vigencia de 15 minutos.
+    </p>
+</div>
+<!-- Formulario y Acciones -->
+<div class="flex flex-col space-y-space-md">
+<form class="flex flex-col space-y-space-md" id="recovery-form" onsubmit="event.preventDefault(); handleSubmit();">
+<!-- Input institucional -->
+<div class="flex flex-col space-y-space-xs">
+<label class="font-label-md text-label-md text-on-surface-variant flex items-center gap-space-xs" for="recovery-email">
+<span>Correo institucional</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+</label>
+<div class="relative flex items-center">
+<div class="absolute left-4 flex items-center pointer-events-none text-secondary">
+<span class="material-symbols-outlined text-[22px]">
+              account_balance
+            </span>
+</div>
+<input class="w-full h-[52px] pl-12 pr-4 bg-surface-container-lowest text-on-surface font-body-lg text-body-lg rounded-xl shadow-sm outline-none focus:ring-2 focus:ring-primary focus:bg-surface-bright transition-all" id="recovery-email" name="email" oninput="handleInputValidation(this)" pattern="^[a-zA-Z0-9._%+-]+@(alumno\.ipn\.mx|ipn\.mx)$" placeholder="usuario@ipn.mx" required="" type="email" value="v.sanchez@ipn.mx"/>
+</div>
+<!-- Mensaje de ayuda contextual / validación -->
+<div class="flex items-center gap-space-xs text-on-surface-variant text-body-sm font-body-sm px-1" id="input-help">
+<span class="material-symbols-outlined text-[16px] text-secondary">
+            verified_user
+          </span>
+<span>Se enviará el enlace a esta dirección oficial</span>
+</div>
+</div>
+<!-- Botón de acción primario -->
+<button class="h-12 w-full bg-primary-container hover:bg-primary text-on-primary font-label-lg text-label-lg rounded-xl shadow-sm active:scale-[0.99] flex items-center justify-center gap-space-sm transition-all" id="submit-btn" type="submit">
+<span class="material-symbols-outlined text-[20px]">
+          send
+        </span>
+<span id="btn-text">Enviar enlace</span>
+<span class="hidden material-symbols-outlined text-[20px] animate-spin" id="spinner">
+          progress_activity
+        </span>
+</button>
+</form>
+<!-- Banner de confirmación de envío (estado exitoso visible) -->
+<div class="w-full rounded-xl bg-[#E8F5E9] text-[#0F5124] p-space-md shadow-sm transition-all duration-300" id="success-banner">
+<div class="flex items-start gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-[#1B873F] text-surface-container-lowest flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px]">
+            check
+          </span>
+</div>
+<div class="flex-1 space-y-1">
+<h3 class="font-title-md text-title-md text-[#0F5124] leading-tight">
+            ¡Enlace enviado!
+          </h3>
+<p class="font-body-sm text-body-sm text-[#1B5E20] leading-snug">
+            Revisa tu bandeja de entrada y correo no deseado. Sigue las instrucciones del mensaje para definir tu nueva contraseña.
+          </p>
+<div class="pt-space-xs flex items-center gap-space-xs text-label-md font-label-md text-[#0F5124]">
+<span class="material-symbols-outlined text-[16px]">
+              schedule
+            </span>
+<span>Expira en 14:59 minutos</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Enlace de regreso al inicio de sesión -->
+<div class="pt-space-sm flex justify-center">
+<button class="inline-flex items-center gap-space-xs font-label-lg text-label-lg text-primary hover:text-on-primary-fixed-variant transition-colors py-space-sm px-space-md rounded-lg active:bg-surface-container" onclick="history.back()" type="button">
+<span class="material-symbols-outlined text-[20px]">
+          arrow_back
+        </span>
+<span>Volver a Iniciar sesión</span>
+</button>
+</div>
+</div>
+<!-- Identificador de seguridad y soporte institucional -->
+<div class="mt-auto pt-space-lg flex flex-col items-center text-center">
+<div class="flex items-center gap-space-xs text-on-surface-variant font-label-md text-label-md">
+<span class="material-symbols-outlined text-[16px] text-tertiary">
+        security
+      </span>
+<span>Sistema de Control de Acceso Vehicular ESCOM</span>
+</div>
+<p class="mt-1 font-body-sm text-body-sm text-outline">
+      ¿No tienes acceso a tu correo IPN? <a class="text-secondary font-label-md underline" href="#">Contacta a soporte técnico</a>
+</p>
+</div>
+</div>
+<script>
+  function handleInputValidation(input) {
+    const help = document.getElementById('input-help');
+    if (input.validity.valid) {
+      help.classList.remove('text-error');
+      help.classList.add('text-on-surface-variant');
+      help.innerHTML = `
+        <span class="material-symbols-outlined text-[16px] text-secondary">verified_user</span>
+        <span>Se enviará el enlace a esta dirección oficial</span>
+      `;
+    } else {
+      help.classList.remove('text-on-surface-variant');
+      help.classList.add('text-error');
+      help.innerHTML = `
+        <span class="material-symbols-outlined text-[16px] text-error">error</span>
+        <span>Debe ser un correo @alumno.ipn.mx o @ipn.mx</span>
+      `;
+    }
+  }
+
+  function handleSubmit() {
+    const btn = document.getElementById('submit-btn');
+    const btnText = document.getElementById('btn-text');
+    const spinner = document.getElementById('spinner');
+    const banner = document.getElementById('success-banner');
+
+    btnText.textContent = "Procesando...";
+    spinner.classList.remove('hidden');
+    btn.disabled = true;
+
+    setTimeout(() => {
+      btnText.textContent = "Reenviar enlace";
+      spinner.classList.add('hidden');
+      btn.disabled = false;
+      banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 800);
+  }
+</script></main></body></html>

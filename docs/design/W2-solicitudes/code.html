@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "background": "#f5faff", "on-tertiary-container": "#d1dfe6", "surface-tint": "#006496", "surface-container-highest": "#d8e4ed", "surface-container": "#e3f0f9", "secondary-fixed-dim": "#96ccf9", "on-primary-fixed-variant": "#004b72", "primary-container": "#006699", "surface-dim": "#cfdce5", "tertiary-container": "#566369", "surface-variant": "#d8e4ed", "on-tertiary": "#ffffff", "surface-container-high": "#ddeaf3", "on-tertiary-fixed-variant": "#3c494e", "tertiary-fixed-dim": "#bbc9cf", "error": "#ba1a1a", "on-tertiary-fixed": "#101d22", "on-secondary-fixed-variant": "#004b70", "on-primary-container": "#bfe0ff", "outline": "#707880", "on-error-container": "#93000a", "on-background": "#111d24", "surface-bright": "#f5faff", "error-container": "#ffdad6", "on-surface": "#111d24", "inverse-on-surface": "#e6f2fc", "inverse-primary": "#90cdff", "on-primary": "#ffffff", "on-surface-variant": "#40484f", "secondary-fixed": "#cae6ff", "secondary": "#27638a", "secondary-container": "#9bd2ff", "primary-fixed": "#cce5ff", "tertiary-fixed": "#d7e5ec", "tertiary": "#3e4b51", "on-secondary-container": "#1c5b82", "primary": "#004d75", "on-error": "#ffffff", "inverse-surface": "#263239", "on-secondary": "#ffffff", "surface-container-low": "#e9f5ff", "on-primary-fixed": "#001e31", "outline-variant": "#c0c7d0", "primary-fixed-dim": "#90cdff", "surface": "#f5faff", "on-secondary-fixed": "#001e30", "surface-container-lowest": "#ffffff" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-md": "1rem", "gutter": "1rem", "space-sm": "0.5rem", "margin": "1rem", "space-xs": "0.25rem", "space-lg": "1.5rem", "space-xl": "2rem" }, "fontFamily": { "body-lg-medium": [ "Inter" ], "body-sm": [ "Inter" ], "headline-lg-mobile": [ "Inter" ], "label-lg": [ "Inter" ], "headline-sm": [ "Inter" ], "body-lg": [ "Inter" ], "headline-md": [ "Inter" ], "headline-lg": [ "Inter" ], "label-md": [ "Inter" ], "title-md": [ "Inter" ], "code-license-plate": [ "Inter" ] }, "fontSize": { "body-lg-medium": [ "16px", { "lineHeight": "24px", "fontWeight": "500" } ], "body-sm": [ "14px", { "lineHeight": "20px", "fontWeight": "400" } ], "headline-lg-mobile": [ "26px", { "lineHeight": "34px", "fontWeight": "700" } ], "label-lg": [ "14px", { "lineHeight": "20px", "fontWeight": "600" } ], "headline-sm": [ "20px", { "lineHeight": "28px", "fontWeight": "600" } ], "body-lg": [ "16px", { "lineHeight": "24px", "fontWeight": "400" } ], "headline-md": [ "24px", { "lineHeight": "32px", "fontWeight": "700" } ], "headline-lg": [ "32px", { "lineHeight": "40px", "fontWeight": "700" } ], "label-md": [ "12px", { "lineHeight": "16px", "fontWeight": "600" } ], "title-md": [ "18px", { "lineHeight": "26px", "fontWeight": "600" } ], "code-license-plate": [ "20px", { "lineHeight": "24px", "letterSpacing": "1.5px", "fontWeight": "700" } ] } } } };</script></head><body class="bg-surface font-body-lg text-body-lg text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-72 bg-surface-container-low shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex flex-col justify-between pt-space-lg pb-space-lg"><div class="flex flex-col"><div class="px-space-lg mb-space-lg flex items-center gap-space-sm"><div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary font-headline-sm text-headline-sm shadow-sm">P</div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-primary tracking-tight">ParkESCOM</span><span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">IPN · ESCOM</span></div></div><div class="px-space-lg mb-space-sm"><span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant">Navegación del Sistema</span></div><nav class="flex flex-col gap-space-xs px-space-md" data-active-classes="bg-primary-container text-on-primary font-label-lg rounded-xl shadow-sm"><a class="flex items-center gap-space-sm px-space-md py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface font-label-lg text-label-lg transition-all" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">dashboard</span><span>Dashboard</span></a><a aria-current="page" class="flex items-center gap-space-sm px-space-md py-3 transition-all bg-primary-container text-on-primary font-label-lg rounded-xl shadow-sm" data-path="solicitudes" href="#"><span class="material-symbols-outlined text-[20px]">inbox</span><span>Solicitudes</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface font-label-lg text-label-lg transition-all" data-path="usuarios" href="#"><span class="material-symbols-outlined text-[20px]">group</span><span>Usuarios</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface font-label-lg text-label-lg transition-all" data-path="vehiculos" href="#"><span class="material-symbols-outlined text-[20px]">directions_car</span><span>Vehículos</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface font-label-lg text-label-lg transition-all" data-path="credenciales" href="#"><span class="material-symbols-outlined text-[20px]">badge</span><span>Credenciales</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface font-label-lg text-label-lg transition-all" data-path="pases" href="#"><span class="material-symbols-outlined text-[20px]">confirmation_number</span><span>Pases</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface font-label-lg text-label-lg transition-all" data-path="movimientos" href="#"><span class="material-symbols-outlined text-[20px]">swap_horiz</span><span>Movimientos</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface font-label-lg text-label-lg transition-all" data-path="incidentes" href="#"><span class="material-symbols-outlined text-[20px]">warning</span><span>Incidentes</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface font-label-lg text-label-lg transition-all" data-path="configuracion" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span>Configuración</span></a><a class="flex items-center gap-space-sm px-space-md py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface font-label-lg text-label-lg transition-all" data-path="auditoria" href="#"><span class="material-symbols-outlined text-[20px]">policy</span><span>Auditoría</span></a></nav></div><div class="px-space-md"><div class="bg-surface-container p-space-md rounded-xl flex items-center justify-between"><div class="flex flex-col"><span class="font-label-md text-label-md text-on-surface-variant">Instancia</span><span class="font-label-lg text-label-lg text-primary">Unidad ESCOM</span></div><span class="material-symbols-outlined text-primary text-[20px]">verified</span></div></div></aside><div class="pl-72"><header class="fixed top-0 left-72 right-0 h-16 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-space-xl"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-primary text-[20px]">admin_panel_settings</span><span class="font-label-lg text-label-lg text-primary uppercase tracking-wide">Administración</span><span class="text-outline-variant">/</span><span class="font-body-sm text-body-sm text-on-surface-variant">Control Institucional</span></div><div class="flex items-center gap-space-lg"><div class="flex flex-col text-right"><span class="font-label-lg text-label-lg text-on-surface">Administrador</span><span class="font-label-md text-label-md text-on-surface-variant">Control General</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="relative pt-16 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<div class="px-space-xl py-space-lg flex flex-col gap-space-lg">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs mb-1">
+<span class="font-label-md text-label-md uppercase tracking-wider text-primary">Unidad Profesional Adolfo López Mateos</span>
+<span class="text-outline-variant font-label-md text-label-md">•</span>
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant">Ciclo 2024-2025</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Solicitudes de Acceso Vehicular</h1>
+<div class="bg-secondary-container/60 text-on-secondary-container px-3 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-md text-label-md">8 pendientes de validación</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-sm self-start lg:self-auto">
+<div class="flex items-center bg-surface-container-high rounded-xl px-3 py-2 text-on-surface-variant focus-within:bg-surface-container-lowest focus-within:shadow-md transition-all">
+<span class="material-symbols-outlined text-[20px] text-outline mr-2">search</span>
+<input class="bg-transparent border-0 outline-none font-body-sm text-body-sm text-on-surface placeholder:text-outline w-64" placeholder="Buscar por nombre, boleta o placa..." type="text"/>
+</div>
+<button class="bg-surface-container hover:bg-surface-container-high text-primary px-4 py-2.5 rounded-xl font-label-lg text-label-lg flex items-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+<span>Filtros avanzados</span>
+</button>
+</div>
+</div>
+<div class="flex items-center justify-between flex-wrap gap-space-md bg-surface-container-low p-2 rounded-2xl">
+<div class="flex items-center gap-1">
+<button class="bg-primary text-on-primary font-label-lg text-label-lg px-4 py-2 rounded-xl flex items-center gap-2 shadow-sm transition-all">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">schedule</span>
+<span>Pendientes</span>
+<span class="bg-primary-container text-on-primary-container text-xs px-2 py-0.5 rounded-full font-bold">8</span>
+</button>
+<button class="hover:bg-surface-container text-on-surface-variant hover:text-on-surface font-label-lg text-label-lg px-4 py-2 rounded-xl flex items-center gap-2 transition-all">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span>Aprobadas</span>
+<span class="bg-surface-container-highest text-on-surface-variant text-xs px-2 py-0.5 rounded-full font-bold">42</span>
+</button>
+<button class="hover:bg-surface-container text-on-surface-variant hover:text-on-surface font-label-lg text-label-lg px-4 py-2 rounded-xl flex items-center gap-2 transition-all">
+<span class="material-symbols-outlined text-[18px]">cancel</span>
+<span>Rechazadas</span>
+<span class="bg-surface-container-highest text-on-surface-variant text-xs px-2 py-0.5 rounded-full font-bold">5</span>
+</button>
+</div>
+<div class="flex items-center gap-4 text-outline font-label-md text-label-md pr-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary">sync</span>
+<span class="text-on-surface-variant">Sincronizado hace 2 min</span>
+</div>
+<span class="text-outline-variant">|</span>
+<button class="text-primary hover:underline flex items-center gap-1 font-label-md text-label-md">
+<span class="material-symbols-outlined text-[16px]">file_download</span>
+<span>Exportar listado</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-lg items-start">
+<div class="xl:col-span-6 bg-surface-container-lowest rounded-2xl shadow-sm overflow-hidden flex flex-col">
+<div class="p-space-md bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">format_list_bulleted</span>
+<span class="font-title-md text-title-md text-on-surface">Cola de Cotejo Vehicular</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant">Mostrando 8 registros</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-surface-container-low/50 text-outline text-[12px] uppercase tracking-wider font-semibold">
+<th class="py-3 px-4">Folio / Fecha</th>
+<th class="py-3 px-4">Solicitante</th>
+<th class="py-3 px-4">Vehículo</th>
+<th class="py-3 px-4">Placa</th>
+<th class="py-3 px-4">Trámite</th>
+<th class="py-3 px-4 text-center">Estado</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container text-body-sm font-body-sm text-on-surface">
+<tr class="bg-primary/5 shadow-inner transition-colors cursor-pointer relative">
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-2">
+<div class="w-1.5 h-8 bg-primary rounded-full"></div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-primary">#SOL-10492</span>
+<span class="text-[12px] text-outline">Hoy, 09:24 hrs</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface">Víctor Hugo Sánchez</span>
+<span class="text-[12px] text-on-surface-variant font-mono">2024630981</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">directions_car</span>
+<span class="text-on-surface truncate max-w-[100px]" title="Nissan Versa">Nissan Versa</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="font-code-license-plate text-[13px] bg-surface-container-high px-2 py-0.5 rounded text-on-surface font-bold tracking-wider">
+                    456-ABC
+                  </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="text-[12px] bg-secondary-fixed text-on-secondary-fixed font-medium px-2 py-0.5 rounded-full">
+                    Alta
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-900">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+<span>Pendiente</span>
+</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors cursor-pointer">
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface">#SOL-10491</span>
+<span class="text-[12px] text-outline">Hoy, 08:52 hrs</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface">Mariana Ortiz Lara</span>
+<span class="text-[12px] text-on-surface-variant font-mono">2021630122</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-[18px]">two_wheeler</span>
+<span class="text-on-surface truncate max-w-[100px]" title="Yamaha FZ25">Yamaha FZ</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="font-code-license-plate text-[13px] bg-surface-container px-2 py-0.5 rounded text-on-surface-variant font-bold tracking-wider">
+                    89-KKL-1
+                  </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="text-[12px] bg-secondary-fixed text-on-secondary-fixed font-medium px-2 py-0.5 rounded-full">
+                    Alta
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-900">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+<span>Pendiente</span>
+</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors cursor-pointer">
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface">#SOL-10490</span>
+<span class="text-[12px] text-outline">Ayer, 18:30 hrs</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface">Dr. Ricardo Gómez Peña</span>
+<span class="text-[12px] text-on-surface-variant font-mono">EMP-90812</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-[18px]">directions_car</span>
+<span class="text-on-surface truncate max-w-[100px]" title="Volkswagen Jetta">VW Jetta</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="font-code-license-plate text-[13px] bg-surface-container px-2 py-0.5 rounded text-on-surface-variant font-bold tracking-wider">
+                    PDX-7712
+                  </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="text-[12px] bg-secondary-fixed text-on-secondary-fixed font-medium px-2 py-0.5 rounded-full">
+                    Alta
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-900">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+<span>Pendiente</span>
+</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors cursor-pointer">
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface">#SOL-10489</span>
+<span class="text-[12px] text-outline">Ayer, 16:15 hrs</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface">Ana Cecilia Miranda</span>
+<span class="text-[12px] text-on-surface-variant font-mono">2022630441</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-[18px]">directions_car</span>
+<span class="text-on-surface truncate max-w-[100px]" title="Chevrolet Aveo">Chev. Aveo</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="font-code-license-plate text-[13px] bg-surface-container px-2 py-0.5 rounded text-on-surface-variant font-bold tracking-wider">
+                    NWX-1029
+                  </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="text-[12px] bg-secondary-fixed text-on-secondary-fixed font-medium px-2 py-0.5 rounded-full">
+                    Alta
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-900">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+<span>Pendiente</span>
+</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors cursor-pointer">
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface">#SOL-10488</span>
+<span class="text-[12px] text-outline">Ayer, 14:02 hrs</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface">Esteban Alarcón Ruiz</span>
+<span class="text-[12px] text-on-surface-variant font-mono">2023630099</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-[18px]">two_wheeler</span>
+<span class="text-on-surface truncate max-w-[100px]" title="KTM Duke 250">KTM Duke</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="font-code-license-plate text-[13px] bg-surface-container px-2 py-0.5 rounded text-on-surface-variant font-bold tracking-wider">
+                    12-MTX-4
+                  </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="text-[12px] bg-secondary-fixed text-on-secondary-fixed font-medium px-2 py-0.5 rounded-full">
+                    Alta
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-900">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+<span>Pendiente</span>
+</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors cursor-pointer">
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface">#SOL-10487</span>
+<span class="text-[12px] text-outline">Ayer, 11:45 hrs</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface">Mtra. Elena Morales V.</span>
+<span class="text-[12px] text-on-surface-variant font-mono">EMP-81044</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-[18px]">directions_car</span>
+<span class="text-on-surface truncate max-w-[100px]" title="Mazda 3 Sedán">Mazda 3</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="font-code-license-plate text-[13px] bg-surface-container px-2 py-0.5 rounded text-on-surface-variant font-bold tracking-wider">
+                    LRP-8831
+                  </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="text-[12px] bg-secondary-fixed text-on-secondary-fixed font-medium px-2 py-0.5 rounded-full">
+                    Alta
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-900">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+<span>Pendiente</span>
+</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-space-md bg-surface-container-lowest flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Página 1 de 2</span>
+<div class="flex items-center gap-1">
+<button class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-outline hover:bg-surface-container-high transition-colors" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-primary text-on-primary font-label-md text-label-md flex items-center justify-center">1</button>
+<button class="w-8 h-8 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md flex items-center justify-center transition-colors">2</button>
+<button class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<div class="xl:col-span-6 flex flex-col gap-space-md">
+<div class="bg-surface-container-lowest rounded-2xl shadow-md p-space-lg flex flex-col gap-space-lg">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<div class="flex items-center gap-2 mb-1">
+<span class="px-2.5 py-0.5 bg-primary/10 text-primary font-mono text-[12px] font-bold rounded">SOL-10492</span>
+<span class="text-outline text-xs">Cotejo Documental y Vehicular</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Cotejo de Solicitud · Víctor Hugo Sánchez</h2>
+</div>
+<div class="flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-900 rounded-full font-label-md text-label-md">
+<span class="material-symbols-outlined text-[16px]">hourglass_top</span>
+<span>Revisión en Proceso</span>
+</div>
+</div>
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">how_to_reg</span>
+<h3 class="font-title-md text-title-md text-on-surface">1. Comparativa de Identidad Institucional</h3>
+</div>
+<span class="font-label-md text-label-md text-primary font-semibold">Cotejo Lado a Lado</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md bg-surface-container-low p-space-md rounded-xl">
+<div class="flex flex-col gap-space-xs bg-surface-container-lowest p-3 rounded-lg shadow-sm">
+<div class="flex items-center justify-between pb-1 border-b border-surface-container">
+<span class="font-label-md text-label-md uppercase tracking-wider text-outline flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">badge</span>
+                    Credencial Oficial IPN ESCOM
+                  </span>
+<span class="text-[11px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded">Digitalizada</span>
+</div>
+<div class="relative rounded-lg overflow-hidden mt-1 group">
+<img class="w-full h-44 object-cover object-center rounded transition-transform group-hover:scale-105 duration-300" data-alt="Realistic student ID card of IPN Instituto Politecnico Nacional and ESCOM Escuela Superior de Computo, Mexico. Clear official badge showing a young male university student headshot, bold burgundy institutional header, student full name Victor Hugo Sanchez, enrollment number 2024630981, and degree program Ingenieria en Sistemas Computacionales." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPFvI5baoYhwOlN07VLkF7lF18cNcpyAHmk_B5vV0RfDvTHJwBoTEoBxiXczhmI0Y0sehMybpomLbjg79HBAVouUIcH1NK1VQsZTfyRcub9dT-U-PS47UL71TQtI0Bj_SFBFeFHRF7iE5UARNh2T69KjSBh_5KEtAqY-OXelJ0vza3IqXvnqO4PC6i6DOUzWCA4ZYc83lFuuTU178zEDBWt3xQYdIatjvEk3MEQmu9wv5ureKLjRca"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent flex items-end p-2 opacity-90">
+<span class="text-white text-xs font-medium">Credencial Alumno Vigente 2024</span>
+</div>
+</div>
+<div class="flex items-center justify-between text-[12px] text-on-surface-variant pt-1">
+<span>Resolución: 1200 x 800 px</span>
+<button class="text-primary font-medium hover:underline flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px]">zoom_in</span>
+<span>Ampliar</span>
+</button>
+</div>
+</div>
+<div class="flex flex-col gap-space-xs bg-surface-container-lowest p-3 rounded-lg shadow-sm justify-between">
+<div>
+<div class="flex items-center justify-between pb-1 border-b border-surface-container">
+<span class="font-label-md text-label-md uppercase tracking-wider text-outline flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">fact_check</span>
+                      Datos Capturados en Formulario
+                    </span>
+<span class="text-[11px] bg-primary/10 text-primary font-bold px-1.5 py-0.5 rounded">Para Validar</span>
+</div>
+<div class="flex flex-col gap-2 mt-2">
+<div class="flex flex-col">
+<span class="text-[11px] text-outline uppercase font-semibold">Nombre Completo</span>
+<span class="font-label-lg text-label-lg text-on-surface">Víctor Hugo Sánchez</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[11px] text-outline uppercase font-semibold">Boleta de Registro</span>
+<span class="font-mono font-bold text-primary text-[14px]">2024630981</span>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<div class="flex flex-col">
+<span class="text-[11px] text-outline uppercase font-semibold">Rol Declarado</span>
+<span class="font-body-sm text-body-sm text-on-surface font-medium">Alumno Activo</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[11px] text-outline uppercase font-semibold">Programa</span>
+<span class="font-body-sm text-body-sm text-on-surface font-medium">Ing. en Sistemas</span>
+</div>
+</div>
+<div class="flex flex-col">
+<span class="text-[11px] text-outline uppercase font-semibold">Correo Institucional</span>
+<span class="font-mono text-xs text-on-surface-variant truncate">vsanchezg2400@alumno.ipn.mx</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container p-2 rounded flex items-center gap-2 mt-2"><span class="material-symbols-outlined text-primary text-[18px]">info</span><span class="text-[12px] text-on-surface-variant font-medium">Compara la foto de la credencial con los datos capturados</span></div>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">directions_car</span>
+<h3 class="font-title-md text-title-md text-on-surface">2. Cotejo de Fotografías del Vehículo</h3>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant">Inspección Visual</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md bg-surface-container-low p-space-md rounded-xl">
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Vista Frontal Completa</span>
+<span class="text-xs text-outline font-medium">Nissan Versa · Plata</span>
+</div>
+<div class="relative rounded-xl overflow-hidden shadow-sm h-40 group">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Front view photograph of a modern metallic silver Nissan Versa sedan parked in an academic daylight parking lot. High clarity, professional automotive verification image capturing front headlights, grille, windshield and general exterior conditions." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnuLyYc79U_n8STo6jb3dOhGzt0qh2awvuSyqaFDAKTLaWJ6ny_v_gpVNFpX767QV8cyWXDsGLh1hTouQX_l5QwPoJCkIo8g2UwYwaT9pxqK1k5mpKJ4TtjG008u_UQwk3HyqLL7iskR8y-D5sqvtpU8pMeJWLM7PLy8C-5TkNsTSjWT07f4T0137_-faypWJkCNeU0NSpT80NDf1dDpE0lSRkIFclxZ_Pe9V691mFGfbU_7VsNYhP"/>
+<div class="absolute bottom-2 left-2 bg-on-background/80 text-white text-[11px] px-2 py-0.5 rounded backdrop-blur-sm">
+                    Carrocería en orden
+                  </div>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Detalle de Placa Vehicular</span>
+<span class="font-code-license-plate text-[14px] text-primary">456-ABC</span>
+</div>
+<div class="relative rounded-xl overflow-hidden shadow-sm h-40 group">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Extreme close-up macro photograph of a legitimate Mexican vehicle license plate reading '456-ABC'. High contrast, razor sharp typography, crisp embossed numbers and letters clearly visible without glare or distortion." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6jZn4oxL9T_WVRrd70Aicd32-biL05k9GYj5wdGkcq78nnJ_z35jCBHCvlsgtiV1fI_iJEhbcT6k4oDXvBivQFY70aNyk0ONA0nZWf_p58FCiA8jiKLOWHQxrpTMxfHtrWDK2jxX2eaSH5e3qQccmzzLk6Hh-An09Yfuimr5GBtuC24N2qDkMEYne20VlkWwxRW0Hvm5T5-6bUX4dZ68YUQB2ihHPCAyBWF5UkYFDJj83XUXBN4XH"/>
+<div class="absolute bottom-2 left-2 bg-on-background/80 text-white text-[11px] px-2 py-0.5 rounded backdrop-blur-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-emerald-400">check_circle</span>
+                    Placa legible
+                  </div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-space-sm pt-2">
+<label class="font-label-lg text-label-lg text-on-surface flex items-center gap-1.5" for="resolution-comment">
+<span>Comentario de resolución</span>
+<span class="text-error font-bold text-xs uppercase tracking-wide">(obligatorio en caso de rechazo)</span>
+</label>
+<div class="relative">
+<textarea class="w-full bg-surface-container-low rounded-xl p-3 font-body-sm text-body-sm text-on-surface placeholder:text-outline border-0 focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary outline-none transition-all resize-none" id="resolution-comment" placeholder="Especifique el motivo por el cual no procede la solicitud (ej. fotografía de credencial ilegible, inconsistencia en número de boleta, placa no coincide con documentación)..." rows="3"></textarea>
+</div>
+<div class="flex items-center justify-between text-[12px] text-outline">
+<span>Este comentario será notificado de inmediato al buzón del solicitante.</span>
+<span id="char-count">0 / 250</span>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row items-center justify-end gap-space-md pt-2 border-t border-surface-container">
+<button class="w-full sm:w-auto h-12 px-6 rounded-xl bg-error-container hover:bg-error/20 text-error font-label-lg text-label-lg flex items-center justify-center gap-2 transition-all" id="reject-btn">
+<span class="material-symbols-outlined text-[20px]">block</span>
+<span>Rechazar solicitud</span>
+</button>
+<button class="w-full sm:w-auto h-12 px-8 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all" id="approve-btn">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+<span>Aprobar solicitud</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    const commentInput = document.getElementById('resolution-comment');
+    const charCount = document.getElementById('char-count');
+    const rejectBtn = document.getElementById('reject-btn');
+    const approveBtn = document.getElementById('approve-btn');
+
+    if (commentInput && charCount) {
+      commentInput.addEventListener('input', function() {
+        const len = this.value.length;
+        charCount.textContent = len + ' / 250';
+        if (len > 0) {
+          commentInput.classList.remove('ring-2', 'ring-error');
+        }
+      });
+    }
+
+    if (rejectBtn && commentInput) {
+      rejectBtn.addEventListener('click', function() {
+        if (!commentInput.value.trim()) {
+          commentInput.focus();
+          commentInput.classList.add('ring-2', 'ring-error');
+          alert('Atención de Administración: Para formalizar el rechazo es obligatorio ingresar el motivo en el comentario.');
+        } else {
+          if (confirm('¿Confirmar rechazo de la solicitud #SOL-10492? Se emitirá la notificación correspondiente.')) {
+            alert('Solicitud rechazada con éxito.');
+          }
+        }
+      });
+    }
+
+    if (approveBtn) {
+      approveBtn.addEventListener('click', function() {
+        if (confirm('¿Proceder con la aprobación definitiva del registro vehicular para Víctor Hugo Sánchez (Placa: 456-ABC)?')) {
+          approveBtn.disabled = true;
+          approveBtn.innerHTML = '<span class="material-symbols-outlined text-[20px] animate-spin">refresh</span><span>Registrando acceso...</span>';
+          setTimeout(function() {
+            alert('Solicitud aprobada satisfactoriamente. Credencial vehicular activada.');
+            window.location.reload();
+          }, 700);
+        }
+      });
+    }
+  })();
+</script></main></div></body></html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "surface-variant": "#d8e4ed", "on-tertiary-container": "#d1dfe6", "tertiary-fixed": "#d7e5ec", "tertiary-fixed-dim": "#bbc9cf", "on-primary-container": "#bfe0ff", "surface-bright": "#f5faff", "on-error": "#ffffff", "secondary": "#27638a", "on-secondary-container": "#1c5b82", "primary-fixed": "#cce5ff", "tertiary-container": "#566369", "surface-tint": "#006496", "on-primary": "#ffffff", "on-surface": "#111d24", "tertiary": "#3e4b51", "surface-container": "#e3f0f9", "on-primary-fixed-variant": "#004b72", "on-secondary-fixed-variant": "#004b70", "on-primary-fixed": "#001e31", "on-background": "#111d24", "error": "#ba1a1a", "primary-container": "#006699", "secondary-container": "#9bd2ff", "on-secondary-fixed": "#001e30", "surface": "#f5faff", "secondary-fixed": "#cae6ff", "on-tertiary-fixed-variant": "#3c494e", "on-secondary": "#ffffff", "inverse-primary": "#90cdff", "surface-container-lowest": "#ffffff", "error-container": "#ffdad6", "primary": "#004d75", "on-tertiary": "#ffffff", "primary-fixed-dim": "#90cdff", "on-tertiary-fixed": "#101d22", "surface-container-high": "#ddeaf3", "surface-dim": "#cfdce5", "outline-variant": "#c0c7d0", "on-surface-variant": "#40484f", "inverse-surface": "#263239", "surface-container-highest": "#d8e4ed", "secondary-fixed-dim": "#96ccf9", "on-error-container": "#93000a", "outline": "#707880", "surface-container-low": "#e9f5ff", "inverse-on-surface": "#e6f2fc", "background": "#f5faff" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-md": "1rem", "gutter": "1rem", "space-sm": "0.5rem", "margin": "1rem", "space-xs": "0.25rem", "space-lg": "1.5rem", "space-xl": "2rem" }, fontFamily: { "body-lg-medium": ["Inter"], "headline-lg-mobile": ["Inter"], "title-md": ["Inter"], "label-md": ["Inter"], "body-sm": ["Inter"], "headline-lg": ["Inter"], "label-lg": ["Inter"], "code-license-plate": ["Inter"], "headline-sm": ["Inter"], "headline-md": ["Inter"], "body-lg": ["Inter"] }, fontSize: { "body-lg-medium": ["16px", { lineHeight: "24px", fontWeight: "500" }], "headline-lg-mobile": ["26px", { lineHeight: "34px", fontWeight: "700" }], "title-md": ["18px", { lineHeight: "26px", fontWeight: "600" }], "label-md": ["12px", { lineHeight: "16px", fontWeight: "600" }], "body-sm": ["14px", { lineHeight: "20px", fontWeight: "400" }], "headline-lg": ["32px", { lineHeight: "40px", fontWeight: "700" }], "label-lg": ["14px", { lineHeight: "20px", fontWeight: "600" }], "code-license-plate": ["20px", { lineHeight: "24px", letterSpacing: "1.5px", fontWeight: "700" }], "headline-sm": ["20px", { lineHeight: "28px", fontWeight: "600" }], "headline-md": ["24px", { lineHeight: "32px", fontWeight: "700" }], "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }] } } } };</script><style>@layer base{html,body{width:100%;margin:0;padding:0;min-height:100%;}body{overscroll-behavior-y:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head><body class="bg-background font-body-lg text-body-lg text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-gutter flex items-center justify-between"><div class="flex items-center gap-space-sm"><div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary shadow-sm"><span class="material-symbols-outlined text-[24px]">local_parking</span></div><div class="flex flex-col"><span class="font-label-md text-label-md text-secondary block leading-none">ESCOM IPN</span><h1 class="font-title-md text-title-md text-on-surface tracking-tight leading-tight">Mis Vehículos</h1></div></div><div class="flex items-center"><div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary font-label-lg text-label-lg shadow-sm ring-2 ring-primary/20"><span class="material-symbols-outlined text-[20px]">person</span></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-20 bg-background min-h-screen"><div class="flex flex-col w-full pb-8">
+<div class="px-gutter pt-3 pb-2 flex items-center justify-between">
+<button aria-label="Regresar" class="w-10 h-10 -ml-2 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[24px]">arrow_back</span>
+</button>
+<span class="font-title-md text-title-md text-on-surface">Detalle de Vehículo</span>
+</div>
+<div class="px-gutter flex flex-col gap-space-md">
+<div class="relative w-full h-56 rounded-xl overflow-hidden shadow-sm bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="High quality realistic exterior photograph of a sleek 2022 Nissan Versa sedan in metallic silver color parked in front of modern engineering university campus under clear daylight, sharp angle front three-quarter view, institutional academic blue tones in reflections" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrA0jyqq43WIxzpBtcQ677zn9LaaNbd8F5yvT9JQ8rpeaq3P2ja-JdhSRQlGzfRJhJ_YMur75XVr4bj1m82wu2LlznSO_Nd1Lw0l8ZxvPKsdpjDXy1SOjHSbd05tt4rFhkEatmxEuhkdRlhYkv5kA6AmbuqPvfGU6PWB3UUo5Ue_9dkrk_AX0E89eJNo061clhctf58liGqi7zZ32bs6UD2CTwFu5AvHDy_UpFoXVdci6qQ1X18Bd8"/>
+<div class="absolute inset-0 bg-gradient-to-t from-inverse-surface/60 via-transparent to-transparent"></div>
+<div class="absolute top-3 right-3 flex items-center gap-space-xs bg-[#E8F5E9] text-[#0F5124] px-2.5 py-1 rounded-full shadow-sm">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-label-md text-label-md tracking-tight">Activo</span>
+</div>
+<div class="absolute bottom-3 left-3 right-3 flex items-end justify-between">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-white/90">Registro Vehicular IPN</span>
+<span class="font-headline-sm text-headline-sm text-white font-bold tracking-tight">Nissan Versa 2022</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between pb-space-sm bg-surface-container-low p-space-md rounded-lg">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Placa Oficial</span>
+<span class="font-code-license-plate text-code-license-plate text-primary font-bold">456-ABC</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-label-md text-label-md text-on-surface-variant">Tipo</span>
+<span class="font-body-sm text-body-sm font-medium text-on-surface">Automóvil particular</span>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-space-sm pt-1">
+<div class="flex flex-col bg-surface-bright p-space-sm rounded-lg">
+<span class="font-label-md text-label-md text-on-surface-variant">Marca</span>
+<span class="font-label-lg text-label-lg text-on-surface">Nissan</span>
+</div>
+<div class="flex flex-col bg-surface-bright p-space-sm rounded-lg">
+<span class="font-label-md text-label-md text-on-surface-variant">Modelo</span>
+<span class="font-label-lg text-label-lg text-on-surface">Advance '22</span>
+</div>
+<div class="flex flex-col bg-surface-bright p-space-sm rounded-lg">
+<span class="font-label-md text-label-md text-on-surface-variant">Color</span>
+<span class="font-label-lg text-label-lg text-on-surface flex items-center gap-1">
+<span class="w-2.5 h-2.5 rounded-full bg-slate-400 inline-block"></span>
+            Gris Plata
+          </span>
+</div>
+</div>
+<div class="flex items-center gap-space-md pt-space-xs bg-surface-bright p-space-md rounded-lg">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed font-bold text-label-lg">
+          VH
+        </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface-variant">Titular Registrado</span>
+<span class="font-body-lg-medium text-body-lg-medium text-on-surface truncate">Víctor Hugo Sánchez</span>
+<span class="font-body-sm text-body-sm text-secondary">Alumno · Boleta 2024630981</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between px-1">
+<h2 class="font-title-md text-title-md text-on-surface">Credenciales ligadas</h2>
+<span class="font-label-md text-label-md text-secondary">2 asignadas</span>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-md"><div class="flex items-center gap-space-md"><div class="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0"><span class="material-symbols-outlined text-[24px]">sensors</span></div><div class="flex flex-col flex-1 min-w-0"><div class="flex items-center justify-between"><span class="font-label-lg text-label-lg text-on-surface">Tag RFID UHF</span><span class="font-label-md text-label-md px-2 py-0.5 rounded-full bg-[#E8F5E9] text-[#0F5124] font-medium">Activo</span></div><span class="font-body-sm text-body-sm font-semibold text-primary">TAG-ESCOM-99120</span><span class="font-label-md text-label-md text-on-surface-variant">Lectura en puerta vehicular</span></div></div><div class="w-full h-[1px] bg-surface-container"></div><div class="flex items-center gap-space-md"><div class="w-11 h-11 rounded-xl bg-secondary-container/40 flex items-center justify-center text-secondary shrink-0"><span class="material-symbols-outlined text-[24px]">qr_code_2</span></div><div class="flex flex-col flex-1 min-w-0"><div class="flex items-center justify-between"><span class="font-label-lg text-label-lg text-on-surface">Código QR Dinámico</span><span class="font-label-md text-label-md px-2 py-0.5 rounded-full bg-[#E3F1F8] text-[#004D73] font-medium">Habilitado</span></div><span class="font-body-sm text-body-sm text-on-surface">Respaldo en pantalla del celular</span></div></div></div>
+</div>
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between px-1">
+<h2 class="font-title-md text-title-md text-on-surface">Usuarios autorizados</h2>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center gap-space-md">
+<img class="w-12 h-12 rounded-full object-cover shrink-0 shadow-sm" data-alt="Clear modern ID portrait photo of a young male university engineering student smiling gently with neutral background, wearing dark casual collegiate sweater, professional student credential style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTYVoixdGOD44pDzap74IVJplOZcUl4YsKYONq3M2L_RaxdJNajXkjQyV7m8SMT0g2wL8yWta3NbxkWV9ItC0Dk2Vlaa1dztGQP96Ce7ZGJud5lUY2w9QuWKSeU65ktA3mO_Tx8dPr-8NKB2JFeYsVtU60Izi0SwTl2iQbbUF_i-eZYihRAM2FPlvaicEq2MbBQF8ua15zBp-dNfs636HDZJsHR0uAOXLblwJ-E7ECAJq6WZjJ1nv-"/>
+<div class="flex flex-col flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<span class="font-body-lg-medium text-body-lg-medium text-on-surface truncate">Víctor Hugo Sánchez</span>
+<span class="font-label-md text-label-md px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed">Propietario</span>
+</div>
+<span class="font-body-sm text-body-sm text-secondary">Titular principal · Boleta 2024630981</span>
+</div>
+</div>
+<div class="w-full h-[1px] bg-surface-container"></div>
+<div class="flex items-center gap-space-md">
+<img class="w-12 h-12 rounded-full object-cover shrink-0 shadow-sm" data-alt="Authentic friendly academic ID headshot of an intelligent female college student with glasses wearing a maroon university hoodie, clean soft daylight framing, campus security credential format" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBV0blaz-e-bT5a8lRV2nxI3OHVPva6of4J8maphwZ2akXYJSgqXUOtXlch9keYSo1wYkxTKbZdGw3ldS95UUsKyHWcDXYGaZmdyVpl4V56kJ-GafLMQ7NZ3AcLPUALmlWad5guOPWx-27mDYDbZpxmCmjeQ7xcX0JQZRpJzCDLfqq8AOB47kJEPtgbrN7PYemfIh4DVjeAHgxPuCoIIpGzmXcQAuG_w6uxijX2X1lHcVfg4wM0aU5U"/>
+<div class="flex flex-col flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<span class="font-body-lg-medium text-body-lg-medium text-on-surface truncate">Mariana López Morales</span>
+<span class="font-label-md text-label-md px-2 py-0.5 rounded-full bg-[#E8F5E9] text-[#0F5124]">Autorizada</span>
+</div>
+<span class="font-body-sm text-body-sm text-secondary">Hermana · Alumna ESCOM · Boleta 2022630112</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-space-sm pt-2">
+<button class="w-full h-12 px-space-lg rounded-xl bg-surface-container-high text-primary hover:bg-surface-container-highest transition-colors font-label-lg text-label-lg flex items-center justify-center gap-space-sm shadow-sm" type="button">
+<span class="material-symbols-outlined text-[20px]">edit_note</span>
+        Solicitar cambio de datos o fotos
+      </button>
+<button class="w-full h-12 px-space-lg rounded-xl bg-surface-container-lowest text-secondary hover:bg-surface-container-low transition-colors font-label-lg text-label-lg flex items-center justify-center gap-space-sm shadow-sm" type="button">
+<span class="material-symbols-outlined text-[20px]">no_crash</span>
+        Solicitar baja de vehículo
+      </button>
+<button class="w-full h-12 px-space-lg rounded-xl bg-[#FDE8E8] text-[#C62828] hover:bg-[#FCD7D7] transition-all font-label-lg text-label-lg flex items-center justify-center gap-space-sm shadow-sm" id="btn-reportar" type="button">
+<span class="material-symbols-outlined text-[20px]">warning</span>
+        Reportar credencial perdida
+      </button>
+<div class="hidden flex-col bg-[#FFEBEE] rounded-xl p-space-md gap-space-sm shadow-sm" id="modal-confirmacion">
+<div class="flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-[#C62828] text-[24px] shrink-0">report</span>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-[#7F1313] font-bold">¿Reportar extravío del Tag RFID?</span>
+<span class="font-body-sm text-body-sm text-[#7F1313] leading-tight mt-0.5">La credencial dejará de funcionar en las casetas en su próxima sincronización.</span>
+</div>
+</div>
+<div class="flex items-center justify-end gap-space-sm pt-2">
+<button class="px-space-md py-2 rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-container-lowest transition-colors" id="btn-cancelar-reporte" type="button">
+            Cancelar
+          </button>
+<button class="px-space-md py-2 rounded-lg bg-[#C62828] text-white font-label-md text-label-md shadow-sm hover:bg-[#A81F1F] transition-colors" id="btn-confirmar-reporte" type="button">
+            Confirmar revocación
+          </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    const navVehiculos = document.querySelector('nav a[data-path="mis-vehiculos"]');
+    if (navVehiculos) {
+      document.querySelectorAll('nav a').forEach(el => {
+        el.className = 'flex flex-col items-center justify-center flex-1 h-full py-space-xs text-on-surface-variant hover:text-on-surface transition-colors min-h-[44px] min-w-[44px]';
+        const innerDiv = el.querySelector('div');
+        if (innerDiv) innerDiv.className = 'w-12 h-8 rounded-full flex items-center justify-center transition-colors';
+        const innerIcon = el.querySelector('span.material-symbols-outlined');
+        if (innerIcon) innerIcon.className = 'material-symbols-outlined text-[24px]';
+      });
+      navVehiculos.className = 'flex flex-col items-center justify-center flex-1 h-full py-space-xs text-primary font-label-md min-h-[44px] min-w-[44px]';
+      const activeDiv = navVehiculos.querySelector('div');
+      if (activeDiv) activeDiv.className = 'w-12 h-8 rounded-full flex items-center justify-center bg-secondary-container/40 transition-colors';
+      const activeIcon = navVehiculos.querySelector('span.material-symbols-outlined');
+      if (activeIcon) activeIcon.className = 'material-symbols-outlined text-[24px] text-primary';
+    }
+
+    const btnReportar = document.getElementById('btn-reportar');
+    const modalConfirmacion = document.getElementById('modal-confirmacion');
+    const btnCancelar = document.getElementById('btn-cancelar-reporte');
+    const btnConfirmar = document.getElementById('btn-confirmar-reporte');
+
+    if (btnReportar && modalConfirmacion) {
+      btnReportar.addEventListener('click', () => {
+        modalConfirmacion.classList.remove('hidden');
+        modalConfirmacion.classList.add('flex');
+        btnReportar.classList.add('hidden');
+        modalConfirmacion.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      });
+    }
+
+    if (btnCancelar && modalConfirmacion && btnReportar) {
+      btnCancelar.addEventListener('click', () => {
+        modalConfirmacion.classList.add('hidden');
+        modalConfirmacion.classList.remove('flex');
+        btnReportar.classList.remove('hidden');
+      });
+    }
+
+    if (btnConfirmar && modalConfirmacion) {
+      btnConfirmar.addEventListener('click', () => {
+        modalConfirmacion.innerHTML = `
+          <div class="flex items-center gap-space-sm text-[#0F5124] p-1">
+            <span class="material-symbols-outlined text-[24px]">verified</span>
+            <span class="font-label-md text-label-md font-semibold">Reporte registrado. Administración revisará tu caso.</span>
+          </div>
+        `;
+        modalConfirmacion.className = 'flex flex-col bg-[#E8F5E9] rounded-xl p-space-md shadow-sm transition-all';
+      });
+    }
+  })();
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.06)]" data-active-classes="text-primary font-label-md [&amp;&gt;div]:bg-secondary-container/40 [&amp;&gt;div&gt;span]:text-primary"><div class="flex justify-around items-center h-16 px-space-xs"><a class="flex flex-col items-center justify-center flex-1 h-full py-space-xs text-on-surface-variant hover:text-on-surface transition-colors min-h-[44px] min-w-[44px]" data-path="mi-credencial" href="#"><div class="w-12 h-8 rounded-full flex items-center justify-center transition-colors"><span class="material-symbols-outlined text-[24px]">badge</span></div><span class="font-label-md text-label-md mt-0.5 tracking-tight">Inicio</span></a><a class="flex flex-col items-center justify-center flex-1 h-full py-space-xs text-on-surface-variant hover:text-on-surface transition-colors min-h-[44px] min-w-[44px]" data-path="mis-vehiculos" href="#"><div class="w-12 h-8 rounded-full flex items-center justify-center transition-colors"><span class="material-symbols-outlined text-[24px]">directions_car</span></div><span class="font-label-md text-label-md mt-0.5 tracking-tight">Vehículos</span></a><a class="flex flex-col items-center justify-center flex-1 h-full py-space-xs text-on-surface-variant hover:text-on-surface transition-colors min-h-[44px] min-w-[44px]" data-path="historial-de-accesos" href="#"><div class="w-12 h-8 rounded-full flex items-center justify-center transition-colors"><span class="material-symbols-outlined text-[24px]">history</span></div><span class="font-label-md text-label-md mt-0.5 tracking-tight">Historial</span></a><a class="flex flex-col items-center justify-center flex-1 h-full py-space-xs text-on-surface-variant hover:text-on-surface transition-colors min-h-[44px] min-w-[44px]" data-path="perfil-de-usuario" href="#"><div class="w-12 h-8 rounded-full flex items-center justify-center transition-colors"><span class="material-symbols-outlined text-[24px]">account_circle</span></div><span class="font-label-md text-label-md mt-0.5 tracking-tight">Perfil</span></a></div></nav>
+</body></html>

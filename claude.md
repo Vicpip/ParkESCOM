@@ -1,0 +1,304 @@
+# ParkESCOM
+
+Sistema de control de acceso vehicular para ESCOM-IPN. Proyecto final de Desarrollo de Aplicaciones Móviles Nativas.
+Un solo desarrollador. Entrega: **15 de noviembre de 2026**.
+
+- **App Flutter (Android):** usuario (vehículos, QR dinámico, historial) y guardia (modo caseta con lectores Zebra).
+- **Panel web (Flutter Web, mismo código):** administración de solicitudes, usuarios, vehículos y credenciales.
+- **API REST en Dart Frog + PostgreSQL**, desplegada con Docker Compose en un VPS detrás de Nginx con Certbot.
+
+La planeación completa está en **`docs/planeacion.md`** (requerimientos RF/RNF, pantallas, flujos, modelo de datos,
+plan por fases) y es la fuente de verdad. Léela antes de empezar cada fase.
+Los requerimientos del profesor están en `docs/requerimientos-profesor.pdf`.
+Si una tarea contradice la planeación, **detente y pregunta** antes de escribir código.
+
+## Reglas no negociables
+
+1. **Todo el código es Dart.** No escribir Kotlin, Java ni Swift. El hardware se usa solo mediante paquetes de pub.dev.
+2. **Nada de secretos en el código ni en Git.** Todo va en variables de entorno; el repo solo tiene `.env.example` con nombres, sin valores.
+3. **MVVM por funcionalidad** en la app. Las vistas no llaman repositorios ni la API directamente.
+4. **Las reglas críticas viven en PostgreSQL**, no solo en la API (ver "Base de datos").
+5. **Migraciones inmutables:** una migración ya aplicada no se edita; los cambios van en una migración nueva.
+6. **No agregar dependencias** fuera de las listadas abajo sin preguntar primero.
+7. **No inventar APIs de paquetes.** Si no estás seguro de cómo funciona un paquete, revisa su README o código fuente antes de usarlo.
+8. **Trabaja solo la fase o tarea pedida.** No adelantes fases ni refactorices fuera del alcance.
+
+## Estructura del monorepo
+
+```
+parkescom/
+  app/                  # Flutter: Android + web
+  backend/              # Dart Frog
+  shared/               # paquete Dart puro: modelos, motor de validación, TOTP, verificación de pases
+  db/migrations/        # 001_init.sql, 002_..., aplicadas en orden
+  nginx/                # configuración de referencia para el VPS (no se usa en local)
+  docs/                 # planeacion.md, requerimientos-profesor.pdf, design/ (mockups), diagramas UML
+  docker-compose.yml    # api + postgres
+  .env.example
+  CLAUDE.md
+```
+
+`shared/` no depende de Flutter ni de IO: lo importan `app/` y `backend/`.
+
+## Comandos
+
+```bash
+# Base de datos local
+docker compose up -d db
+
+# Paquete compartido
+cd shared && dart pub get && dart test
+
+# Backend
+cd backend && dart pub get
+dart run bin/migrate.dart          # aplica migraciones pendientes (se crea en Fase 1)
+dart_frog dev                      # API en http://localhost:8080
+dart test
+
+# App
+cd app && flutter pub get
+flutter analyze
+flutter test
+flutter run                        # Android (MC33xR, ET401 o celular)
+flutter run -d chrome              # panel web
+
+# Formato (antes de cada commit)
+dart format .
+```
+
+Si un comando de esta lista todavía no existe, créalo como parte de la fase que lo necesite y actualiza esta sección.
+
+## Dependencias permitidas
+
+**shared:** `otp`, `uuid`, `dart_jsonwebtoken`, `meta`, `test`.
+
+**backend:** `dart_frog`, `postgres`, `bcrypt`, `dart_jsonwebtoken`, `mailer`, `uuid`, `shared` (path), `test`, `mocktail`.
+
+**app:** `flutter_riverpod`, `go_router`, `dio`, `flutter_secure_storage`, `sqflite_sqlcipher`, `workmanager`,
+`flutter_local_notifications`, `qr_flutter`, `otp`, `flutter_datawedge`, `mobile_scanner`, `nfc_manager`,
+`nfc_host_card_emulation`, `image_picker`, `flutter_image_compress`, `cached_network_image`, `geolocator`,
+`connectivity_plus`, `fl_chart`, `uuid`, `intl`, `shared` (path).
+
+## Arquitectura de la app (MVVM)
+
+```
+app/lib/
+  core/            # tema, router, cliente HTTP, manejo global de errores, constantes
+  data/
+    repositories/  # única puerta de los ViewModels hacia los datos
+    sources/
+      remote/      # API (dio)
+      local/       # SQLite, secure storage
+      hardware/    # DataWedge, NFC, HCE (solo Android)
+  features/<funcionalidad>/
+    view/          # widgets; solo leen estado y llaman métodos del ViewModel
+    viewmodel/     # Notifier/AsyncNotifier de Riverpod
+  main.dart
+```
+
+- Flujo: **View → ViewModel → Repository → Source**. Nunca saltarse capas.
+- Estado de pantalla con `AsyncValue`: siempre manejar carga (skeleton o spinner), error (mensaje para el usuario) y datos.
+- Rutas por rol con `go_router`: usuario, guardia y admin ven shells distintos.
+- Código solo Android (`sqflite_sqlcipher`, DataWedge, NFC, HCE, workmanager) se aísla con importaciones condicionales y `kIsWeb`, para que `flutter build web` compile.
+- Diseño responsivo: probar en celular, MC33xR (pantalla chica), ET401 (tablet) y navegador.
+
+## Pantallas (32)
+
+Usa estos IDs en nombres de archivos, commits y reportes. El detalle de cada una está en `docs/planeacion.md`.
+P1 = obligatoria; P2 = se recorta primero si falta tiempo.
+
+**App móvil, comunes y usuario** (barra inferior: Inicio, Vehículos, Historial, Perfil)
+
+| ID | Pantalla | Contenido clave | Prio |
+| --- | --- | --- | --- |
+| M1 | Splash | Revisa sesión y rol, redirige | P1 |
+| M2 | Inicio de sesión | Correo, contraseña, enlaces a registro y recuperación | P1 |
+| M3 | Registro | Correo institucional, boleta o núm. de empleado, foto del titular y de su credencial, aviso de privacidad | P1 |
+| M4 | Recuperar contraseña | Envía el correo con el enlace (el enlace abre W11) | P1 |
+| M5 | Inicio (mi credencial) | QR dinámico con contador, botón HCE, vehículo activo | P1 |
+| M6 | Mis vehículos | Tarjetas, búsqueda, filtro por tipo | P1 |
+| M7 | Detalle de vehículo | Fotos, datos, credenciales, usuarios autorizados, reportar credencial perdida | P1 |
+| M8 | Formulario de vehículo | Alta o cambio con fotos (y foto de placa en motos); genera solicitud | P1 |
+| M9 | Mis solicitudes | Lista con estado | P1 |
+| M10 | Historial | Entradas y salidas con filtros por fecha, vehículo y puerta | P1 |
+| M11 | Pases de visitante | Lista y estado | P2 |
+| M12 | Nuevo pase | Nombre, placa, fecha y ventana de horario | P2 |
+| M13 | Perfil | Avatar, datos, preferencias de notificaciones, cambiar contraseña (diálogo: actual y nueva), cerrar sesión | P1 |
+
+**App móvil, guardia y admin en sitio** (MC33xR y ET401)
+
+| ID | Pantalla | Contenido clave | Prio |
+| --- | --- | --- | --- |
+| G1 | Configurar caseta | Puerta, sentido, lectores activos | P1 |
+| G2 | Modo caseta | Pantalla completa escuchando RFID, QR y NFC; conexión, última sincronización, cola offline | P1 |
+| G3 | Resultado de validación | Verde o rojo, foto del titular, vehículo y placa, motivo | P1 |
+| G4 | Registro manual | Búsqueda por placa o usuario, motivo obligatorio | P1 |
+| G5 | Incidentes | Lista con filtro por estado | P1 |
+| G6 | Formulario de incidente | Foto, descripción, GPS opcional | P1 |
+| G7 | Enrolar credencial | Leer TID (MC33xR) o UID NFC y ligarlo a un vehículo; solo admin | P1 |
+| G8 | Turno | Dentro ahora, ocupación por zona, movimientos del turno con búsqueda por placa | P1 |
+
+**Panel web** (Flutter Web, menú lateral)
+
+| ID | Pantalla | Contenido clave | Prio |
+| --- | --- | --- | --- |
+| W1 | Dashboard | Dentro ahora, entradas y salidas por hora y por tipo | P2 |
+| W2 | Solicitudes | Aprobar o rechazar comparando la foto de la credencial con el registro | P1 |
+| W3 | Usuarios | Tabla con búsqueda; alta, baja, cambio de rol | P1 |
+| W4 | Vehículos | Tabla con filtros por tipo y estado | P1 |
+| W5 | Credenciales | Revocar, reportar perdida, vigencia | P1 |
+| W6 | Pases de visitante | Aprobar y consultar | P2 |
+| W7 | Movimientos | Bitácora con filtros y exportación a CSV | P2 |
+| W8 | Incidentes | Seguimiento y cambio de estado | P2 |
+| W9 | Configuración | Puertas, zonas y cupos | P2 |
+| W10 | Auditoría | Quién cambió qué y cuándo | P2 |
+| W11 | Nueva contraseña | Página pública del enlace de recuperación; valida el token | P1 |
+
+Inicio de sesión y perfil se comparten entre móvil y web. El enrolamiento de tags vive en la app (G7) porque el navegador no puede leer el MC33xR.
+
+## Diseño
+
+```
+docs/design/
+  DESIGN.md              # tokens de diseño (colores, tipografía, radios, componentes)
+  00-sistema/            # hoja de estilo: screen.png + code.html
+  M5-mi-credencial/      # una carpeta por pantalla, nombrada por ID
+    screen.png           # captura del mockup
+    code.html            # HTML con Tailwind exportado de Stitch
+  ...
+```
+
+- **Orden de prioridad:** `CLAUDE.md` > `docs/planeacion.md` > `docs/design/DESIGN.md` > mockups.
+- Los mockups (`screen.png` y `code.html`) son **referencia visual**, no fuente de verdad del texto ni del comportamiento.
+- `code.html` sirve para ver jerarquía, espaciado y componentes. **No se traduce literal a Flutter:** cada pantalla se
+  reconstruye con los widgets compartidos y el tema de `core/theme`.
+- El MC33xR tiene pantalla de 4": las pantallas de caseta se diseñan para un ancho de ~320 dp. Verifícalo con `MediaQuery` en el equipo.
+
+**Tokens** (en `app/lib/core/theme/`; ningún color ni tamaño se escribe a mano fuera del tema):
+
+| Token | Valor | Uso |
+| --- | --- | --- |
+| primario | `#006699` | Azul ESCOM: botones primarios, barra de navegación activa |
+| primario oscuro | `#004D73` | Encabezados, estados presionados |
+| contenedor primario | `#E3F1F8` | Fondos de tarjetas destacadas y chips |
+| fondo / superficie | `#FFFFFF` / `#F5F7F9` | Pantallas / secciones |
+| texto / texto secundario | `#1A1C1E` / `#5F6B73` | |
+| éxito / rechazo / advertencia | `#1B873F` / `#C62828` / `#B26A00` | Solo estados; nunca como color de marca |
+
+- `ColorScheme.fromSeed(seedColor: Color(0xFF006699))` y luego `.copyWith(primary: ..., ...)` con los valores exactos, porque `fromSeed` altera el tono.
+- Tipografía **Inter empaquetada como asset** en `pubspec.yaml` (no `google_fonts`, que la descarga en tiempo de ejecución y falla sin red). Cuerpo mínimo 16 px.
+- Esquinas de 12 px, botones de al menos 48 px de alto. Ningún estado se comunica solo con color: siempre ícono + texto.
+- Fechas y horas con `intl` en `es_MX`, formato de 24 horas (`13:15`).
+
+**Navegación:** misma lista de destinos en celular (`NavigationBar`) y en tablet o web (`NavigationRail` o menú lateral).
+- Usuario: Inicio, Vehículos, Historial, Perfil.
+- Guardia: Caseta, Manual, Turno, Incidentes. Admin agrega Enrolar y Configuración.
+- Panel web: Dashboard, Solicitudes, Usuarios, Vehículos, Credenciales, Pases, Movimientos, Incidentes, Configuración, Auditoría.
+- Sin campana de notificaciones en los encabezados (no hay pantalla de notificaciones).
+
+**Textos de la interfaz:** los mockups inventaron cosas que el sistema no hace. Nunca escribas en la UI:
+- Hardware o integraciones fuera de alcance: biometría, detección de rostro, OCR o lectura de placas, plumas, barreras, torniquetes, SAES, padrón o catálogos del IPN, tarjeta universitaria (TUI).
+- Promesas de tiempo real: "notificación instantánea", "replicación inmediata". Las notificaciones se revisan cada 15 min y las revocaciones llegan a la caseta en su siguiente sincronización.
+- Reglamentos, límites, horarios, plazos o áreas administrativas inventadas. La única autoridad es "Administración".
+- Nombres de lugar distintos a **Puerta A** y **Puerta B** (nada de "garita", "poste", "acceso norte").
+- IDs de pantalla o de requerimientos (M5, RF-04…), ni detalles técnicos para el usuario (TOTP, SHA, dBm).
+
+**Estados de interfaz** (`docs/design/00-estados/`): skeletons, vacío, error de red con "Reintentar", franja de
+"Sin conexión · datos guardados", error de campo y diálogo destructivo. Se implementan como widgets compartidos en la
+Fase 2 y toda pantalla con datos remotos usa los cuatro estados: carga, vacío, error y datos.
+
+**Reglas transversales**
+- **Placas:** se aceptan letras, números y guiones. Se guardan en mayúsculas y sin espacios. La validación es de formato, no de estado de emisión.
+- **Bajas:** el usuario nunca da de baja directamente; en M7 *solicita* la baja y Administración la ejecuta desde el panel web (W3, W4). Toda baja es lógica y el texto de confirmación dice que las credenciales dejan de funcionar en las casetas en su próxima sincronización y que el historial se conserva.
+
+**Notas por pantalla**
+- **M5:** debajo del QR solo el contador ("Se actualiza en 12 s"). El botón NFC dice que es para la caseta peatonal de motos, bicis y scooters.
+- **M7:** un auto muestra solo tag RFID y QR como credenciales; NFC aplica a motos, bicis y scooters. Aquí vive "Reportar credencial perdida".
+- **M8:** la sección "Fotografía de placa" solo aparece si el tipo es Moto. Sin etiqueta de estado de la placa (CDMX/EdoMex).
+- **G2:** el texto de lectores activos sale de la configuración de G1 y del equipo (MC33xR: RFID y lector QR; ET401: NFC y cámara).
+- **G3:** fondo verde o rojo a **pantalla completa**, cierre automático a los 3 s, sin texto cortado en el MC33xR (pantalla de 4"). El título va en dos líneas si no cabe.
+- **G7:** el paso de lectura cambia según el tipo elegido (UHF para tags en el MC33xR, NFC para calcomanía). No mostrar potencia ni rango de antena.
+- **G8:** sin botón "Regresar a modo caseta" (ya está la pestaña).
+- **W1:** gráficas tituladas "Flujo vehicular por hora" y "Tipo de vehículo".
+- **W5:** la revocación avisa "Se aplicará en las casetas en su próxima sincronización".
+
+## Backend (Dart Frog)
+
+- Rutas en `backend/routes/`, agrupadas por recurso (`/auth`, `/vehiculos`, `/solicitudes`, `/credenciales`, `/movimientos`, `/sync`, `/pases`, `/incidentes`, `/admin`).
+- Middleware de autenticación JWT y de autorización por rol; ninguna ruta protegida sin él.
+- SQL siempre parametrizado. Nunca concatenar valores en consultas.
+- Operaciones de varias tablas (registrar movimiento + abrir/cerrar estancia) en una transacción.
+- Errores en formato uniforme: `{"error": {"code": "SNAKE_CASE", "message": "texto para el usuario"}}` con el código HTTP correcto.
+- Contraseñas con `bcrypt`. JWT de acceso de 15 min y refresh token guardado como hash en `sesiones`.
+- Pases de visitante firmados con EdDSA; la llave privada solo en variables de entorno, la pública se distribuye a las casetas.
+- Fotos en un volumen del VPS, registradas en `archivos`; solo JPEG o PNG, máximo 2 MB. Las fotos de credencial escolar solo las ve un admin.
+- Toda escritura administrativa registra un renglón en `auditoria` (antes y después en JSONB).
+
+## Base de datos (PostgreSQL)
+
+- Llaves primarias UUID. Fechas en `timestamptz`. Nombres de tablas y columnas en español y `snake_case`.
+- Estados y tipos como `ENUM` de PostgreSQL.
+- Bajas lógicas (cambio de `estado`); nunca `DELETE` de datos de negocio.
+- Reglas garantizadas por la base:
+  - **Anti-passback:** `CREATE UNIQUE INDEX ... ON estancias (vehiculo_id) WHERE salida_id IS NULL;`
+  - **Una credencial activa por identificador:** `CREATE UNIQUE INDEX ... ON credenciales (tipo, identificador) WHERE estado = 'activa';`
+  - **Movimientos idempotentes:** el `id` del movimiento es el UUID generado en el dispositivo; un reintento con el mismo id no duplica.
+- `incidentes` tiene además una columna `folio` con secuencia propia (único), que la interfaz muestra como `INC-0001`.
+  Sirve para citar un incidente de viva voz; la llave primaria sigue siendo UUID.
+- Tablas: `usuarios`, `vehiculos`, `vehiculo_usuarios`, `credenciales`, `solicitudes`, `pases`, `puertas`, `zonas`,
+  `movimientos`, `estancias`, `incidentes`, `dispositivos`, `sesiones`, `restablecimientos`, `archivos`, `auditoria`.
+
+## Motor de validación (shared)
+
+Función pura en `shared/`, sin IO, con pruebas unitarias para cada rama. Recibe la lectura, la lista de acceso y el estado local; devuelve `Aceptado` o `Rechazado(motivo)`. Orden obligatorio:
+
+1. Normalizar la lectura a un identificador (TID, UID de NFC, código QR/HCE).
+2. Ignorar la misma credencial si se leyó hace menos de 5 s (el RFID repite lecturas).
+3. QR/HCE: verificar TOTP con tolerancia de ±1 ventana de 30 s; pase de visitante: verificar firma y ventana de horario.
+4. Credencial existe en la lista local → si no, `CREDENCIAL_DESCONOCIDA`.
+5. Credencial activa y vigente → si no, `CREDENCIAL_INVALIDA`.
+6. Vehículo y usuario vigentes → si no, `VEHICULO_O_USUARIO_INACTIVO`.
+7. Anti-passback según sentido → si no, `ANTIPASSBACK` (genera incidente).
+8. Cupo de la zona en entrada → si no, `ZONA_LLENA`.
+9. Aceptado: registrar movimiento local con UUID y encolarlo para sincronizar.
+
+## Hardware (sin código nativo)
+
+- **MC33xR:** RFID y QR llegan por DataWedge a `flutter_datawedge`. El perfil de DataWedge se configura **a mano en el equipo**:
+  RFID Input habilitado con TID, Barcode Input habilitado e Intent Output con la acción que espera el paquete (ver su README).
+  La fuente de cada lectura (`rfid` o código de barras) se distingue en el resultado.
+- **ET401 y celulares:** QR con `mobile_scanner`; NFC con `nfc_manager`.
+- **HCE (celular del usuario):** `nfc_host_card_emulation`. Requiere `res/xml/apduservice.xml` y el servicio en `AndroidManifest.xml` (configuración, no código). El paquete tiene años sin actualizarse: si falla, se usa solo QR.
+- Todo lector se suscribe al entrar a la pantalla y se libera (`cancel`/`dispose`) al salir.
+- Debe existir un modo **"simular lectura"** (solo en depuración) para probar el modo caseta sin hardware.
+
+## Offline y sincronización
+
+- La caseta valida siempre contra `lista_acceso` en SQLite cifrado; nunca espera a la red para decidir.
+- La lista se actualiza de forma incremental (por `actualizado_en`) y la caseta muestra la hora de la última sincronización; con más de 15 min muestra aviso.
+- Los movimientos se encolan en `movimientos_pendientes` y se envían con su UUID; la API ignora los repetidos.
+- La app de usuario guarda en caché sus vehículos e historial; la semilla TOTP va en `flutter_secure_storage`.
+
+## Calidad y Git
+
+- `flutter analyze` y `dart analyze` sin errores ni warnings antes de dar una tarea por terminada.
+- Pruebas obligatorias: motor de validación (todas las ramas), migraciones (los índices parciales rechazan duplicados) y endpoints de auth, movimientos y sync.
+- Commits pequeños y frecuentes, en español, con Conventional Commits: `feat(caseta): lectura RFID por DataWedge`.
+- Documentar con `///` las clases públicas de `shared/` y de los repositorios.
+
+## Cómo trabajar en este repo
+
+- Al empezar una tarea, resume en 3–5 líneas qué vas a hacer y qué archivos vas a tocar.
+- Al terminar, reporta cada criterio de aceptación con su evidencia: comando ejecutado y resultado.
+- Si algo no se pudo verificar (sobre todo hardware), dilo explícitamente; no lo marques como hecho.
+- Si encuentras un problema fuera del alcance, anótalo al final del reporte en vez de arreglarlo.
+
+## Estado por fases
+
+- [ ] Fase 1 — base: monorepo, Docker, migración inicial, API de auth (5–11 oct)
+- [ ] Fase 2 — app de usuario: M1–M10, M13 (12–18 oct)
+- [ ] Fase 3 — panel web: W2–W5, W7–W11 (19–23 oct)
+- [ ] Fase 4 — caseta y motor de validación: G1–G8 (24–31 oct)
+- [ ] Fase 5 — offline, sincronización y corte de hardware (1–4 nov)
+- [ ] Fase 6 — NFC, HCE, pases (M11, M12, W6), vehículo compartido, dashboard (W1) (5–9 nov)
+- [ ] Fase 7 — despliegue en VPS, pulido, documentación y ensayo (10–14 nov)

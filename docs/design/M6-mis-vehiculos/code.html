@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "surface-variant": "#d8e4ed", "on-tertiary-container": "#d1dfe6", "tertiary-fixed": "#d7e5ec", "tertiary-fixed-dim": "#bbc9cf", "on-primary-container": "#bfe0ff", "surface-bright": "#f5faff", "on-error": "#ffffff", "secondary": "#27638a", "on-secondary-container": "#1c5b82", "primary-fixed": "#cce5ff", "tertiary-container": "#566369", "surface-tint": "#006496", "on-primary": "#ffffff", "on-surface": "#111d24", "tertiary": "#3e4b51", "surface-container": "#e3f0f9", "on-primary-fixed-variant": "#004b72", "on-secondary-fixed-variant": "#004b70", "on-primary-fixed": "#001e31", "on-background": "#111d24", "error": "#ba1a1a", "primary-container": "#006699", "secondary-container": "#9bd2ff", "on-secondary-fixed": "#001e30", "surface": "#f5faff", "secondary-fixed": "#cae6ff", "on-tertiary-fixed-variant": "#3c494e", "on-secondary": "#ffffff", "inverse-primary": "#90cdff", "surface-container-lowest": "#ffffff", "error-container": "#ffdad6", "primary": "#004d75", "on-tertiary": "#ffffff", "primary-fixed-dim": "#90cdff", "on-tertiary-fixed": "#101d22", "surface-container-high": "#ddeaf3", "surface-dim": "#cfdce5", "outline-variant": "#c0c7d0", "on-surface-variant": "#40484f", "inverse-surface": "#263239", "surface-container-highest": "#d8e4ed", "secondary-fixed-dim": "#96ccf9", "on-error-container": "#93000a", "outline": "#707880", "surface-container-low": "#e9f5ff", "inverse-on-surface": "#e6f2fc", "background": "#f5faff" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-md": "1rem", "gutter": "1rem", "space-sm": "0.5rem", "margin": "1rem", "space-xs": "0.25rem", "space-lg": "1.5rem", "space-xl": "2rem" }, fontFamily: { "body-lg-medium": ["Inter"], "headline-lg-mobile": ["Inter"], "title-md": ["Inter"], "label-md": ["Inter"], "body-sm": ["Inter"], "headline-lg": ["Inter"], "label-lg": ["Inter"], "code-license-plate": ["Inter"], "headline-sm": ["Inter"], "headline-md": ["Inter"], "body-lg": ["Inter"] }, fontSize: { "body-lg-medium": ["16px", { lineHeight: "24px", fontWeight: "500" }], "headline-lg-mobile": ["26px", { lineHeight: "34px", fontWeight: "700" }], "title-md": ["18px", { lineHeight: "26px", fontWeight: "600" }], "label-md": ["12px", { lineHeight: "16px", fontWeight: "600" }], "body-sm": ["14px", { lineHeight: "20px", fontWeight: "400" }], "headline-lg": ["32px", { lineHeight: "40px", fontWeight: "700" }], "label-lg": ["14px", { lineHeight: "20px", fontWeight: "600" }], "code-license-plate": ["20px", { lineHeight: "24px", letterSpacing: "1.5px", fontWeight: "700" }], "headline-sm": ["20px", { lineHeight: "28px", fontWeight: "600" }], "headline-md": ["24px", { lineHeight: "32px", fontWeight: "700" }], "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }] } } } };</script><style>@layer base{html,body{width:100%;margin:0;padding:0;min-height:100%;}body{overscroll-behavior-y:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head><body class="bg-background font-body-lg text-body-lg text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-gutter flex items-center justify-between"><div class="flex items-center gap-space-sm"><div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary shadow-sm"><span class="material-symbols-outlined text-[24px]">local_parking</span></div><div class="flex flex-col"><span class="font-label-md text-label-md text-secondary block leading-none">ESCOM IPN</span><h1 class="font-title-md text-title-md text-on-surface tracking-tight leading-tight">Mis Vehículos</h1></div></div><div class="flex items-center"><div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary font-label-lg text-label-lg shadow-sm ring-2 ring-primary/20"><span class="material-symbols-outlined text-[20px]">person</span></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-20 bg-background min-h-screen"><div class="flex flex-col w-full px-margin pb-24">
+<!-- Sub-header section inside content slot -->
+<div class="pt-space-md pb-space-sm flex items-center justify-between">
+<div class="flex flex-col">
+<h2 class="font-headline-sm text-headline-sm text-on-surface tracking-tight">Mis Vehículos</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Unidades registradas en ESCOM IPN</p>
+</div>
+<div class="w-9 h-9 rounded-full bg-secondary-container/50 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">garage</span>
+</div>
+</div>
+<!-- Search Input Container -->
+<div class="mt-space-sm mb-space-md">
+<div class="relative flex items-center w-full h-[52px] bg-surface-container-lowest rounded-xl shadow-sm">
+<span class="material-symbols-outlined absolute left-space-md text-outline text-[22px]">search</span>
+<input class="w-full h-full pl-12 pr-10 bg-transparent font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:outline-none" id="vehicle-search-input" placeholder="Buscar por placa, modelo o marca..." type="text"/>
+<button class="hidden absolute right-space-md text-outline hover:text-on-surface focus:outline-none" id="clear-search-btn" onclick="clearSearch()">
+<span class="material-symbols-outlined text-[20px]">cancel</span>
+</button>
+</div>
+</div>
+<!-- Horizontal Filter Chips (Scrollable) -->
+<div class="flex items-center gap-space-sm overflow-x-auto pb-space-xs no-scrollbar -mx-margin px-margin">
+<button class="filter-chip active flex items-center gap-space-xs h-9 px-space-md rounded-full bg-primary text-on-primary font-label-md text-label-md shadow-sm transition-all whitespace-nowrap" onclick="setFilter('all', this)">
+<span class="material-symbols-outlined text-[18px]">apps</span>
+<span>Todos (3)</span>
+</button>
+<button class="filter-chip flex items-center gap-space-xs h-9 px-space-md rounded-full bg-surface-container-lowest text-on-surface-variant font-label-md text-label-md shadow-sm hover:bg-surface-container transition-all whitespace-nowrap" onclick="setFilter('auto', this)">
+<span class="material-symbols-outlined text-[18px]">directions_car</span>
+<span>Auto (1)</span>
+</button>
+<button class="filter-chip flex items-center gap-space-xs h-9 px-space-md rounded-full bg-surface-container-lowest text-on-surface-variant font-label-md text-label-md shadow-sm hover:bg-surface-container transition-all whitespace-nowrap" onclick="setFilter('moto', this)">
+<span class="material-symbols-outlined text-[18px]">two_wheeler</span>
+<span>Moto (1)</span>
+</button>
+<button class="filter-chip flex items-center gap-space-xs h-9 px-space-md rounded-full bg-surface-container-lowest text-on-surface-variant font-label-md text-label-md shadow-sm hover:bg-surface-container transition-all whitespace-nowrap" onclick="setFilter('bici', this)">
+<span class="material-symbols-outlined text-[18px]">pedal_bike</span>
+<span>Bici (1)</span>
+</button>
+<button class="filter-chip opacity-60 flex items-center gap-space-xs h-9 px-space-md rounded-full bg-surface-container-lowest text-on-surface-variant font-label-md text-label-md shadow-sm whitespace-nowrap cursor-default" onclick="setFilter('scooter', this)">
+<span class="material-symbols-outlined text-[18px]">electric_scooter</span>
+<span>Scooter (0)</span>
+</button>
+</div>
+<!-- Vehicular Cards Stack -->
+<div class="flex flex-col gap-space-md mt-space-md" id="vehicle-card-list">
+<!-- Card 1: Automóvil Nissan Versa -->
+<div class="vehicle-card group relative bg-surface-container-lowest rounded-xl shadow-sm p-space-md transition-all active:scale-[0.99]" data-query="456-abc nissan versa 2022 gris plata tag-escom-99120" data-type="auto">
+<div class="flex items-start justify-between gap-space-sm mb-space-sm">
+<div class="flex items-center gap-space-xs">
+<div class="w-8 h-8 rounded-lg bg-surface-container-low flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">directions_car</span>
+</div>
+<span class="font-label-md text-label-md text-secondary">Automóvil</span>
+</div>
+<!-- Status Chip Activo -->
+<div class="inline-flex items-center gap-space-xs px-2.5 py-1 rounded-full bg-surface-container-low text-primary">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="font-label-md text-label-md">Activo</span>
+</div>
+</div>
+<div class="flex gap-space-md items-center">
+<!-- Vehicle Photo Thumbnail -->
+<div class="relative w-24 h-24 rounded-lg overflow-hidden shrink-0 bg-surface-container shadow-inner">
+<img class="w-full h-full object-cover" data-alt="A clean modern silver metallic Nissan Versa sedan parked in an academic university campus parking bay under soft morning daylight, studio clean automotive style photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmvR5mWTBfBF-hA8OqqsGWL8AZq0FPAlYOGA4A541VYVHlaLYRRzEZYV_RwjYjiPM3ju6HZJc0KjIVegh1Hc5Zl_ZqFpnywLaiPxhqN9YGyV5UVtZZvMsdy1teqDwoi6A7dG7pfvvdPvnRiuNfpJ_7mxnLDuzUh_Lf3jUp0nBEPz-RjN-YdUyNnieJNU6DIm7EReKRUPNrM7LIox0A3OeAVDqdcZvtPamOBZV0V9gSOpbwGXaCkg5q"/>
+<div class="absolute bottom-1 right-1 bg-surface/90 backdrop-blur-sm rounded px-1 text-[10px] font-label-md text-on-surface">
+            2022
+          </div>
+</div>
+<!-- Vehicle Details -->
+<div class="flex flex-col flex-1 min-w-0">
+<div class="inline-block bg-surface-container-high px-2.5 py-0.5 rounded text-primary font-code-license-plate text-code-license-plate w-fit mb-1">
+            456-ABC
+          </div>
+<h3 class="font-title-md text-title-md text-on-surface truncate">Nissan Versa</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1.5 mt-0.5">
+<span class="w-2.5 h-2.5 rounded-full bg-outline-variant inline-block"></span>
+            Gris Plata
+          </p>
+<div class="flex items-center gap-1.5 mt-2 bg-surface-container-low rounded-lg px-2 py-1 text-secondary w-fit">
+<span class="material-symbols-outlined text-[15px]">sensors</span>
+<span class="font-label-md text-label-md truncate max-w-[130px]">TAG-ESCOM-99120</span>
+</div>
+</div>
+<button aria-label="Ver detalles Nissan Versa" class="shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[24px]">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Card 2: Motocicleta Yamaha FZ25 -->
+<div class="vehicle-card group relative bg-surface-container-lowest rounded-xl shadow-sm p-space-md transition-all active:scale-[0.99]" data-query="m-4819 yamaha fz25 2021 azul metálico qr dinámico foto placa" data-type="moto">
+<div class="flex items-start justify-between gap-space-sm mb-space-sm">
+<div class="flex items-center gap-space-xs">
+<div class="w-8 h-8 rounded-lg bg-surface-container-low flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">two_wheeler</span>
+</div>
+<span class="font-label-md text-label-md text-secondary">Motocicleta</span>
+</div>
+<!-- Status Chip Activo -->
+<div class="inline-flex items-center gap-space-xs px-2.5 py-1 rounded-full bg-surface-container-low text-primary">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="font-label-md text-label-md">Activo</span>
+</div>
+</div>
+<div class="flex gap-space-md items-center">
+<!-- Vehicle Photo Thumbnail -->
+<div class="relative w-24 h-24 rounded-lg overflow-hidden shrink-0 bg-surface-container shadow-inner">
+<img class="w-full h-full object-cover" data-alt="A sleek navy deep metallic blue Yamaha FZ25 motorcycle parked on a clean concrete paved student lot at ESCOM engineering school, natural crisp outdoor lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrFwq8mlHkTFOtv3wlxNxZi6Q3brN8HDfq9E_u8BIhnlTaBb6910t8sAJfEZeY4mG2N9oU6dGy2fO6clvqluJ4dc9TFWFjY34hmZIezwLMSo8F1bklMrspJC1yhJ-LxiLd1u7hJnIyeS_REN8HhFBl5bXWnqVzfjZCOfixXZgMrxCIdZFCODHO_KkHefrDgR3Iyb1PVeWAxYzurke0zQGW44RgIYUekS9FBOMeL1kppzRG2WbwOmXM"/>
+<div class="absolute bottom-1 right-1 bg-surface/90 backdrop-blur-sm rounded px-1 text-[10px] font-label-md text-on-surface">
+            2021
+          </div>
+</div>
+<!-- Vehicle Details -->
+<div class="flex flex-col flex-1 min-w-0">
+<div class="inline-block bg-surface-container-high px-2.5 py-0.5 rounded text-primary font-code-license-plate text-code-license-plate w-fit mb-1">
+            M-4819
+          </div>
+<h3 class="font-title-md text-title-md text-on-surface truncate">Yamaha FZ25</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1.5 mt-0.5">
+<span class="w-2.5 h-2.5 rounded-full bg-primary inline-block"></span>
+            Azul Metálico
+          </p>
+<div class="flex items-center gap-1.5 mt-2 bg-surface-container-low rounded-lg px-2 py-1 text-secondary w-fit">
+<span class="material-symbols-outlined text-[15px]">qr_code_2</span>
+<span class="font-label-md text-label-md truncate max-w-[130px]">QR + Foto placa</span>
+</div>
+</div>
+<button aria-label="Ver detalles Yamaha FZ25" class="shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[24px]">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Card 3: Bicicleta Trek Marlin 6 -->
+<div class="vehicle-card group relative bg-surface-container-lowest rounded-xl shadow-sm p-space-md transition-all active:scale-[0.99]" data-query="bi-2024-99 trek marlin 6 negro rojo calcomania nfc bicicleta" data-type="bici">
+<div class="flex items-start justify-between gap-space-sm mb-space-sm">
+<div class="flex items-center gap-space-xs">
+<div class="w-8 h-8 rounded-lg bg-surface-container-low flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">pedal_bike</span>
+</div>
+<span class="font-label-md text-label-md text-secondary">Bicicleta</span>
+</div>
+<!-- Status Chip En Revisión (Amarillo/Ámbar) -->
+<div class="inline-flex items-center gap-space-xs px-2.5 py-1 rounded-full bg-surface-container-highest text-tertiary">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+<span class="font-label-md text-label-md">En revisión</span>
+</div>
+</div>
+<div class="flex gap-space-md items-center">
+<!-- Vehicle Glyph Container (No photo plate) -->
+<div class="relative w-24 h-24 rounded-lg shrink-0 bg-surface-container-high flex flex-col items-center justify-center text-primary shadow-inner">
+<span class="material-symbols-outlined text-[44px]">pedal_bike</span>
+<span class="font-label-md text-[10px] text-secondary mt-1">Sin placa</span>
+</div>
+<!-- Vehicle Details -->
+<div class="flex flex-col flex-1 min-w-0">
+<div class="inline-flex items-center gap-1 bg-surface-container-high px-2 py-0.5 rounded text-tertiary font-code-license-plate text-[14px] w-fit mb-1">
+<span class="font-label-md text-[11px] text-outline">SERIE:</span>
+<span>BI-2024-99</span>
+</div>
+<h3 class="font-title-md text-title-md text-on-surface truncate">Trek Marlin 6</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1.5 mt-0.5">
+<span class="w-2.5 h-2.5 rounded-full bg-on-surface inline-block"></span>
+            Negro / Rojo
+          </p>
+<div class="flex items-center gap-1.5 mt-2 bg-surface-container-low rounded-lg px-2 py-1 text-secondary w-fit">
+<span class="material-symbols-outlined text-[15px]">nfc</span>
+<span class="font-label-md text-label-md truncate max-w-[130px]">Calcomanía NFC</span>
+</div>
+</div>
+<button aria-label="Ver detalles Trek Marlin 6" class="shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[24px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Dynamic Empty State when filters yield no items -->
+<div class="hidden flex flex-col items-center justify-center py-12 text-center bg-surface-container-lowest rounded-xl shadow-sm mt-space-md" id="no-results-state">
+<div class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center text-outline mb-3">
+<span class="material-symbols-outlined text-[32px]">no_crash</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">Sin coincidencias</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-xs px-4">
+      No se encontraron vehículos registrados con los criterios solicitados.
+    </p>
+<button class="mt-4 px-4 py-2 bg-surface-container text-primary rounded-full font-label-md text-label-md transition-colors hover:bg-surface-container-high" onclick="resetFilters()">
+      Restablecer filtros
+    </button>
+</div>
+<!-- Educational Institutional Micro-Banner -->
+<!-- Floating Action Button (FAB) for Registering New Vehicle -->
+<div class="fixed bottom-20 right-4 z-40">
+<button aria-label="Registrar nuevo vehículo" class="flex items-center justify-center w-14 h-14 rounded-full bg-primary-container text-on-primary shadow-xl hover:scale-105 active:scale-95 transition-transform" onclick="notifyNewVehicle()">
+<span class="material-symbols-outlined text-[28px]">add</span>
+</button>
+</div>
+</div>
+<script>
+  // Ensure the bottom tab 'Vehículos' is highlighted per App Shell contract
+  document.addEventListener('DOMContentLoaded', () => {
+    const bottomNavLinks = document.querySelectorAll('nav a[data-path]');
+    bottomNavLinks.forEach(link => {
+      const pill = link.querySelector('div');
+      const icon = link.querySelector('span.material-symbols-outlined');
+      const label = link.querySelector('span.font-label-md');
+
+      if (link.getAttribute('data-path') === 'mis-vehiculos') {
+        link.classList.remove('text-on-surface-variant');
+        link.classList.add('text-primary');
+        if (pill) {
+          pill.classList.add('bg-secondary-container/40');
+        }
+        if (icon) {
+          icon.classList.add('text-primary');
+          icon.style.fontVariationSettings = "'FILL' 1";
+        }
+        if (label) {
+          label.classList.add('font-semibold');
+        }
+      } else {
+        link.classList.remove('text-primary');
+        link.classList.add('text-on-surface-variant');
+        if (pill) pill.classList.remove('bg-secondary-container/40');
+        if (icon) {
+          icon.classList.remove('text-primary');
+          icon.style.fontVariationSettings = "'FILL' 0";
+        }
+        if (label) label.classList.remove('font-semibold');
+      }
+    });
+
+    // Real-time search filter setup
+    const searchInput = document.getElementById('vehicle-search-input');
+    const clearBtn = document.getElementById('clear-search-btn');
+
+    searchInput.addEventListener('input', (e) => {
+      const val = e.target.value.trim().toLowerCase();
+      if (val.length > 0) {
+        clearBtn.classList.remove('hidden');
+      } else {
+        clearBtn.classList.add('hidden');
+      }
+      applyFilters();
+    });
+  });
+
+  let currentCategory = 'all';
+
+  function setFilter(type, buttonEl) {
+    if (type === 'scooter') return; // 0 items available
+    currentCategory = type;
+
+    // Update chips style
+    document.querySelectorAll('.filter-chip').forEach(btn => {
+      btn.classList.remove('bg-primary', 'text-on-primary', 'active');
+      btn.classList.add('bg-surface-container-lowest', 'text-on-surface-variant');
+    });
+
+    buttonEl.classList.remove('bg-surface-container-lowest', 'text-on-surface-variant');
+    buttonEl.classList.add('bg-primary', 'text-on-primary', 'active');
+
+    applyFilters();
+  }
+
+  function clearSearch() {
+    const searchInput = document.getElementById('vehicle-search-input');
+    searchInput.value = '';
+    document.getElementById('clear-search-btn').classList.add('hidden');
+    searchInput.focus();
+    applyFilters();
+  }
+
+  function resetFilters() {
+    clearSearch();
+    const firstChip = document.querySelector('.filter-chip');
+    if (firstChip) setFilter('all', firstChip);
+  }
+
+  function applyFilters() {
+    const searchVal = document.getElementById('vehicle-search-input').value.trim().toLowerCase();
+    const cards = document.querySelectorAll('.vehicle-card');
+    let visibleCount = 0;
+
+    cards.forEach(card => {
+      const type = card.getAttribute('data-type');
+      const query = card.getAttribute('data-query') || '';
+
+      const matchesCategory = (currentCategory === 'all') || (type === currentCategory);
+      const matchesSearch = !searchVal || query.includes(searchVal);
+
+      if (matchesCategory && matchesSearch) {
+        card.style.display = 'block';
+        visibleCount++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    const noResultsEl = document.getElementById('no-results-state');
+    if (visibleCount === 0) {
+      noResultsEl.classList.remove('hidden');
+    } else {
+      noResultsEl.classList.add('hidden');
+    }
+  }
+
+  function notifyNewVehicle() {
+    // Tactile micro-haptic feedback visual simulation
+    const fab = document.querySelector('.fixed.bottom-20 button');
+    if (fab) {
+      fab.classList.add('scale-90');
+      setTimeout(() => fab.classList.remove('scale-90'), 150);
+    }
+  }
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.06)]" data-active-classes="text-primary font-label-md [&amp;&gt;div]:bg-secondary-container/40 [&amp;&gt;div&gt;span]:text-primary"><div class="flex justify-around items-center h-16 px-space-xs"><a class="flex flex-col items-center justify-center flex-1 h-full py-space-xs text-on-surface-variant hover:text-on-surface transition-colors min-h-[44px] min-w-[44px]" data-path="mi-credencial" href="#"><div class="w-12 h-8 rounded-full flex items-center justify-center transition-colors"><span class="material-symbols-outlined text-[24px]">badge</span></div><span class="font-label-md text-label-md mt-0.5 tracking-tight">Inicio</span></a><a class="flex flex-col items-center justify-center flex-1 h-full py-space-xs text-on-surface-variant hover:text-on-surface transition-colors min-h-[44px] min-w-[44px]" data-path="mis-vehiculos" href="#"><div class="w-12 h-8 rounded-full flex items-center justify-center transition-colors"><span class="material-symbols-outlined text-[24px]">directions_car</span></div><span class="font-label-md text-label-md mt-0.5 tracking-tight">Vehículos</span></a><a class="flex flex-col items-center justify-center flex-1 h-full py-space-xs text-on-surface-variant hover:text-on-surface transition-colors min-h-[44px] min-w-[44px]" data-path="historial-de-accesos" href="#"><div class="w-12 h-8 rounded-full flex items-center justify-center transition-colors"><span class="material-symbols-outlined text-[24px]">history</span></div><span class="font-label-md text-label-md mt-0.5 tracking-tight">Historial</span></a><a class="flex flex-col items-center justify-center flex-1 h-full py-space-xs text-on-surface-variant hover:text-on-surface transition-colors min-h-[44px] min-w-[44px]" data-path="perfil-de-usuario" href="#"><div class="w-12 h-8 rounded-full flex items-center justify-center transition-colors"><span class="material-symbols-outlined text-[24px]">account_circle</span></div><span class="font-label-md text-label-md mt-0.5 tracking-tight">Perfil</span></a></div></nav>
+</body></html>

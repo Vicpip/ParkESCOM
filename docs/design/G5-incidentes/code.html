@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"inverse-on-surface":"#e6f2fc","on-primary-fixed":"#001e31","surface-container-low":"#e9f5ff","primary-container":"#006699","on-secondary-container":"#1c5b82","secondary-fixed-dim":"#96ccf9","on-secondary-fixed":"#001e30","primary":"#004d75","primary-fixed-dim":"#90cdff","on-tertiary":"#ffffff","on-secondary-fixed-variant":"#004b70","outline-variant":"#c0c7d0","on-primary-container":"#bfe0ff","on-error":"#ffffff","tertiary-fixed-dim":"#bbc9cf","background":"#f5faff","on-tertiary-fixed":"#101d22","surface-container-high":"#ddeaf3","inverse-primary":"#90cdff","on-tertiary-container":"#d1dfe6","surface-variant":"#d8e4ed","inverse-surface":"#263239","secondary":"#27638a","on-error-container":"#93000a","surface-container-highest":"#d8e4ed","surface-dim":"#cfdce5","secondary-fixed":"#cae6ff","outline":"#707880","surface-container":"#e3f0f9","tertiary-fixed":"#d7e5ec","secondary-container":"#9bd2ff","surface-tint":"#006496","on-tertiary-fixed-variant":"#3c494e","on-surface":"#111d24","surface":"#f5faff","tertiary":"#3e4b51","primary-fixed":"#cce5ff","error-container":"#ffdad6","on-primary-fixed-variant":"#004b72","on-surface-variant":"#40484f","error":"#ba1a1a","on-background":"#111d24","on-secondary":"#ffffff","surface-bright":"#f5faff","on-primary":"#ffffff","tertiary-container":"#566369","surface-container-lowest":"#ffffff"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-lg":"1.5rem","space-sm":"0.5rem","space-xs":"0.25rem","space-md":"1rem","gutter":"1rem","space-xl":"2rem","margin":"1rem"},"fontFamily":{"body-sm":["Inter"],"title-md":["Inter"],"headline-sm":["Inter"],"body-lg":["Inter"],"headline-lg":["Inter"],"label-lg":["Inter"],"headline-md":["Inter"],"headline-lg-mobile":["Inter"],"code-license-plate":["Inter"],"body-lg-medium":["Inter"],"label-md":["Inter"]},"fontSize":{"body-sm":["14px",{"lineHeight":"20px","fontWeight":"400"}],"title-md":["18px",{"lineHeight":"26px","fontWeight":"600"}],"headline-sm":["20px",{"lineHeight":"28px","fontWeight":"600"}],"body-lg":["16px",{"lineHeight":"24px","fontWeight":"400"}],"headline-lg":["32px",{"lineHeight":"40px","fontWeight":"700"}],"label-lg":["14px",{"lineHeight":"20px","fontWeight":"600"}],"headline-md":["24px",{"lineHeight":"32px","fontWeight":"700"}],"headline-lg-mobile":["26px",{"lineHeight":"34px","fontWeight":"700"}],"code-license-plate":["20px",{"lineHeight":"24px","letterSpacing":"1.5px","fontWeight":"700"}],"body-lg-medium":["16px",{"lineHeight":"24px","fontWeight":"500"}],"label-md":["12px",{"lineHeight":"16px","fontWeight":"600"}]}}}}</script></head><body class="bg-surface font-body-lg text-body-lg text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-low z-50 flex flex-col justify-between py-space-md shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex flex-col gap-space-md"><div class="flex items-center gap-space-sm px-space-md"><div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-on-primary font-headline-sm text-headline-sm select-none shadow-sm">P</div><div class="flex flex-col min-w-0"><span class="font-title-md text-title-md text-primary tracking-tight truncate leading-tight">ParkESCOM</span><span class="font-label-md text-label-md text-on-surface-variant truncate">ESCOM · IPN</span></div></div><div class="px-space-md"><div class="h-[1px] w-full bg-outline-variant/40"></div></div><nav class="flex flex-col gap-space-xs px-space-sm" data-active-classes="bg-primary text-on-primary font-label-lg rounded-xl shadow-sm"><a class="flex items-center gap-space-sm px-space-md py-space-sm min-h-[48px] rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" href="#"><span class="material-symbols-outlined text-[24px]">local_convenience_store</span><span class="font-label-lg text-label-lg">Caseta</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm min-h-[48px] rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" href="#"><span class="material-symbols-outlined text-[24px]">touch_app</span><span class="font-label-lg text-label-lg">Manual</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm min-h-[48px] rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" href="#"><span class="material-symbols-outlined text-[24px]">badge</span><span class="font-label-lg text-label-lg">Turno</span></a><a aria-current="page" class="flex items-center gap-space-sm px-space-md py-space-sm min-h-[48px] transition-colors bg-primary text-on-primary font-label-lg rounded-xl shadow-sm" href="#"><span class="material-symbols-outlined text-[24px]">report</span><span class="font-label-lg text-label-lg">Incidentes</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm min-h-[48px] rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" href="#"><span class="material-symbols-outlined text-[24px]">person_add</span><span class="font-label-lg text-label-lg">Enrolar</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm min-h-[48px] rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" href="#"><span class="material-symbols-outlined text-[24px]">settings</span><span class="font-label-lg text-label-lg">Configuración</span></a></nav></div><div class="px-space-sm flex flex-col gap-space-xs"><div class="px-space-md py-space-sm rounded-xl bg-surface-container flex items-center justify-between"><span class="font-label-md text-label-md text-on-surface-variant">Tablet ID</span><span class="font-label-md text-label-md text-primary font-bold">TAB-10-G1</span></div></div></aside><div class="pl-64 flex flex-col min-h-screen"><header class="fixed top-0 left-64 right-0 h-16 bg-surface/90 backdrop-blur-xl z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 w-full px-space-lg flex items-center justify-between"><div class="flex items-center gap-space-md"><span class="font-title-md text-title-md text-on-surface font-semibold">Puerta A · Entrada</span><div class="flex items-center gap-space-xs bg-surface-container px-space-sm py-1 rounded-full"><span class="w-2 h-2 rounded-full bg-[#0F5124] animate-pulse"></span><span class="font-label-md text-label-md text-on-surface-variant">En línea</span></div></div><div class="flex items-center gap-space-md"><div class="flex flex-col text-right"><span class="font-label-lg text-label-lg text-on-surface font-semibold leading-tight">Oficial Guardia</span><span class="font-label-md text-label-md text-on-surface-variant">Personal de Turno</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="relative pt-16 w-full bg-surface min-h-screen"><div class="flex flex-col w-full">
+<div class="px-space-lg py-space-md flex flex-col gap-space-md">
+<!-- Top Command Strip: Title, Metrics, Quick Action -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md bg-surface-container-lowest p-space-lg rounded-xl shadow-sm">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-sm">
+<span class="p-2 bg-error-container text-on-error-container rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-[26px]">warning</span>
+</span>
+<h1 class="font-headline-md text-headline-md text-on-surface">Registro de Incidentes en Caseta</h1>
+</div>
+<div class="flex items-center gap-space-sm text-on-surface-variant font-body-sm text-body-sm pl-11"><span class="inline-flex items-center gap-1 font-body-lg-medium text-body-lg-medium text-primary"><span class="w-2.5 h-2.5 rounded-full bg-primary animate-pulse"></span>Total: 18 registrados en la semana</span></div>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="h-12 px-space-lg bg-primary text-on-primary rounded-xl font-label-lg text-label-lg flex items-center justify-center gap-space-sm shadow-md hover:bg-primary-container active:scale-[0.98] transition-all cursor-pointer" id="btn-nuevo-incidente">
+<span class="material-symbols-outlined text-[22px]">add_circle</span>
+<span>+ Registrar incidente</span>
+</button>
+</div>
+</div>
+<!-- Tablet Filter & Search Row -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-md items-center">
+<!-- Search input (Tablet optimized touch target) -->
+<div class="lg:col-span-5 relative flex items-center">
+<span class="material-symbols-outlined absolute left-4 text-outline pointer-events-none text-[22px]">search</span>
+<input class="w-full h-[52px] pl-12 pr-4 bg-surface-container-lowest rounded-xl font-body-lg text-body-lg text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-low shadow-sm transition-all" id="search-input" placeholder="Buscar por placa o folio (ej. 456-ABC)..." type="text"/>
+</div>
+<!-- Segmented State Chips (Touch pills >48px height) -->
+<div class="lg:col-span-7 flex items-center gap-space-sm overflow-x-auto pb-1 lg:pb-0" id="filter-container">
+<button class="filter-chip active-filter flex items-center gap-2 h-12 px-space-md rounded-full bg-primary text-on-primary font-label-lg text-label-lg shadow-sm whitespace-nowrap transition-all cursor-pointer" data-filter="all">
+<span class="material-symbols-outlined text-[18px]">checklist</span>
+<span>Todos (18)</span>
+</button>
+<button class="filter-chip flex items-center gap-2 h-12 px-space-md rounded-full bg-surface-container-lowest text-on-surface font-label-lg text-label-lg shadow-sm hover:bg-surface-container whitespace-nowrap transition-all cursor-pointer" data-filter="abierto">
+<span class="w-3 h-3 rounded-full bg-[#E65100]"></span>
+<span>Abierto (3)</span>
+</button>
+<button class="filter-chip flex items-center gap-2 h-12 px-space-md rounded-full bg-surface-container-lowest text-on-surface font-label-lg text-label-lg shadow-sm hover:bg-surface-container whitespace-nowrap transition-all cursor-pointer" data-filter="en revision">
+<span class="w-3 h-3 rounded-full bg-primary"></span>
+<span>En revisión (5)</span>
+</button>
+<button class="filter-chip flex items-center gap-2 h-12 px-space-md rounded-full bg-surface-container-lowest text-on-surface font-label-lg text-label-lg shadow-sm hover:bg-surface-container whitespace-nowrap transition-all cursor-pointer" data-filter="resuelto">
+<span class="w-3 h-3 rounded-full bg-[#0F5124]"></span>
+<span>Resuelto (10)</span>
+</button>
+</div>
+</div>
+<!-- Incidents Cards Stream for 10-inch Tablet View -->
+<div class="flex flex-col gap-space-md" id="incidents-list">
+<!-- Item 1: Abierto -->
+<div class="incident-card bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-space-md transition-all hover:shadow-md" data-folio="INC-8821" data-plate="456-ABC" data-status="abierto">
+<div class="flex items-start gap-space-md min-w-0 flex-1">
+<div class="w-14 h-14 rounded-xl bg-orange-50 text-[#E65100] flex flex-col items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[30px]">sync_problem</span>
+</div>
+<div class="flex flex-col gap-space-xs min-w-0 flex-1">
+<div class="flex flex-wrap items-center gap-space-sm">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFF3E0] text-[#6D3F00] font-label-md text-label-md shrink-0">
+<span class="w-2 h-2 rounded-full bg-[#E65100]"></span>
+                Abierto
+              </span>
+<span class="font-title-md text-title-md text-on-surface font-bold">Anti-passback: Entrada duplicada</span>
+<span class="text-on-surface-variant font-label-md text-label-md bg-surface-container px-2 py-0.5 rounded">Folio INC-8821</span>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+              El tag registró ingreso previo sin salida marcada en el sistema.
+            </p>
+<div class="flex flex-wrap items-center gap-y-1 gap-x-space-lg font-body-sm text-body-sm text-on-surface-variant mt-1">
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-outline">schedule</span>
+<strong class="font-body-lg-medium text-body-lg-medium text-on-surface">Hoy · 14:10 hrs</strong>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-outline">directions_car</span>
+<span class="font-code-license-plate text-code-license-plate text-primary tracking-wider bg-surface-container px-2 py-0.5 rounded">456-ABC</span>
+<span>(Nissan Versa)</span>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-outline">meeting_room</span>
+<span>Puerta A · Entrada</span>
+</span>
+</div>
+</div>
+</div>
+<div class="flex md:flex-col items-end justify-between md:justify-center gap-space-sm shrink-0 pt-space-xs md:pt-0">
+<button class="h-12 px-space-lg bg-surface-container text-primary font-label-lg text-label-lg rounded-xl flex items-center justify-center gap-space-xs hover:bg-surface-container-high transition-colors w-full md:w-auto cursor-pointer" onclick="verDetalle('INC-8821', 'Anti-passback: Entrada duplicada', '456-ABC (Nissan Versa)', 'Puerta A · Entrada', 'Hoy · 14:10 hrs', 'Abierto', 'El tag registró ingreso previo sin salida marcada en el sistema.')">
+<span>Dar seguimiento</span>
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Item 2: En revisión -->
+<div class="incident-card bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-space-md transition-all hover:shadow-md" data-folio="INC-8819" data-plate="982-XYZ" data-status="en revision">
+<div class="flex items-start gap-space-md min-w-0 flex-1">
+<div class="w-14 h-14 rounded-xl bg-surface-container-high text-primary flex flex-col items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[30px]">contactless</span>
+</div>
+<div class="flex flex-col gap-space-xs min-w-0 flex-1">
+<div class="flex flex-wrap items-center gap-space-sm">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E3F1F8] text-[#004D73] font-label-md text-label-md shrink-0">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+                En revisión
+              </span>
+<span class="font-title-md text-title-md text-on-surface font-bold">Tag ilegible / no reconocido</span>
+<span class="text-on-surface-variant font-label-md text-label-md bg-surface-container px-2 py-0.5 rounded">Folio INC-8819</span>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+              Conductor presentó QR de respaldo; se canalizó solicitud de revisión técnica.
+            </p>
+<div class="flex flex-wrap items-center gap-y-1 gap-x-space-lg font-body-sm text-body-sm text-on-surface-variant mt-1">
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-outline">schedule</span>
+<strong class="font-body-lg-medium text-body-lg-medium text-on-surface">Hoy · 11:25 hrs</strong>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-outline">directions_car</span>
+<span class="font-code-license-plate text-code-license-plate text-primary tracking-wider bg-surface-container px-2 py-0.5 rounded">982-XYZ</span>
+<span>(Chevrolet Aveo)</span>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-outline">meeting_room</span>
+<span>Puerta A · Entrada</span>
+</span>
+</div>
+</div>
+</div>
+<div class="flex md:flex-col items-end justify-between md:justify-center gap-space-sm shrink-0 pt-space-xs md:pt-0">
+<button class="h-12 px-space-lg bg-surface-container text-primary font-label-lg text-label-lg rounded-xl flex items-center justify-center gap-space-xs hover:bg-surface-container-high transition-colors w-full md:w-auto cursor-pointer" onclick="verDetalle('INC-8819', 'Tag ilegible / no reconocido', '982-XYZ (Chevrolet Aveo)', 'Puerta A · Entrada', 'Hoy · 11:25 hrs', 'En revisión', 'Conductor presentó QR de respaldo; se canalizó solicitud de revisión técnica.')">
+<span>Ver detalle</span>
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+</div>
+</div>
+<!-- Item 3: Abierto -->
+<div class="incident-card bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-space-md transition-all hover:shadow-md" data-folio="INC-8815" data-plate="312-LMN" data-status="abierto"><div class="flex items-start gap-space-md min-w-0 flex-1"><div class="w-14 h-14 rounded-xl bg-orange-50 text-[#E65100] flex flex-col items-center justify-center shrink-0"><span class="material-symbols-outlined text-[30px]">gpp_bad</span></div><div class="flex flex-col gap-space-xs min-w-0 flex-1"><div class="flex flex-wrap items-center gap-space-sm"><span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFF3E0] text-[#6D3F00] font-label-md text-label-md shrink-0"><span class="w-2 h-2 rounded-full bg-[#E65100]"></span>Abierto</span><span class="font-title-md text-title-md text-on-surface font-bold">Credencial revocada en acceso</span><span class="text-on-surface-variant font-label-md text-label-md bg-surface-container px-2 py-0.5 rounded">Folio INC-8815</span></div><p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">Intento de acceso con credencial reportada por Administración.</p><div class="flex flex-wrap items-center gap-y-1 gap-x-space-lg font-body-sm text-body-sm text-on-surface-variant mt-1"><span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[18px] text-outline">schedule</span><strong class="font-body-lg-medium text-body-lg-medium text-on-surface">Ayer · 16:40 hrs</strong></span><span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[18px] text-outline">directions_car</span><span class="font-code-license-plate text-code-license-plate text-primary tracking-wider bg-surface-container px-2 py-0.5 rounded">312-LMN</span><span>(Volkswagen Gol)</span></span><span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[18px] text-outline">meeting_room</span><span>Puerta A</span></span></div></div></div><div class="flex md:flex-col items-end justify-between md:justify-center gap-space-sm shrink-0 pt-space-xs md:pt-0"><button class="h-12 px-space-lg bg-surface-container text-primary font-label-lg text-label-lg rounded-xl flex items-center justify-center gap-space-xs hover:bg-surface-container-high transition-colors w-full md:w-auto cursor-pointer" onclick="verDetalle('INC-8815', 'Credencial revocada en acceso', '312-LMN (Volkswagen Gol)', 'Puerta A', 'Ayer · 16:40 hrs', 'Abierto', 'Intento de acceso con credencial reportada por Administración.')"><span>Dar seguimiento</span><span class="material-symbols-outlined text-[20px]">chevron_right</span></button></div></div>
+<!-- Item 4: Resuelto -->
+<div class="incident-card bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-space-md transition-all hover:shadow-md" data-folio="INC-8808" data-plate="Sin placa" data-status="resuelto">
+<div class="flex items-start gap-space-md min-w-0 flex-1">
+<div class="w-14 h-14 rounded-xl bg-green-50 text-[#0F5124] flex flex-col items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[30px]">pedal_bike</span>
+</div>
+<div class="flex flex-col gap-space-xs min-w-0 flex-1">
+<div class="flex flex-wrap items-center gap-space-sm">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E8F5E9] text-[#0F5124] font-label-md text-label-md shrink-0">
+<span class="w-2 h-2 rounded-full bg-[#0F5124]"></span>
+                Resuelto
+              </span>
+<span class="font-title-md text-title-md text-on-surface font-bold">Bicicleta sin calcomanía NFC</span>
+<span class="text-on-surface-variant font-label-md text-label-md bg-surface-container px-2 py-0.5 rounded">Folio INC-8808</span>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+              Se verificó pertenencia con QR del titular y credencial escolar.
+            </p>
+<div class="flex flex-wrap items-center gap-y-1 gap-x-space-lg font-body-sm text-body-sm text-on-surface-variant mt-1">
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-outline">schedule</span>
+<strong class="font-body-lg-medium text-body-lg-medium text-on-surface">Ayer · 09:15 hrs</strong>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-outline">pedal_bike</span>
+<span class="bg-surface-container px-2 py-0.5 rounded font-body-sm text-body-sm text-on-surface">Sin placa (Trek Marlin 6)</span>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-outline">meeting_room</span>
+<span>Puerta B</span>
+</span>
+</div>
+</div>
+</div>
+<div class="flex md:flex-col items-end justify-between md:justify-center gap-space-sm shrink-0 pt-space-xs md:pt-0">
+<button class="h-12 px-space-lg bg-surface-container text-primary font-label-lg text-label-lg rounded-xl flex items-center justify-center gap-space-xs hover:bg-surface-container-high transition-colors w-full md:w-auto cursor-pointer" onclick="verDetalle('INC-8808', 'Bicicleta sin calcomanía NFC', 'Sin placa (Trek Marlin 6)', 'Puerta B', 'Ayer · 09:15 hrs', 'Resuelto', 'Se verificó pertenencia con QR del titular y credencial escolar.')">
+<span>Ver detalle</span>
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+</div>
+</div>
+<!-- Item 5: Resuelto -->
+<div class="incident-card bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-space-md transition-all hover:shadow-md" data-folio="INC-8794" data-plate="654-FED" data-status="resuelto">
+<div class="flex items-start gap-space-md min-w-0 flex-1">
+<div class="w-14 h-14 rounded-xl bg-green-50 text-[#0F5124] flex flex-col items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[30px]">assignment_turned_in</span>
+</div>
+<div class="flex flex-col gap-space-xs min-w-0 flex-1">
+<div class="flex flex-wrap items-center gap-space-sm">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E8F5E9] text-[#0F5124] font-label-md text-label-md shrink-0">
+<span class="w-2 h-2 rounded-full bg-[#0F5124]"></span>
+                Resuelto
+              </span>
+<span class="font-title-md text-title-md text-on-surface font-bold">Visitante sin pase registrado</span>
+<span class="text-on-surface-variant font-label-md text-label-md bg-surface-container px-2 py-0.5 rounded">Folio INC-8794</span>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+              Se comunicó con Administración y se emitió pase autorizado.
+            </p>
+<div class="flex flex-wrap items-center gap-y-1 gap-x-space-lg font-body-sm text-body-sm text-on-surface-variant mt-1">
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-outline">schedule</span>
+<strong class="font-body-lg-medium text-body-lg-medium text-on-surface">17 Oct 2026 · 12:00 hrs</strong>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-outline">directions_car</span>
+<span class="font-code-license-plate text-code-license-plate text-primary tracking-wider bg-surface-container px-2 py-0.5 rounded">654-FED</span>
+<span>(Ford Fiesta)</span>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-outline">meeting_room</span>
+<span>Puerta A</span>
+</span>
+</div>
+</div>
+</div>
+<div class="flex md:flex-col items-end justify-between md:justify-center gap-space-sm shrink-0 pt-space-xs md:pt-0">
+<button class="h-12 px-space-lg bg-surface-container text-primary font-label-lg text-label-lg rounded-xl flex items-center justify-center gap-space-xs hover:bg-surface-container-high transition-colors w-full md:w-auto cursor-pointer" onclick="verDetalle('INC-8794', 'Visitante sin pase registrado', '654-FED (Ford Fiesta)', 'Puerta A', '17 Oct 2026 · 12:00 hrs', 'Resuelto', 'Se comunicó con Administración y se emitió pase autorizado.')">
+<span>Ver detalle</span>
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Empty search / filter placeholder -->
+<div class="hidden bg-surface-container-lowest rounded-xl p-space-xl text-center flex flex-col items-center justify-center gap-space-sm" id="no-results-msg">
+<span class="material-symbols-outlined text-[48px] text-outline">content_paste_off</span>
+<h3 class="font-title-md text-title-md text-on-surface">Sin coincidencias encontradas</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Pruebe con otra matrícula o seleccione el filtro de todos los incidentes.</p>
+</div>
+</div>
+<!-- Modal: Registrar Incidente en Caseta (Tablet Friendly touch controls) -->
+<div class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden items-center justify-center p-space-md" id="modal-nuevo">
+<div class="bg-surface-container-lowest rounded-xl w-full max-w-2xl max-h-[942px] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+<!-- Modal Header -->
+<div class="px-space-lg py-space-md bg-surface-container-low flex items-center justify-between"><div class="flex items-center gap-space-sm"><span class="p-2 bg-primary text-on-primary rounded-lg flex items-center justify-center"><span class="material-symbols-outlined text-[22px]">assignment_add</span></span><div><h2 class="font-headline-sm text-headline-sm text-on-surface">Nuevo Registro de Incidente</h2><span class="font-label-md text-label-md text-on-surface-variant">Reporte de Caseta para Administración</span></div></div><button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container cursor-pointer" id="close-modal-nuevo"><span class="material-symbols-outlined">close</span></button></div>
+<!-- Modal Form Body -->
+<div class="p-space-lg flex flex-col gap-space-md overflow-y-auto">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-md text-label-md text-on-surface-variant">Tipo de Incidente</label>
+<select class="h-[52px] px-space-md bg-surface-container rounded-xl font-body-lg text-body-lg text-on-surface focus:outline-none focus:bg-surface-container-low" id="input-tipo">
+<option value="Anti-passback: Entrada duplicada">Anti-passback: Entrada duplicada</option>
+<option value="Tag ilegible / no reconocido">Tag ilegible / no reconocido</option>
+<option value="Credencial revocada en acceso">Credencial revocada en acceso</option>
+<option value="Visitante sin pase registrado">Visitante sin pase registrado</option>
+<option value="Bicicleta sin calcomanía NFC">Bicicleta sin calcomanía NFC</option>
+<option value="Otro incidente en caseta">Otro incidente en caseta</option>
+</select>
+</div>
+<div class="flex flex-col gap-space-xs"><label class="font-label-md text-label-md text-on-surface-variant">Ubicación / Acceso</label><select class="h-[52px] px-space-md bg-surface-container rounded-xl font-body-lg text-body-lg text-on-surface focus:outline-none focus:bg-surface-container-low" id="input-puerta"><option value="Puerta A · Entrada">Puerta A · Entrada</option><option value="Puerta A · Salida">Puerta A · Salida</option><option value="Puerta B · Entrada general">Puerta B · Entrada general</option><option value="Puerta C · Ciclistas / Peatonal">Puerta C · Ciclistas / Peatonal</option></select></div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-md text-label-md text-on-surface-variant">Placa o Identificador</label>
+<input class="h-[52px] px-space-md bg-surface-container rounded-xl font-code-license-plate text-code-license-plate uppercase text-on-surface focus:outline-none focus:bg-surface-container-low placeholder:text-outline" id="input-placa" placeholder="Ej. 789-DEF" type="text"/>
+</div>
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-md text-label-md text-on-surface-variant">Vehículo (Marca, Modelo, Color)</label>
+<input class="h-[52px] px-space-md bg-surface-container rounded-xl font-body-lg text-body-lg text-on-surface focus:outline-none focus:bg-surface-container-low placeholder:text-outline" id="input-vehiculo" placeholder="Ej. Honda Civic Blanco" type="text"/>
+</div>
+</div>
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-md text-label-md text-on-surface-variant">Descripción de los hechos en caseta</label>
+<textarea class="p-space-md bg-surface-container rounded-xl font-body-lg text-body-lg text-on-surface focus:outline-none focus:bg-surface-container-low placeholder:text-outline resize-none" id="input-desc" placeholder="Describa la situación detectada para seguimiento de Administración..." rows="3"></textarea>
+</div>
+<div class="flex items-center gap-space-sm p-space-md bg-surface-container-low rounded-xl"><div class="flex items-center gap-space-sm"><span class="p-2 bg-primary text-on-primary rounded-lg flex items-center justify-center"><span class="material-symbols-outlined text-[22px]">assignment_add</span></span><div><h2 class="font-headline-sm text-headline-sm text-on-surface">Nuevo Registro de Incidente</h2><span class="font-label-md text-label-md text-on-surface-variant">Reporte de Caseta para Administración</span></div></div><button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container cursor-pointer" id="close-modal-nuevo"><span class="material-symbols-outlined">close</span></button></div>
+</div>
+<!-- Modal Footer -->
+<div class="p-space-lg bg-surface-container-lowest flex items-center justify-end gap-space-md">
+<button class="h-12 px-space-lg text-on-surface-variant hover:bg-surface-container font-label-lg text-label-lg rounded-xl cursor-pointer" id="btn-cancelar-crear">
+          Cancelar
+        </button>
+<button class="h-12 px-space-xl bg-primary text-on-primary font-label-lg text-label-lg rounded-xl flex items-center justify-center gap-space-xs shadow-md hover:bg-primary-container cursor-pointer" id="btn-guardar-incidente">
+<span class="material-symbols-outlined text-[20px]">save</span>
+<span>Guardar reporte</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Modal: Detalle / Seguimiento de Incidente -->
+<div class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden items-center justify-center p-space-md" id="modal-detalle">
+<div class="bg-surface-container-lowest rounded-xl w-full max-w-xl max-h-[921px] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+<div class="px-space-lg py-space-md bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="p-2 bg-secondary text-on-secondary rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">folder_open</span>
+</span>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface" id="modal-detalle-folio">Folio INC-8821</h2>
+<span class="font-label-md text-label-md text-on-surface-variant">Detalle operativo en Caseta</span>
+</div>
+</div>
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container cursor-pointer" id="close-modal-detalle">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-space-lg flex flex-col gap-space-md overflow-y-auto">
+<div class="flex items-center justify-between p-space-md bg-surface-container rounded-xl">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Estado actual:</span>
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFF3E0] text-[#6D3F00] font-label-md text-label-md" id="modal-detalle-estado">
+            Abierto
+          </span>
+</div>
+<div class="flex flex-col gap-1">
+<span class="font-label-md text-label-md text-on-surface-variant">Motivo del Incidente</span>
+<span class="font-title-md text-title-md text-on-surface font-semibold" id="modal-detalle-tipo">Anti-passback: Entrada duplicada</span>
+</div>
+<div class="grid grid-cols-2 gap-space-md">
+<div class="flex flex-col gap-1 p-space-sm bg-surface-container-low rounded-lg">
+<span class="font-label-md text-label-md text-on-surface-variant">Vehículo / Placa</span>
+<span class="font-body-lg-medium text-body-lg-medium text-on-surface" id="modal-detalle-vehiculo">456-ABC (Nissan Versa)</span>
+</div>
+<div class="flex flex-col gap-1 p-space-sm bg-surface-container-low rounded-lg">
+<span class="font-label-md text-label-md text-on-surface-variant">Ubicación y Hora</span>
+<span class="font-body-lg-medium text-body-lg-medium text-on-surface" id="modal-detalle-lugar">Puerta A · Entrada</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<span class="font-label-md text-label-md text-on-surface-variant">Descripción completa</span>
+<p class="p-space-md bg-surface-container rounded-xl font-body-lg text-body-lg text-on-surface leading-relaxed" id="modal-detalle-desc">
+            El tag registró ingreso previo sin salida marcada en el sistema.
+          </p>
+</div>
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-md text-label-md text-on-surface-variant">Acción en turno para Oficial Guardia:</label>
+<div class="grid grid-cols-2 gap-space-sm">
+<button class="h-12 bg-secondary text-on-secondary rounded-xl font-label-lg text-label-lg flex items-center justify-center gap-1 hover:bg-secondary-container hover:text-on-secondary-container transition-colors cursor-pointer" onclick="cambiarEstado('En revisión')">
+<span class="material-symbols-outlined text-[18px]">engineering</span>
+<span>Marcar En revisión</span>
+</button>
+<button class="h-12 bg-[#0F5124] text-white rounded-xl font-label-lg text-label-lg flex items-center justify-center gap-1 hover:opacity-90 transition-colors cursor-pointer" onclick="cambiarEstado('Resuelto')">
+<span class="material-symbols-outlined text-[18px]">task_alt</span>
+<span>Marcar Resuelto</span>
+</button>
+</div>
+</div>
+</div>
+<div class="p-space-lg bg-surface-container-lowest flex items-center justify-end">
+<button class="h-12 px-space-xl bg-surface-container text-on-surface font-label-lg text-label-lg rounded-xl hover:bg-surface-container-high transition-colors cursor-pointer" id="btn-cerrar-detalle">
+          Cerrar
+        </button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Filter and Search Logic
+  const filterChips = document.querySelectorAll('.filter-chip');
+  const searchInput = document.getElementById('search-input');
+  const incidentCards = document.querySelectorAll('.incident-card');
+  const noResultsMsg = document.getElementById('no-results-msg');
+
+  let currentFilter = 'all';
+
+  function applyFilters() {
+    const query = searchInput.value.trim().toLowerCase();
+    let visibleCount = 0;
+
+    incidentCards.forEach(card => {
+      const status = card.getAttribute('data-status').toLowerCase();
+      const plate = card.getAttribute('data-plate').toLowerCase();
+      const folio = card.getAttribute('data-folio').toLowerCase();
+      const textContent = card.innerText.toLowerCase();
+
+      const matchesFilter = (currentFilter === 'all') || (status === currentFilter);
+      const matchesSearch = query === '' || plate.includes(query) || folio.includes(query) || textContent.includes(query);
+
+      if (matchesFilter && matchesSearch) {
+        card.style.display = 'flex';
+        visibleCount++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    if (visibleCount === 0) {
+      noResultsMsg.classList.remove('hidden');
+    } else {
+      noResultsMsg.classList.add('hidden');
+    }
+  }
+
+  filterChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      filterChips.forEach(c => {
+        c.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+        c.classList.add('bg-surface-container-lowest', 'text-on-surface');
+      });
+      chip.classList.remove('bg-surface-container-lowest', 'text-on-surface');
+      chip.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+
+      currentFilter = chip.getAttribute('data-filter');
+      applyFilters();
+    });
+  });
+
+  searchInput.addEventListener('input', applyFilters);
+
+  // Modal Nuevo Incidente
+  const btnNuevo = document.getElementById('btn-nuevo-incidente');
+  const modalNuevo = document.getElementById('modal-nuevo');
+  const closeNuevo = document.getElementById('close-modal-nuevo');
+  const cancelNuevo = document.getElementById('btn-cancelar-crear');
+  const saveNuevo = document.getElementById('btn-guardar-incidente');
+
+  function openNuevoModal() {
+    modalNuevo.classList.remove('hidden');
+    modalNuevo.classList.add('flex');
+  }
+
+  function closeNuevoModal() {
+    modalNuevo.classList.add('hidden');
+    modalNuevo.classList.remove('flex');
+    document.getElementById('input-placa').value = '';
+    document.getElementById('input-vehiculo').value = '';
+    document.getElementById('input-desc').value = '';
+  }
+
+  btnNuevo.addEventListener('click', openNuevoModal);
+  closeNuevo.addEventListener('click', closeNuevoModal);
+  cancelNuevo.addEventListener('click', closeNuevoModal);
+
+  saveNuevo.addEventListener('click', () => {
+    const placa = document.getElementById('input-placa').value.trim() || 'S/P';
+    const tipo = document.getElementById('input-tipo').value;
+    const vehiculo = document.getElementById('input-vehiculo').value.trim() || 'Vehículo no identificado';
+    const puerta = document.getElementById('input-puerta').value;
+    const desc = document.getElementById('input-desc').value.trim() || 'Reportado en caseta para revisión de Administración.';
+    
+    // Add new card dynamically to list
+    const folioNum = 'INC-' + Math.floor(1000 + Math.random() * 9000);
+    const list = document.getElementById('incidents-list');
+
+    const card = document.createElement('div');
+    card.className = 'incident-card bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-space-md transition-all hover:shadow-md';
+    card.setAttribute('data-status', 'abierto');
+    card.setAttribute('data-plate', placa);
+    card.setAttribute('data-folio', folioNum);
+
+    card.innerHTML = `
+      <div class="flex items-start gap-space-md min-w-0 flex-1">
+        <div class="w-14 h-14 rounded-xl bg-orange-50 text-[#E65100] flex flex-col items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-[30px]">report</span>
+        </div>
+        <div class="flex flex-col gap-space-xs min-w-0 flex-1">
+          <div class="flex flex-wrap items-center gap-space-sm">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFF3E0] text-[#6D3F00] font-label-md text-label-md shrink-0">
+              <span class="w-2 h-2 rounded-full bg-[#E65100]"></span>
+              Abierto
+            </span>
+            <span class="font-title-md text-title-md text-on-surface font-bold">${tipo}</span>
+            <span class="text-on-surface-variant font-label-md text-label-md bg-surface-container px-2 py-0.5 rounded">Folio ${folioNum}</span>
+          </div>
+          <p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">${desc}</p>
+          <div class="flex flex-wrap items-center gap-y-1 gap-x-space-lg font-body-sm text-body-sm text-on-surface-variant mt-1">
+            <span class="flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[18px] text-outline">schedule</span>
+              <strong class="font-body-lg-medium text-body-lg-medium text-on-surface">Hoy · Ahora</strong>
+            </span>
+            <span class="flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[18px] text-outline">directions_car</span>
+              <span class="font-code-license-plate text-code-license-plate text-primary tracking-wider bg-surface-container px-2 py-0.5 rounded">${placa}</span>
+              <span>(${vehiculo})</span>
+            </span>
+            <span class="flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[18px] text-outline">meeting_room</span>
+              <span>${puerta}</span>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="flex md:flex-col items-end justify-between md:justify-center gap-space-sm shrink-0 pt-space-xs md:pt-0">
+        <button onclick="verDetalle('${folioNum}', '${tipo}', '${placa} (${vehiculo})', '${puerta}', 'Hoy · Ahora', 'Abierto', '${desc}')" class="h-12 px-space-lg bg-surface-container text-primary font-label-lg text-label-lg rounded-xl flex items-center justify-center gap-space-xs hover:bg-surface-container-high transition-colors w-full md:w-auto cursor-pointer">
+          <span>Dar seguimiento</span>
+          <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+        </button>
+      </div>
+    `;
+
+    list.insertBefore(card, list.firstChild);
+    closeNuevoModal();
+    applyFilters();
+  });
+
+  // Modal Detalle
+  const modalDetalle = document.getElementById('modal-detalle');
+  const closeDetalle = document.getElementById('close-modal-detalle');
+  const btnCerrarDetalle = document.getElementById('btn-cerrar-detalle');
+
+  let currentCardActive = null;
+
+  function verDetalle(folio, tipo, vehiculo, lugar, hora, estado, desc) {
+    document.getElementById('modal-detalle-folio').innerText = 'Folio ' + folio;
+    document.getElementById('modal-detalle-tipo').innerText = tipo;
+    document.getElementById('modal-detalle-vehiculo').innerText = vehiculo;
+    document.getElementById('modal-detalle-lugar').innerText = lugar + ' · ' + hora;
+    document.getElementById('modal-detalle-desc').innerText = desc;
+    
+    const statusBadge = document.getElementById('modal-detalle-estado');
+    statusBadge.innerText = estado;
+    if (estado.toLowerCase() === 'abierto') {
+      statusBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFF3E0] text-[#6D3F00] font-label-md text-label-md';
+    } else if (estado.toLowerCase() === 'resuelto') {
+      statusBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E8F5E9] text-[#0F5124] font-label-md text-label-md';
+    } else {
+      statusBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E3F1F8] text-[#004D73] font-label-md text-label-md';
+    }
+
+    modalDetalle.classList.remove('hidden');
+    modalDetalle.classList.add('flex');
+  }
+
+  function closeDetalleModal() {
+    modalDetalle.classList.add('hidden');
+    modalDetalle.classList.remove('flex');
+  }
+
+  closeDetalle.addEventListener('click', closeDetalleModal);
+  btnCerrarDetalle.addEventListener('click', closeDetalleModal);
+
+  function cambiarEstado(nuevoEstado) {
+    const statusBadge = document.getElementById('modal-detalle-estado');
+    statusBadge.innerText = nuevoEstado;
+    if (nuevoEstado === 'Resuelto') {
+      statusBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E8F5E9] text-[#0F5124] font-label-md text-label-md';
+    } else {
+      statusBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E3F1F8] text-[#004D73] font-label-md text-label-md';
+    }
+    setTimeout(closeDetalleModal, 400);
+  }
+</script></main></div></body></html>

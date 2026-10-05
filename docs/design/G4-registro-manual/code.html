@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "on-error-container": "#93000a", "primary-container": "#006699", "primary": "#004d75", "on-surface-variant": "#40484f", "tertiary": "#3e4b51", "on-tertiary-fixed": "#101d22", "on-tertiary-container": "#d1dfe6", "on-background": "#111d24", "error-container": "#ffdad6", "outline": "#707880", "on-secondary-fixed-variant": "#004b70", "on-primary-fixed-variant": "#004b72", "on-primary-fixed": "#001e31", "on-secondary-fixed": "#001e30", "background": "#f5faff", "on-primary": "#ffffff", "surface-container": "#e3f0f9", "surface-container-low": "#e9f5ff", "surface-container-high": "#ddeaf3", "primary-fixed-dim": "#90cdff", "on-secondary": "#ffffff", "tertiary-fixed": "#d7e5ec", "surface-container-highest": "#d8e4ed", "tertiary-container": "#566369", "on-primary-container": "#bfe0ff", "on-tertiary-fixed-variant": "#3c494e", "secondary-container": "#9bd2ff", "surface-bright": "#f5faff", "on-tertiary": "#ffffff", "tertiary-fixed-dim": "#bbc9cf", "surface": "#f5faff", "inverse-surface": "#263239", "outline-variant": "#c0c7d0", "primary-fixed": "#cce5ff", "surface-tint": "#006496", "on-error": "#ffffff", "secondary-fixed": "#cae6ff", "error": "#ba1a1a", "inverse-primary": "#90cdff", "on-secondary-container": "#1c5b82", "surface-container-lowest": "#ffffff", "surface-dim": "#cfdce5", "secondary-fixed-dim": "#96ccf9", "secondary": "#27638a", "inverse-on-surface": "#e6f2fc", "surface-variant": "#d8e4ed", "on-surface": "#111d24" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "gutter": "1rem", "space-xs": "0.25rem", "space-lg": "1.5rem", "margin": "1rem", "space-sm": "0.5rem", "space-md": "1rem", "space-xl": "2rem" }, fontFamily: { "headline-lg": ["Inter"], "label-lg": ["Inter"], "body-sm": ["Inter"], "body-lg-medium": ["Inter"], "body-lg": ["Inter"], "headline-sm": ["Inter"], "title-md": ["Inter"], "headline-md": ["Inter"], "headline-lg-mobile": ["Inter"], "label-md": ["Inter"], "code-license-plate": ["Inter"] }, fontSize: { "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }], "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "600" }], "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "body-lg-medium": ["16px", { "lineHeight": "24px", "fontWeight": "500" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }], "title-md": ["18px", { "lineHeight": "26px", "fontWeight": "600" }], "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "700" }], "headline-lg-mobile": ["26px", { "lineHeight": "34px", "fontWeight": "700" }], "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "600" }], "code-license-plate": ["20px", { "lineHeight": "24px", "letterSpacing": "1.5px", "fontWeight": "700" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head><body class="bg-surface font-body-lg text-on-surface flex flex-col min-h-screen select-none"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-space-md flex items-center justify-between"><div class="flex items-center gap-space-sm"><div class="flex items-center justify-center w-11 h-11 bg-surface-container rounded-lg text-primary"><span class="material-symbols-outlined text-[24px]">barcode_scanner</span></div><div class="flex flex-col"><h1 class="font-headline-sm text-headline-sm text-on-surface leading-tight tracking-tight">Puerta A · Entrada</h1></div></div><div class="flex items-center gap-space-sm"><div class="flex items-center gap-space-xs px-space-sm py-1 bg-surface-container-high rounded-full font-label-md text-label-md text-secondary font-bold"><span class="w-2.5 h-2.5 rounded-full bg-secondary animate-pulse"></span><span>En línea</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-20 bg-surface px-space-md"><div class="flex flex-col w-full pb-6 gap-space-sm select-none">
+<!-- Sub-barra Operativa de Navegación Rápida -->
+<div class="flex items-center justify-between py-space-xs px-1"><div class="flex items-center gap-space-sm"><button aria-label="Volver a caseta" class="min-w-[48px] min-h-[48px] flex items-center justify-center rounded-lg bg-surface-container active:bg-surface-container-highest text-primary transition-colors" type="button"><span class="material-symbols-outlined text-[26px]">arrow_back</span></button><h2 class="font-title-md text-title-md text-primary font-bold">Registro manual</h2></div></div>
+<!-- Buscador Táctil de Alto Contraste (Operación Rápida) -->
+<section class="flex flex-col gap-space-xs">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase" for="plate-search">
+      Identificación Vehicular / Titular
+    </label>
+<div class="flex items-stretch gap-space-xs">
+<div class="relative flex-1 flex items-center bg-surface-container-lowest rounded-lg shadow-sm">
+<input class="w-full h-14 pl-3 pr-2 text-on-surface font-title-md text-title-md uppercase tracking-wider rounded-lg outline-none bg-transparent placeholder:text-outline-variant focus:bg-surface-container-low transition-colors" id="plate-search" placeholder="Buscar placa o conductor..." type="text" value="456-ABC"/>
+</div>
+<button aria-label="Buscar registro" class="min-w-[56px] min-h-[56px] px-3 bg-primary active:bg-on-secondary-fixed-variant text-on-primary rounded-lg flex items-center justify-center shadow-md transition-all active:scale-95" id="btn-search-trigger" type="button">
+<span class="material-symbols-outlined text-[28px]">search</span>
+</button>
+</div>
+</section>
+<!-- Tarjeta de Coincidencia Activa (Alto Contraste al Sol) -->
+<section class="flex flex-col bg-surface-container-lowest rounded-xl p-space-sm shadow-md gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="px-space-xs py-0.5 rounded-full bg-surface-container font-label-md text-label-md text-primary uppercase">
+        Autorizado · Administración
+      </span>
+<span class="flex items-center gap-space-xs font-label-md text-label-md text-secondary font-bold">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary animate-pulse"></span>
+        ACTIVO
+      </span>
+</div>
+<!-- Fotos Titular & Vehículo + Datos Principales -->
+<div class="flex items-center gap-space-sm">
+<div class="relative flex-shrink-0">
+<img class="w-16 h-16 rounded-lg object-cover shadow-sm bg-surface-container" data-alt="Close up official portrait of Victor Hugo Sanchez, middle-aged male university staff driver wearing a clean uniform badge, daylight illumination, high sharpness for checkpoint security credentials, institutional background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXZf4X5MeQ-RgnUuTWDY2xWfejq_bOKX82KqUStZ9jGwHyItx3RoliZxDmjJylYtcYw6QDzCaxGvELFLroMq6dQ6rGbosg3MffcriEw6qh73zTQt_VuKUWV2DLZ9RhDAmB25TtBaefzqz03QhMCe7_5rJOLFS9jjhT7eXgwcPalWcS3Wh3NiefrhXfyj_7ocH9N1EuE5JTmmND6JnRyl4pIoveA3U5RozenYtvhMpsMPmhpVJnZlnR"/>
+<div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-primary flex items-center justify-center text-on-primary text-[12px] shadow">
+<span class="material-symbols-outlined text-[14px]">verified_user</span>
+</div>
+</div>
+<div class="flex flex-col min-w-0 flex-1"><h2 class="font-headline-sm text-headline-sm text-on-surface leading-tight">Víctor Hugo Sánchez</h2><p class="font-body-sm text-body-sm text-on-surface-variant leading-normal">Nissan Versa · Gris Plata (2022)</p></div>
+<div class="flex-shrink-0">
+<img class="w-16 h-16 rounded-lg object-cover shadow-sm bg-surface-container" data-alt="Compact front-quarter view photograph of a silver gray Nissan Versa sedan passing an institutional vehicular checkpoint gate in daylight, license plate zone visible, authentic security inspection photo." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1DubaWiMHkYbMZxJTYbp4UOokOXtvRey5mtLKCllU5FI_Tl61bgkastSI1FKzUwk10cjqhuNn74JwhU-rY77g3mr9PWiqgatxVdV3AOb0x5JBmSXMqdaDCoNve7a0IT46UNUb9GafuavqY8JneRCIW5LQrzJyzqGkh2PBoBQPHukIwOfMffpf6a5V3hvzOErq40xn40pk5av_KO-PN5edHf5Z-LVau5_fzuQmtY0aVNe2urGgqAGA"/>
+</div>
+</div>
+<!-- Placa Destacada de Máxima Legibilidad -->
+<div class="bg-surface-container-high py-2 px-space-md rounded-lg flex items-center justify-between shadow-inner">
+<div class="flex items-center gap-space-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">directions_car</span>
+<span class="font-label-md text-label-md uppercase">Placa</span>
+</div>
+<span class="font-code-license-plate text-code-license-plate text-on-surface font-black tracking-widest">
+        456-ABC
+      </span>
+</div>
+</section>
+<!-- Motivo del Registro Manual (Obligatorio) -->
+<section class="flex flex-col gap-space-xs mt-1">
+<div class="flex items-center justify-between">
+<label class="font-label-md text-label-md text-on-surface font-bold uppercase tracking-wider flex items-center gap-1">
+<span class="material-symbols-outlined text-primary text-[18px]">fact_check</span>
+        Motivo del Registro *
+      </label>
+<span class="font-label-md text-label-md text-on-surface-variant" id="motivo-status">Obligatorio</span>
+</div>
+<!-- Botonera de Opciones Rápidas de Toque Grande (48px+) -->
+<div class="grid grid-cols-2 gap-space-xs" id="quick-reasons-grid">
+<button class="reason-btn min-h-[50px] p-2 rounded-lg bg-surface-container-lowest active:bg-secondary-container text-on-surface font-label-lg text-label-lg flex items-center gap-2 text-left shadow-sm transition-all" data-reason="tag" type="button">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0">sensors_off</span>
+<span class="line-clamp-2 leading-tight">Tag no detectado</span>
+</button>
+<button class="reason-btn min-h-[50px] p-2 rounded-lg bg-surface-container-lowest active:bg-secondary-container text-on-surface font-label-lg text-label-lg flex items-center gap-2 text-left shadow-sm transition-all" data-reason="qr" type="button">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0">qr_code_2</span>
+<span class="line-clamp-2 leading-tight">QR ilegible / Batería</span>
+</button>
+<button class="reason-btn min-h-[50px] p-2 rounded-lg bg-surface-container-lowest active:bg-secondary-container text-on-surface font-label-lg text-label-lg flex items-center gap-2 text-left shadow-sm transition-all" data-reason="visita" type="button">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0">badge</span>
+<span class="line-clamp-2 leading-tight">Visitante autorizado</span>
+</button>
+<button class="reason-btn min-h-[50px] p-2 rounded-lg bg-surface-container-lowest active:bg-secondary-container text-on-surface font-label-lg text-label-lg flex items-center gap-2 text-left shadow-sm transition-all" data-reason="nfc" type="button">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0">contactless_off</span>
+<span class="line-clamp-2 leading-tight">Fallo NFC</span>
+</button>
+</div>
+<!-- Notas Breves Opcionales -->
+<div class="mt-1 flex flex-col gap-1">
+<div class="relative">
+<input class="w-full h-11 px-3 bg-surface-container-lowest rounded-lg text-on-surface font-body-sm text-body-sm outline-none placeholder:text-outline-variant shadow-sm focus:bg-surface-container-low transition-colors" id="notes-input" placeholder="Nota adicional (opcional)..." type="text"/>
+<span class="material-symbols-outlined absolute right-3 top-3 text-[18px] text-outline">edit</span>
+</div>
+</div>
+</section>
+<!-- Botón Enorme de Confirmación al Pie (56px) -->
+<div class="pt-2">
+<button class="w-full h-14 bg-primary text-on-primary rounded-xl font-headline-sm text-headline-sm flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] transition-transform active:bg-on-secondary-fixed-variant" id="submit-manual-btn" type="button">
+<span class="material-symbols-outlined text-[28px]">check_circle</span>
+<span>Registrar Entrada</span>
+</button>
+</div>
+</div>
+<script>
+  (function() {
+    let selectedReason = null;
+    const reasonButtons = document.querySelectorAll('.reason-btn');
+    const submitBtn = document.getElementById('submit-manual-btn');
+    const statusText = document.getElementById('motivo-status');
+
+    reasonButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        reasonButtons.forEach(b => {
+          b.classList.remove('bg-secondary-container', 'text-on-secondary-container', 'shadow-md');
+          b.classList.add('bg-surface-container-lowest', 'text-on-surface');
+        });
+        btn.classList.remove('bg-surface-container-lowest', 'text-on-surface');
+        btn.classList.add('bg-secondary-container', 'text-on-secondary-container', 'shadow-md');
+        selectedReason = btn.getAttribute('data-reason');
+        if(statusText) {
+          statusText.textContent = "Seleccionado";
+          statusText.classList.remove('text-on-surface-variant');
+          statusText.classList.add('text-secondary', 'font-bold');
+        }
+      });
+    });
+
+    submitBtn?.addEventListener('click', () => {
+      if(!selectedReason) {
+        if(statusText) {
+          statusText.textContent = "¡Selecciona un motivo!";
+          statusText.classList.add('text-error', 'font-bold');
+        }
+        submitBtn.classList.add('bg-error');
+        setTimeout(() => {
+          submitBtn.classList.remove('bg-error');
+        }, 800);
+        return;
+      }
+      
+      const prevContent = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `
+        <span class="material-symbols-outlined text-[26px] animate-spin">refresh</span>
+        <span>Guardando...</span>
+      `;
+
+      setTimeout(() => {
+        submitBtn.innerHTML = `
+          <span class="material-symbols-outlined text-[26px]">task_alt</span>
+          <span>¡Acceso Concedido!</span>
+        `;
+        submitBtn.classList.remove('bg-primary');
+        submitBtn.classList.add('bg-secondary-container', 'text-on-secondary-container');
+        setTimeout(() => {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = prevContent;
+          submitBtn.classList.add('bg-primary');
+          submitBtn.classList.remove('bg-secondary-container', 'text-on-secondary-container');
+        }, 1800);
+      }, 700);
+    });
+  })();
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/95 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.06)]" data-active-classes="bg-surface-container text-primary font-label-lg"><div class="grid grid-cols-4 gap-space-xs p-space-xs h-20 items-center"><a class="flex flex-col items-center justify-center min-h-[48px] h-full rounded-lg text-on-surface-variant transition-colors" data-path="modo-caseta" href="#"><span class="material-symbols-outlined text-[24px]">shield</span><span class="font-label-md text-label-md uppercase tracking-wide">Caseta</span></a><a aria-current="page" class="flex flex-col items-center justify-center min-h-[48px] h-full rounded-lg transition-colors bg-surface-container text-primary font-label-lg" data-path="registro-manual" href="#"><span class="material-symbols-outlined text-[24px]">edit_note</span><span class="font-label-md text-label-md uppercase tracking-wide">Manual</span></a><a class="flex flex-col items-center justify-center min-h-[48px] h-full rounded-lg text-on-surface-variant transition-colors" data-path="control-turno" href="#"><span class="material-symbols-outlined text-[24px]">badge</span><span class="font-label-md text-label-md uppercase tracking-wide">Turno</span></a><a class="flex flex-col items-center justify-center min-h-[48px] h-full rounded-lg text-on-surface-variant transition-colors" data-path="incidentes" href="#"><span class="material-symbols-outlined text-[24px]">report</span><span class="font-label-md text-label-md uppercase tracking-wide">Incidentes</span></a></div></nav></body></html>
