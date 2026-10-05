@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:shared/shared.dart';
 import 'package:test/test.dart';
 
@@ -144,6 +146,39 @@ void main() {
 
     test('una letra acentuada cuenta como letra', () {
       expect(validarPassword('ñ1234567'), isNull);
+    });
+
+    test('acepta exactamente 72 bytes y rechaza 73', () {
+      expect(validarPassword('a1${'x' * 70}'), isNull);
+      expect(
+        validarPassword('a1${'x' * 71}'),
+        CodigoValidacion.contrasenaMuyLarga,
+      );
+    });
+
+    test('el límite es de bytes en UTF-8, no de caracteres', () {
+      // 40 caracteres: "a1" (2 bytes), 30 "ñ" (60 bytes) y 8 "é" (16 bytes).
+      final conAcentos = 'a1${'ñ' * 30}${'é' * 8}';
+      expect(conAcentos.length, lessThan(72));
+      expect(utf8.encode(conAcentos).length, 78);
+      expect(validarPassword(conAcentos), CodigoValidacion.contrasenaMuyLarga);
+
+      // 20 caracteres visibles: "a1" y 18 emojis de 4 bytes cada uno.
+      final conEmojis = 'a1${'🚗' * 18}';
+      expect(conEmojis.runes.length, 20);
+      expect(conEmojis.length, lessThan(72));
+      expect(utf8.encode(conEmojis).length, 74);
+      expect(validarPassword(conEmojis), CodigoValidacion.contrasenaMuyLarga);
+
+      // Mezcla de acentos y emojis con menos de 72 caracteres.
+      final mezcla = 'Contraseña1${'á' * 20}${'🔒' * 6}';
+      expect(mezcla.length, lessThan(72));
+      expect(utf8.encode(mezcla).length, greaterThan(72));
+      expect(validarPassword(mezcla), CodigoValidacion.contrasenaMuyLarga);
+    });
+
+    test('acentos y emojis que caben en 72 bytes se aceptan', () {
+      expect(validarPassword('Contraseña1🚗🔒'), isNull);
     });
   });
 

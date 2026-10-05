@@ -1,7 +1,14 @@
+import 'dart:convert';
+
 import 'codigos_validacion.dart';
 
 /// Longitud mínima de una contraseña.
 const longitudMinimaPassword = 8;
+
+/// Tamaño máximo de una contraseña, en bytes de UTF-8. bcrypt ignora lo que
+/// pasa de 72 bytes: dos contraseñas que solo difieren después de ese punto
+/// serían la misma.
+const bytesMaximosPassword = 72;
 
 /// Longitud máxima de un nombre.
 const longitudMaximaNombre = 120;
@@ -62,13 +69,19 @@ String? validarBoletaOEmpleado(String valor) =>
     ? null
     : CodigoValidacion.boletaOEmpleadoInvalido;
 
-/// Valida una contraseña: mínimo 8 caracteres, al menos una letra y un número.
+/// Valida una contraseña: mínimo 8 caracteres, máximo 72 bytes en UTF-8 (una
+/// letra con acento ocupa 2 y un emoji 4 o más) y al menos una letra y un
+/// número.
 ///
 /// Devuelve `null`, [CodigoValidacion.passwordMuyCorta],
-/// [CodigoValidacion.passwordSinLetra] o [CodigoValidacion.passwordSinNumero].
+/// [CodigoValidacion.contrasenaMuyLarga], [CodigoValidacion.passwordSinLetra]
+/// o [CodigoValidacion.passwordSinNumero].
 String? validarPassword(String password) {
   if (password.runes.length < longitudMinimaPassword) {
     return CodigoValidacion.passwordMuyCorta;
+  }
+  if (utf8.encode(password).length > bytesMaximosPassword) {
+    return CodigoValidacion.contrasenaMuyLarga;
   }
   if (!_letra.hasMatch(password)) return CodigoValidacion.passwordSinLetra;
   if (!_numero.hasMatch(password)) return CodigoValidacion.passwordSinNumero;
