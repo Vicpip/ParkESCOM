@@ -73,9 +73,9 @@ aplica migraciones. Una migración ya aplicada no se edita: los cambios van en u
 ```bash
 cd backend
 dart run bin/seed_usuarios.dart    # cuentas de demostración con la contraseña de SEED_PASSWORD (idempotente)
-dart_frog dev --port 8081          # API en http://localhost:8081
+dart_frog dev --port 8090          # API en http://localhost:8090
 
-curl -X POST http://localhost:8081/auth/login -H "Content-Type: application/json"   -d '{"correo": "demo.admin@ipn.mx", "password": "<SEED_PASSWORD>"}'
+curl -X POST http://localhost:8090/auth/login -H "Content-Type: application/json"   -d '{"correo": "demo.admin@ipn.mx", "password": "<SEED_PASSWORD>"}'
 ```
 
 Cuentas de demostración: `demo.admin@ipn.mx`, `demo.guardia@ipn.mx`, `demo.usuario1@alumno.ipn.mx` y

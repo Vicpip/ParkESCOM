@@ -56,7 +56,7 @@ cd backend && dart pub get         # [listo]
 dart run bin/migrate.dart          # [listo] aplica las migraciones pendientes de db/migrations
 dart run bin/migrate.dart --seed   # [listo] además aplica los catálogos de db/seeds (idempotente)
 dart run bin/seed_usuarios.dart    # [listo] cuentas de demostración con la contraseña de SEED_PASSWORD (idempotente)
-dart_frog dev --port 8081          # [listo] API en http://localhost:8081 con las rutas de /auth
+dart_frog dev --port 8090          # [listo] API en http://localhost:8090 (/auth, /archivos, /perfil)
 dart test                          # [listo] test/db y test/routes contra DATABASE_URL_TEST (la base se recrea)
 dart analyze                       # [listo]
 
@@ -75,13 +75,22 @@ El backend lee las variables del entorno del proceso y, si faltan, del `.env` de
 Para arrancar, la API exige `DATABASE_URL`, `JWT_ACCESS_SECRET` (32 caracteres o más), `ALLOWED_EMAIL_DOMAINS` y
 `APP_WEB_URL`; si falta alguna se detiene con un mensaje claro (`backend/main.dart`).
 
+- **`ENTORNO`** es `desarrollo` o `produccion`; si falta se asume `produccion`. En local hay que poner
+  `ENTORNO=desarrollo` en el `.env`: sin `SMTP_HOST`, el enlace de recuperación se imprime en la consola de la API.
+  En `produccion` jamás se imprime un enlace ni un token, y sin `SMTP_HOST` la API no arranca.
+- **`SMTP_HOST`, `SMTP_PORT`** (587 por defecto), **`SMTP_USER`, `SMTP_PASSWORD` y `SMTP_FROM`** (remitente, obligatorio
+  si hay `SMTP_HOST`) configuran el envío de correo.
+- **`UPLOADS_DIR`** es opcional (`./uploads` por defecto, es decir `backend/uploads` en local; está en `.gitignore`).
+- Si `dart_frog dev` se cae al arrancar en una terminal no interactiva (`StdinException: Error setting terminal echo
+  mode`), usa `dart_frog build` y luego `PORT=8090 dart build/bin/server.dart` desde `backend/`.
+
 Cuentas de demostración de `seed_usuarios.dart` (todas activas, contraseña `SEED_PASSWORD`): `demo.admin@ipn.mx`,
 `demo.guardia@ipn.mx`, `demo.usuario1@alumno.ipn.mx` y `demo.usuario2@alumno.ipn.mx`.
 
 Las pruebas del backend corren un archivo a la vez (`backend/dart_test.yaml`) porque comparten la base de pruebas.
 
 Puertos en este equipo:
-- La API corre en el **8081** (`dart_frog dev --port 8081`) porque el 8080 está ocupado.
+- La API corre en el **8090** (`dart_frog dev --port 8090`) porque el 8080 y el 8081 están ocupados.
 - `POSTGRES_PORT` es opcional (5432 por defecto); en este equipo es **5433** y `DATABASE_URL` y `DATABASE_URL_TEST` usan ese mismo puerto.
 
 Si un comando de esta lista todavía no existe, créalo como parte de la fase que lo necesite y actualiza esta sección.
@@ -91,6 +100,7 @@ Si un comando de esta lista todavía no existe, créalo como parte de la fase qu
 **shared:** `otp`, `uuid`, `dart_jsonwebtoken`, `meta`, `test`.
 
 **backend:** `dart_frog`, `postgres`, `bcrypt`, `crypto`, `dart_jsonwebtoken`, `mailer`, `uuid`, `shared` (path), `test`, `mocktail`.
+(`image` no hizo falta: el tipo de una foto se reconoce por sus primeros bytes, sin decodificarla.)
 
 **app:** `flutter_riverpod`, `go_router`, `dio`, `flutter_secure_storage`, `sqflite_sqlcipher`, `workmanager`,
 `flutter_local_notifications`, `qr_flutter`, `otp`, `flutter_datawedge`, `mobile_scanner`, `nfc_manager`,
@@ -244,7 +254,10 @@ Fase 2 y toda pantalla con datos remotos usa los cuatro estados: carga, vacío, 
 
 ## Backend (Dart Frog)
 
-- Rutas en `backend/routes/`, agrupadas por recurso (`/auth`, `/vehiculos`, `/solicitudes`, `/credenciales`, `/movimientos`, `/sync`, `/pases`, `/incidentes`, `/admin`).
+- Rutas en `backend/routes/`, agrupadas por recurso (`/auth`, `/archivos`, `/perfil`, `/vehiculos`, `/solicitudes`, `/credenciales`, `/movimientos`, `/sync`, `/pases`, `/incidentes`, `/admin`).
+- Una ruta que no existe responde 404 `RUTA_NO_ENCONTRADA` con el formato uniforme. Lo hace el middleware
+  `rutaNoEncontrada` (`backend/lib/middleware/ruta_no_encontrada.dart`), que reconoce por identidad el centinela
+  `Router.routeNotFound` de Dart Frog; va por dentro del de CORS, que copia la respuesta.
 - Middleware de autenticación JWT y de autorización por rol; ninguna ruta protegida sin él.
 - SQL siempre parametrizado. Nunca concatenar valores en consultas.
 - Operaciones de varias tablas (registrar movimiento + abrir/cerrar estancia) en una transacción.
@@ -272,9 +285,12 @@ Rutas en `backend/routes/auth/`; cuerpos y respuestas en JSON con nombres en `sn
 | `POST /auth/logout` | `refresh_token` | 204 (también si el token ya no servía) |
 | `GET /auth/me` | (token de acceso) | 200 con `usuario` |
 | `POST /auth/cambiar-password` | `password_actual`, `password_nueva` (token de acceso) | 200 con tokens y `usuario` |
+| `POST /auth/olvide-password` | `correo` | 200 con `mensaje`, idéntico exista o no la cuenta |
+| `POST /auth/restablecer` | `token`, `password_nueva` | 200 con `mensaje` (no abre sesión) |
 
 "Tokens" es `access_token`, `refresh_token` y `expira_en` (segundos del token de acceso). `usuario` trae `id`, `nombre`,
-`correo`, `boleta_o_empleado`, `rol` y `estado`; nunca el hash.
+`correo`, `boleta_o_empleado`, `rol`, `estado`, `foto_titular_id` y `foto_credencial_id` (estos dos pueden ser `null`);
+nunca el hash.
 
 - **Token de acceso:** JWT HS256 de 15 min con los claims `sub` (id del usuario) y `rol`. No se consulta contra la
   base en cada petición: un cambio de rol o una baja tardan hasta 15 min en surtir efecto en las rutas protegidas.
@@ -287,6 +303,19 @@ Rutas en `backend/routes/auth/`; cuerpos y respuestas en JSON con nombres en `sn
   sesión no distingue entre pendiente y activo: una ruta que exija cuenta `activo` debe comprobarlo ella misma.
 - **Validación de campos:** los validadores viven en `shared/lib/src/validacion/` y devuelven códigos, no textos; la
   app los traduce a mensajes. La lista de dominios de correo sale de `ALLOWED_EMAIL_DOMAINS`.
+- **Contraseña:** mínimo 8 caracteres, al menos una letra y un número, y **máximo 72 bytes en UTF-8** (bcrypt ignora
+  lo que pasa de ahí). El tope es de bytes, no de caracteres: una letra con acento ocupa 2 y un emoji 4 o más. Aplica
+  en registro, cambio y restablecimiento.
+- **Recuperación de contraseña:** `olvide-password` crea un token opaco de 32 bytes (base64url), guarda solo su SHA-256
+  en `restablecimientos` con 15 min de vigencia y envía el enlace `${APP_WEB_URL}/restablecer?token=...` (W11). Pedir
+  un enlace nuevo invalida los anteriores de esa cuenta. Una cuenta de `baja` no recibe correo. El correo se envía sin
+  esperar al SMTP, para que la respuesta tarde lo mismo con una cuenta real que con una inexistente; si el envío
+  falla, en consola solo queda el tipo de excepción. `restablecer` marca el token como usado y revoca todas las
+  sesiones; si la contraseña nueva no pasa la validación responde `VALIDACION` y el enlace sigue sirviendo.
+- **Correo:** todo sale por la interfaz `EnviadorCorreo` (`backend/lib/correo/enviador_correo.dart`): `EnviadorSmtp`
+  (paquete `mailer`), `EnviadorConsola` (solo desarrollo sin `SMTP_HOST`) y `EnviadorFalso` en las pruebas.
+- **Límite de recuperación:** 3 solicitudes por correo por hora, exista o no la cuenta. En memoria, igual que el de
+  inicio de sesión.
 - **Límite de intentos:** 5 inicios de sesión fallidos por correo en 15 min. Vive en memoria
   (`LimitadorIntentos`): se pierde al reiniciar la API y no se comparte entre instancias (hay una sola).
 
@@ -299,18 +328,79 @@ Códigos de error (`error.code`):
 | `CORREO_YA_REGISTRADO` | 409 | Registro con un correo existente |
 | `BOLETA_YA_REGISTRADA` | 409 | Registro con una boleta o número de empleado existente |
 | `CREDENCIALES_INVALIDAS` | 401 | Login fallido; el mismo error si el correo no existe, la contraseña no coincide o la cuenta está de baja |
-| `DEMASIADOS_INTENTOS` | 429 | Sexto intento tras 5 fallidos en 15 min |
+| `DEMASIADOS_INTENTOS` | 429 | Sexto intento tras 5 fallidos en 15 min; o 4.ª solicitud de recuperación del mismo correo en una hora |
+| `ENLACE_INVALIDO` | 400 | Token de recuperación inexistente, usado o vencido (no se distingue cuál) |
 | `REFRESH_INVALIDO` | 401 | Refresh token desconocido, vencido, ya usado o revocado |
 | `NO_AUTENTICADO` | 401 | Falta el token de acceso, no es válido o venció |
 | `SIN_PERMISO` | 403 | El rol no alcanza para la ruta |
 | `PASSWORD_ACTUAL_INCORRECTA` | 400 | Cambio de contraseña con la actual equivocada |
-| `SOLICITUD_INVALIDA` | 400 | El cuerpo no es un objeto JSON |
+| `SOLICITUD_INVALIDA` | 400 | El cuerpo no es un objeto JSON (o, en `POST /archivos`, no es `multipart/form-data`) |
+| `RUTA_NO_ENCONTRADA` | 404 | La ruta no existe |
 | `METODO_NO_PERMITIDO` | 405 | Método HTTP distinto al de la ruta |
 | `ERROR_INTERNO` | 500 | Excepción no controlada |
 
 Códigos por campo dentro de `VALIDACION`: `NOMBRE_VACIO`, `NOMBRE_MUY_LARGO`, `CORREO_INVALIDO`, `DOMINIO_NO_PERMITIDO`,
 `BOLETA_O_EMPLEADO_INVALIDO` (`BOLETA_INVALIDA` y `NUMERO_EMPLEADO_INVALIDO` si se validan por separado),
-`PASSWORD_MUY_CORTA`, `PASSWORD_SIN_LETRA`, `PASSWORD_SIN_NUMERO`.
+`PASSWORD_MUY_CORTA`, `CONTRASENA_MUY_LARGA`, `PASSWORD_SIN_LETRA`, `PASSWORD_SIN_NUMERO`.
+
+### Archivos y perfil (Fase 1C)
+
+| Ruta | Cuerpo | Respuesta |
+| --- | --- | --- |
+| `POST /archivos` | `multipart/form-data` con `archivo` y `proposito` (token de acceso) | 201 con `id` |
+| `GET /archivos/{id}` | (token de acceso) | 200 con el binario |
+| `GET /perfil` | (token de acceso) | 200 con `usuario` |
+| `PATCH /perfil` | cualquiera de `nombre`, `foto_titular_id`, `foto_credencial_id` (token de acceso) | 200 con `usuario` |
+
+- **Subida:** `proposito` es `perfil`, `credencial_escolar`, `vehiculo`, `placa` o `incidente`. Máximo 2 MB; el
+  `Content-Length` se revisa antes de leer el cuerpo (con 16 KB de margen para el formulario) y el tamaño exacto del
+  archivo después. El tipo sale de los **primeros bytes** del contenido (JPEG `FF D8 FF`, PNG `89 50 4E 47 0D 0A 1A 0A`),
+  nunca del nombre ni del `Content-Type` del cliente.
+- **En disco:** `UPLOADS_DIR/<uuid>.jpg|png`, donde el UUID es el `id` del archivo. El nombre original se ignora por
+  completo. `AlmacenArchivos.resolver` solo acepta exactamente esa forma de nombre, así que ninguna ruta sale de
+  `UPLOADS_DIR` aunque venga del cliente o de un renglón alterado (ese caso responde 404).
+- **Descarga:** `Content-Type` real, `Cache-Control: private, max-age=3600` y `X-Content-Type-Options: nosniff`.
+  Permisos: `credencial_escolar` → solo el dueño o admin; los demás propósitos → el dueño, admin o guardia. El rol sale
+  del token de acceso.
+- **Perfil:** `PATCH` solo toca los campos presentes; una foto en `null` se quita. `foto_titular_id` exige un archivo
+  propio con propósito `perfil` y `foto_credencial_id` uno con `credencial_escolar`; si no, 422 `VALIDACION` con
+  `FOTO_INVALIDA` en ese campo (el mismo código si el archivo no existe, es ajeno o tiene otro propósito). Si un
+  campo falla no se aplica ninguno.
+
+| Código | HTTP | Cuándo |
+| --- | --- | --- |
+| `ARCHIVO_MUY_GRANDE` | 413 | La petición o el archivo pasan de 2 MB |
+| `ARCHIVO_INVALIDO` | 415 | El contenido no empieza como JPEG ni PNG (incluye el archivo vacío) |
+| `LONGITUD_REQUERIDA` | 411 | `POST /archivos` sin `Content-Length` (envío por trozos) |
+| `ARCHIVO_NO_ENCONTRADO` | 404 | El id no existe, no es un UUID o el archivo ya no está en disco |
+| `SIN_PERMISO` | 403 | El usuario no puede ver ese archivo |
+
+Códigos por campo dentro de `VALIDACION`: `ARCHIVO_FALTANTE`, `PROPOSITO_INVALIDO`, `FOTO_INVALIDA`.
+
+### Limitaciones conocidas
+
+- **Límites de intentos en memoria y por correo:** el de inicio de sesión (5 fallidos en 15 min) y el de recuperación
+  (3 por hora) se pierden al reiniciar la API y no se comparten entre instancias (hay una sola). Cuentan por correo,
+  no por IP: alguien puede bloquear temporalmente el inicio de sesión o la recuperación de una cuenta ajena, y probar
+  una contraseña contra muchos correos no se frena.
+- **Baja o cambio de rol tarda hasta 15 min** en surtir efecto en las rutas protegidas, porque el token de acceso no
+  se consulta contra la base. Esto incluye el permiso de guardia o admin para ver fotos en `GET /archivos/{id}`.
+- **La caseta no se ve afectada** por lo anterior: valida con su lista local y recibe bajas y revocaciones en su
+  siguiente sincronización.
+- **Archivos sin referencia:** una foto subida que nunca se asigna a un perfil, vehículo o incidente se queda en
+  disco y en `archivos`; no hay limpieza automática.
+
+### Notas para la Fase 2 (app)
+
+- `POST /auth/cambiar-password` devuelve tokens nuevos y revoca los anteriores: la app **debe guardarlos** en ese
+  momento o la sesión se cae en la siguiente renovación.
+- El enlace de recuperación abre una página web (W11, `/restablecer?token=...`), así que la app web usa **estrategia
+  de URL por ruta** (`usePathUrlStrategy`, no hash) y el servidor web (Nginx) debe devolver `index.html` en rutas
+  desconocidas.
+- `POST /auth/restablecer` no abre sesión: W11 manda al inicio de sesión al terminar.
+- Las fotos se piden con el token de acceso en `Authorization` (no hay URL pública): `cached_network_image` necesita
+  recibir esa cabecera.
+- El código nuevo de contraseña es `CONTRASENA_MUY_LARGA` (los demás siguen siendo `PASSWORD_*`).
 
 ## Base de datos (PostgreSQL)
 
@@ -360,6 +450,11 @@ Fase 1A.1 (`002_ajustes.sql`):
 - **Puertas sin restricción por tipo:** todo tipo de vehículo entra y sale por cualquiera de las dos puertas; un
   vehículo puede entrar por la Puerta A y salir por la Puerta B. Ambas se siembran con los cuatro tipos.
 
+Fase 1C (`004_archivos_proposito.sql`):
+- **`archivos.proposito`** (`proposito_archivo`: `perfil`, `credencial_escolar`, `vehiculo`, `placa`, `incidente`),
+  obligatorio. Decide quién puede descargar el archivo y a qué campo se puede asignar. `archivos.ruta` guarda la ruta
+  relativa a `UPLOADS_DIR` (`<id>.jpg` o `<id>.png`).
+
 ## Motor de validación (shared)
 
 Función pura en `shared/`, sin IO, con pruebas unitarias para cada rama. Recibe la lectura, la lista de acceso y el estado local; devuelve `Aceptado` o `Rechazado(motivo)`. Orden obligatorio:
@@ -407,7 +502,7 @@ Función pura en `shared/`, sin IO, con pruebas unitarias para cada rama. Recibe
 
 ## Estado por fases
 
-- [ ] Fase 1 — base: monorepo, Docker, migración inicial, API de auth (5–11 oct)
+- [x] Fase 1 — base: monorepo, Docker, migración inicial, API de auth (5–11 oct)
 - [ ] Fase 2 — app de usuario: M1–M10, M13 (12–18 oct)
 - [ ] Fase 3 — panel web: W2–W5, W7–W11 (19–23 oct)
 - [ ] Fase 4 — caseta y motor de validación: G1–G8 (24–31 oct)
