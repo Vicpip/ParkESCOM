@@ -89,6 +89,8 @@ void main() {
           'boleta_o_empleado': datos['boleta_o_empleado'],
           'rol': 'usuario',
           'estado': 'pendiente',
+          'foto_titular_id': null,
+          'foto_credencial_id': null,
         });
         expect(_objeto(respuesta)['expira_en'], 900);
 
@@ -634,6 +636,89 @@ void main() {
         );
       },
     );
+  });
+
+  group('rutas inexistentes', () {
+    test('responden 404 RUTA_NO_ENCONTRADA con el formato uniforme', () async {
+      for (final ruta in ['/ruta-que-no-existe', '/auth/no-existe', '/']) {
+        final respuesta = await api.get(ruta);
+        _esperarError(respuesta, HttpStatus.notFound, 'RUTA_NO_ENCONTRADA');
+        expect(
+          respuesta.cabeceras.contentType?.mimeType,
+          ContentType.json.mimeType,
+        );
+      }
+      _esperarError(
+        await api.post('/ruta-que-no-existe', cuerpo: {'a': 1}),
+        HttpStatus.notFound,
+        'RUTA_NO_ENCONTRADA',
+      );
+    });
+
+    test(
+      'con el origen del panel web conserva las cabeceras de CORS',
+      () async {
+        final respuesta = await api.pedir(
+          'GET',
+          '/ruta-que-no-existe',
+          cabeceras: {'Origin': origenWebDePruebas},
+        );
+        _esperarError(respuesta, HttpStatus.notFound, 'RUTA_NO_ENCONTRADA');
+        expect(
+          respuesta.cabeceras.value('access-control-allow-origin'),
+          origenWebDePruebas,
+        );
+      },
+    );
+  });
+
+  group('contraseña de más de 72 bytes', () {
+    // 40 caracteres, 78 bytes en UTF-8.
+    final larga = 'a1${'ñ' * 30}${'é' * 8}';
+
+    test('el registro la rechaza con CONTRASENA_MUY_LARGA', () async {
+      final respuesta = await api.post(
+        '/auth/registro',
+        cuerpo: {...datosNuevos(), 'password': larga},
+      );
+      _esperarError(
+        respuesta,
+        HttpStatus.unprocessableEntity,
+        'VALIDACION',
+      );
+      expect((_objeto(respuesta)['error'] as Map)['campos'], {
+        'password': 'CONTRASENA_MUY_LARGA',
+      });
+    });
+
+    test('el cambio de contraseña la rechaza y deja la anterior', () async {
+      final datos = await registrar();
+      final sesion = await login(datos['correo']!);
+      final respuesta = await api.post(
+        '/auth/cambiar-password',
+        token: _acceso(sesion),
+        cuerpo: {'password_actual': _password, 'password_nueva': larga},
+      );
+      _esperarError(
+        respuesta,
+        HttpStatus.unprocessableEntity,
+        'VALIDACION',
+      );
+      expect((_objeto(respuesta)['error'] as Map)['campos'], {
+        'password_nueva': 'CONTRASENA_MUY_LARGA',
+      });
+      expect((await login(datos['correo']!)).estado, HttpStatus.ok);
+    });
+
+    test('una de exactamente 72 bytes sí se acepta', () async {
+      final justa = 'a1${'x' * 70}';
+      final datos = {...datosNuevos(), 'password': justa};
+      expect(
+        (await api.post('/auth/registro', cuerpo: datos)).estado,
+        HttpStatus.created,
+      );
+      expect((await login(datos['correo']!, justa)).estado, HttpStatus.ok);
+    });
   });
 
   test('el seed de usuarios de demostración es idempotente', () async {

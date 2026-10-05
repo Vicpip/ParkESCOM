@@ -11,9 +11,11 @@ dependencies:
   crypto: ^3.0.7
   dart_frog: ^1.1.0
   dart_jsonwebtoken: ^3.4.1
+  mailer: ^6.0.0
   postgres: ^3.5.19
   shared:
     path: ../shared
+  uuid: ^4.0.0
 
 dev_dependencies:
   dart_frog_lint: ^0.1.0
