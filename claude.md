@@ -44,27 +44,33 @@ parkescom/
 
 ```bash
 # Base de datos local
-docker compose up -d db
+docker compose up -d db            # [listo] PostgreSQL 16 en 127.0.0.1 (puerto POSTGRES_PORT, 5432 por defecto)
 
 # Paquete compartido
-cd shared && dart pub get && dart test
+cd shared && dart pub get          # [listo]
+dart analyze                       # [listo]
+dart test                          # todavía sin pruebas: llegan con el motor de validación (Fase 4)
 
 # Backend
-cd backend && dart pub get
-dart run bin/migrate.dart          # aplica migraciones pendientes (se crea en Fase 1)
-dart_frog dev                      # API en http://localhost:8080
-dart test
+cd backend && dart pub get         # [listo]
+dart run bin/migrate.dart          # [listo] aplica las migraciones pendientes de db/migrations
+dart run bin/migrate.dart --seed   # [listo] además aplica los catálogos de db/seeds (idempotente)
+dart_frog dev                      # API en http://localhost:8080 (por ahora solo la ruta de ejemplo)
+dart test                          # [listo] incluye test/db contra DATABASE_URL_TEST (la base se recrea)
+dart analyze                       # [listo]
 
 # App
-cd app && flutter pub get
-flutter analyze
-flutter test
+cd app && flutter pub get          # [listo]
+flutter analyze                    # [listo]
+flutter test                       # [listo] solo la prueba de la plantilla
 flutter run                        # Android (MC33xR, ET401 o celular)
 flutter run -d chrome              # panel web
 
 # Formato (antes de cada commit)
 dart format .
 ```
+
+El backend lee las variables del entorno del proceso y, si faltan, del `.env` de la raíz (`backend/lib/config/entorno.dart`).
 
 Si un comando de esta lista todavía no existe, créalo como parte de la fase que lo necesite y actualiza esta sección.
 
