@@ -10,6 +10,15 @@ import 'package:test/test.dart';
 /// SQLSTATE de violación de unicidad.
 const _unicidad = '23505';
 
+/// SQLSTATE de violación de un CHECK.
+const _check = '23514';
+
+/// SQLSTATE de violación de NOT NULL.
+const _noNulo = '23502';
+
+/// SQLSTATE de un valor que no pertenece al enum.
+const _valorInvalido = '22P02';
+
 /// Borra y vuelve a crear la base de pruebas para empezar desde cero.
 Future<void> _recrearBase(String urlPruebas) async {
   final uri = Uri.parse(urlPruebas);
@@ -70,16 +79,52 @@ void main() {
     );
   }
 
-  Future<String> crearVehiculo() =>
-      insertar("INSERT INTO vehiculos (tipo) VALUES ('auto')");
+  Future<String> crearVehiculo({String? placa, String estado = 'pendiente'}) =>
+      insertar(
+        'INSERT INTO vehiculos (tipo, placa, estado) '
+        "VALUES ('auto', @placa:text, CAST(@estado:text AS estado_registro))",
+        {'placa': placa, 'estado': estado},
+      );
 
-  Future<String> crearMovimiento(String vehiculoId, {String? id}) => insertar(
+  Future<String> crearMovimiento(
+    String? vehiculoId, {
+    String? id,
+    String? pase,
+    String? puerta,
+    String sentido = 'entrada',
+  }) => insertar(
     'INSERT INTO movimientos '
-    '(id, vehiculo_id, puerta_id, sentido, hora_dispositivo, fuente, '
+    '(id, vehiculo_id, pase_id, puerta_id, sentido, hora_dispositivo, fuente, '
     'resultado) VALUES (coalesce(@id:uuid, gen_random_uuid()), '
-    "@vehiculo:uuid, @puerta:uuid, 'entrada', now(), 'rfid', 'aceptado')",
-    {'id': id, 'vehiculo': vehiculoId, 'puerta': puertaId},
+    '@vehiculo:uuid, @pase:uuid, @puerta:uuid, '
+    "CAST(@sentido:text AS sentido), now(), 'rfid', 'aceptado')",
+    {
+      'id': id,
+      'vehiculo': vehiculoId,
+      'pase': pase,
+      'puerta': puerta ?? puertaId,
+      'sentido': sentido,
+    },
   );
+
+  Future<String> crearPase() async => insertar(
+    'INSERT INTO pases (solicitante_id, visitante, ventana_inicio, '
+    "ventana_fin) VALUES (@solicitante:uuid, 'Visitante de prueba', now(), "
+    "now() + interval '2 hours')",
+    {'solicitante': await crearUsuario()},
+  );
+
+  /// Abre una estancia con un movimiento de entrada nuevo.
+  Future<String> abrirEstancia({String? vehiculo, String? pase}) async =>
+      insertar(
+        'INSERT INTO estancias (vehiculo_id, pase_id, entrada_id) '
+        'VALUES (@vehiculo:uuid, @pase:uuid, @entrada:uuid)',
+        {
+          'vehiculo': vehiculo,
+          'pase': pase,
+          'entrada': await crearMovimiento(vehiculo, pase: pase),
+        },
+      );
 
   Future<String> crearCredencial(
     String vehiculoId,
@@ -114,21 +159,16 @@ void main() {
       return filas.single[0]! as int;
     }
 
-    expect(await contar('schema_migrations'), 1);
+    expect(await contar('schema_migrations'), 2);
     expect(await contar('puertas'), 2);
     expect(await contar('zonas'), 3);
   });
 
   test('anti-passback: una segunda estancia abierta falla', () async {
     final vehiculo = await crearVehiculo();
-    Future<String> abrirEstancia() async => insertar(
-      'INSERT INTO estancias (vehiculo_id, entrada_id) '
-      'VALUES (@vehiculo:uuid, @entrada:uuid)',
-      {'vehiculo': vehiculo, 'entrada': await crearMovimiento(vehiculo)},
-    );
 
-    await abrirEstancia();
-    await expectLater(abrirEstancia(), _fallaCon(_unicidad));
+    await abrirEstancia(vehiculo: vehiculo);
+    await expectLater(abrirEstancia(vehiculo: vehiculo), _fallaCon(_unicidad));
   });
 
   test('una sola credencial activa por (tipo, identificador)', () async {
@@ -184,7 +224,7 @@ void main() {
       for (var i = 0; i < 3; i++) {
         final filas = await db.execute(
           'INSERT INTO incidentes (tipo, descripcion) '
-          "VALUES ('prueba', 'Incidente de prueba') RETURNING folio",
+          "VALUES ('otro', 'Incidente de prueba') RETURNING folio",
         );
         folios.add(filas.single[0]! as int);
       }
@@ -221,4 +261,124 @@ void main() {
       expect((await actualizadoEn()).isAfter(antes), isTrue);
     },
   );
+
+  test('la placa solo es única entre vehículos que no están de baja', () async {
+    await crearVehiculo(placa: 'ABC-123', estado: 'baja');
+
+    await expectLater(
+      crearVehiculo(placa: 'ABC-123', estado: 'activo'),
+      completes,
+    );
+    await expectLater(
+      crearVehiculo(placa: 'ABC-123', estado: 'activo'),
+      _fallaCon(_unicidad),
+    );
+    await expectLater(crearVehiculo(placa: 'ABC-123'), _fallaCon(_unicidad));
+  });
+
+  test('una credencial sin vehículo falla', () async {
+    await expectLater(
+      insertar(
+        'INSERT INTO credenciales (usuario_id, tipo, identificador) '
+        "VALUES (@usuario:uuid, 'tag_propio', 'E2801160600100')",
+        {'usuario': await crearUsuario()},
+      ),
+      _fallaCon(_noNulo),
+    );
+  });
+
+  test('un QR sin usuario falla; con usuario y vehículo se acepta', () async {
+    final vehiculo = await crearVehiculo();
+    Future<String> crearQr(String? usuario) => insertar(
+      'INSERT INTO credenciales (vehiculo_id, usuario_id, tipo, '
+      "identificador) VALUES (@vehiculo:uuid, @usuario:uuid, 'qr', @id)",
+      {'vehiculo': vehiculo, 'usuario': usuario, 'id': 'qr-$vehiculo'},
+    );
+
+    await expectLater(crearQr(null), _fallaCon(_check));
+    await expectLater(crearQr(await crearUsuario()), completes);
+  });
+
+  test('una estancia exige exactamente un vehículo o un pase', () async {
+    final vehiculo = await crearVehiculo();
+    final pase = await crearPase();
+    Future<String> abrirCon({String? vehiculo, String? pase}) async => insertar(
+      'INSERT INTO estancias (vehiculo_id, pase_id, entrada_id) '
+      'VALUES (@vehiculo:uuid, @pase:uuid, @entrada:uuid)',
+      {
+        'vehiculo': vehiculo,
+        'pase': pase,
+        'entrada': await crearMovimiento(null),
+      },
+    );
+
+    await expectLater(abrirCon(), _fallaCon(_check));
+    await expectLater(
+      abrirCon(vehiculo: vehiculo, pase: pase),
+      _fallaCon(_check),
+    );
+  });
+
+  test('un pase con estancia abierta no puede abrir otra', () async {
+    final pase = await crearPase();
+
+    await abrirEstancia(pase: pase);
+    await expectLater(abrirEstancia(pase: pase), _fallaCon(_unicidad));
+  });
+
+  test('un incidente con un tipo fuera del enum falla', () async {
+    await expectLater(
+      db.execute(
+        'INSERT INTO incidentes (tipo, descripcion) '
+        "VALUES ('prueba', 'Incidente de prueba')",
+      ),
+      _fallaCon(_valorInvalido),
+    );
+  });
+
+  test('un vehículo entra por la Puerta A y sale por la Puerta B', () async {
+    final puertas = await db.execute(
+      'SELECT nombre, id::text, tipos_vehiculo::text[] FROM puertas '
+      'ORDER BY nombre',
+    );
+    expect(puertas.map((fila) => fila[0]), ['Puerta A', 'Puerta B']);
+    for (final fila in puertas) {
+      expect(
+        fila[2],
+        unorderedEquals(['auto', 'moto', 'bici', 'scooter']),
+        reason: '${fila[0]} acepta todos los tipos de vehículo',
+      );
+    }
+    final puertaB = puertas.last[1]! as String;
+
+    final vehiculo = await crearVehiculo();
+    final estancia = await abrirEstancia(vehiculo: vehiculo);
+    final salida = await crearMovimiento(
+      vehiculo,
+      puerta: puertaB,
+      sentido: 'salida',
+    );
+    await db.execute(
+      Sql.named(
+        'UPDATE estancias SET salida_id = @salida:uuid WHERE id = @id:uuid',
+      ),
+      parameters: {'salida': salida, 'id': estancia},
+    );
+
+    final filas = await db.execute(
+      Sql.named(
+        'SELECT pe.nombre, ps.nombre FROM estancias e '
+        'JOIN movimientos me ON me.id = e.entrada_id '
+        'JOIN puertas pe ON pe.id = me.puerta_id '
+        'JOIN movimientos ms ON ms.id = e.salida_id '
+        'JOIN puertas ps ON ps.id = ms.puerta_id '
+        'WHERE e.id = @id:uuid',
+      ),
+      parameters: {'id': estancia},
+    );
+    expect(filas.single, ['Puerta A', 'Puerta B']);
+
+    // Con la estancia cerrada, el vehículo puede volver a entrar.
+    await expectLater(abrirEstancia(vehiculo: vehiculo), completes);
+  });
 }
