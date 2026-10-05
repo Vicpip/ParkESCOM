@@ -132,7 +132,7 @@ void main() {
       return filas.single[0]! as int;
     }
 
-    expect(await contar('schema_migrations'), 3);
+    expect(await contar('schema_migrations'), 4);
     expect(await contar('puertas'), 2);
     expect(await contar('zonas'), 3);
   });
@@ -383,5 +383,52 @@ void main() {
 
     // Con la estancia cerrada, el vehículo puede volver a entrar.
     await expectLater(abrirEstancia(vehiculo: vehiculo), completes);
+  });
+
+  group('archivos.proposito', () {
+    var archivos = 0;
+
+    Future<String> crearArchivo(String? proposito) {
+      archivos++;
+      return insertar(
+        'INSERT INTO archivos (ruta, tipo_mime, tamano_bytes, proposito) '
+        "VALUES (@ruta, 'image/png', 10, "
+        'CAST(@proposito:text AS proposito_archivo))',
+        {'ruta': 'esquema-$archivos.png', 'proposito': proposito},
+      );
+    }
+
+    test('el enum tiene exactamente los cinco propósitos', () async {
+      final filas = await db.execute(
+        'SELECT unnest(enum_range(NULL::proposito_archivo))::text',
+      );
+      expect(filas.map((fila) => fila[0]), [
+        'perfil',
+        'credencial_escolar',
+        'vehiculo',
+        'placa',
+        'incidente',
+      ]);
+    });
+
+    test('acepta cada propósito del enum', () async {
+      for (final proposito in [
+        'perfil',
+        'credencial_escolar',
+        'vehiculo',
+        'placa',
+        'incidente',
+      ]) {
+        await expectLater(crearArchivo(proposito), completes);
+      }
+    });
+
+    test('un archivo sin propósito falla', () async {
+      await expectLater(crearArchivo(null), _fallaCon(_noNulo));
+    });
+
+    test('un propósito fuera del enum falla', () async {
+      await expectLater(crearArchivo('otro'), _fallaCon(_valorInvalido));
+    });
   });
 }
