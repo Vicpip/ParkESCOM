@@ -152,7 +152,7 @@ void main() {
       expect(validarPassword('a1${'x' * 70}'), isNull);
       expect(
         validarPassword('a1${'x' * 71}'),
-        CodigoValidacion.contrasenaMuyLarga,
+        CodigoValidacion.passwordMuyLarga,
       );
     });
 
@@ -161,20 +161,20 @@ void main() {
       final conAcentos = 'a1${'ñ' * 30}${'é' * 8}';
       expect(conAcentos.length, lessThan(72));
       expect(utf8.encode(conAcentos).length, 78);
-      expect(validarPassword(conAcentos), CodigoValidacion.contrasenaMuyLarga);
+      expect(validarPassword(conAcentos), CodigoValidacion.passwordMuyLarga);
 
       // 20 caracteres visibles: "a1" y 18 emojis de 4 bytes cada uno.
       final conEmojis = 'a1${'🚗' * 18}';
       expect(conEmojis.runes.length, 20);
       expect(conEmojis.length, lessThan(72));
       expect(utf8.encode(conEmojis).length, 74);
-      expect(validarPassword(conEmojis), CodigoValidacion.contrasenaMuyLarga);
+      expect(validarPassword(conEmojis), CodigoValidacion.passwordMuyLarga);
 
       // Mezcla de acentos y emojis con menos de 72 caracteres.
       final mezcla = 'Contraseña1${'á' * 20}${'🔒' * 6}';
       expect(mezcla.length, lessThan(72));
       expect(utf8.encode(mezcla).length, greaterThan(72));
-      expect(validarPassword(mezcla), CodigoValidacion.contrasenaMuyLarga);
+      expect(validarPassword(mezcla), CodigoValidacion.passwordMuyLarga);
     });
 
     test('acentos y emojis que caben en 72 bytes se aceptan', () {

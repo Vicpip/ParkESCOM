@@ -290,7 +290,7 @@ void main() {
 
         // 40 caracteres, 78 bytes en UTF-8.
         final casos = {
-          'a1${'ñ' * 30}${'é' * 8}': 'CONTRASENA_MUY_LARGA',
+          'a1${'ñ' * 30}${'é' * 8}': 'PASSWORD_MUY_LARGA',
           'corta1': 'PASSWORD_MUY_CORTA',
           'sinnumeros': 'PASSWORD_SIN_NUMERO',
         };

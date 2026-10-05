@@ -676,7 +676,7 @@ void main() {
     // 40 caracteres, 78 bytes en UTF-8.
     final larga = 'a1${'ñ' * 30}${'é' * 8}';
 
-    test('el registro la rechaza con CONTRASENA_MUY_LARGA', () async {
+    test('el registro la rechaza con PASSWORD_MUY_LARGA', () async {
       final respuesta = await api.post(
         '/auth/registro',
         cuerpo: {...datosNuevos(), 'password': larga},
@@ -687,7 +687,7 @@ void main() {
         'VALIDACION',
       );
       expect((_objeto(respuesta)['error'] as Map)['campos'], {
-        'password': 'CONTRASENA_MUY_LARGA',
+        'password': 'PASSWORD_MUY_LARGA',
       });
     });
 
@@ -705,7 +705,7 @@ void main() {
         'VALIDACION',
       );
       expect((_objeto(respuesta)['error'] as Map)['campos'], {
-        'password_nueva': 'CONTRASENA_MUY_LARGA',
+        'password_nueva': 'PASSWORD_MUY_LARGA',
       });
       expect((await login(datos['correo']!)).estado, HttpStatus.ok);
     });

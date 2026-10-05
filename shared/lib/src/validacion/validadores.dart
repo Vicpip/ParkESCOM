@@ -74,14 +74,14 @@ String? validarBoletaOEmpleado(String valor) =>
 /// número.
 ///
 /// Devuelve `null`, [CodigoValidacion.passwordMuyCorta],
-/// [CodigoValidacion.contrasenaMuyLarga], [CodigoValidacion.passwordSinLetra]
+/// [CodigoValidacion.passwordMuyLarga], [CodigoValidacion.passwordSinLetra]
 /// o [CodigoValidacion.passwordSinNumero].
 String? validarPassword(String password) {
   if (password.runes.length < longitudMinimaPassword) {
     return CodigoValidacion.passwordMuyCorta;
   }
   if (utf8.encode(password).length > bytesMaximosPassword) {
-    return CodigoValidacion.contrasenaMuyLarga;
+    return CodigoValidacion.passwordMuyLarga;
   }
   if (!_letra.hasMatch(password)) return CodigoValidacion.passwordSinLetra;
   if (!_numero.hasMatch(password)) return CodigoValidacion.passwordSinNumero;

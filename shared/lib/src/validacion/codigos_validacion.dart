@@ -23,7 +23,7 @@ abstract final class CodigoValidacion {
   static const passwordMuyCorta = 'PASSWORD_MUY_CORTA';
 
   /// La contraseña ocupa más de 72 bytes en UTF-8 (el límite de bcrypt).
-  static const contrasenaMuyLarga = 'CONTRASENA_MUY_LARGA';
+  static const passwordMuyLarga = 'PASSWORD_MUY_LARGA';
 
   /// La contraseña no tiene ninguna letra.
   static const passwordSinLetra = 'PASSWORD_SIN_LETRA';
