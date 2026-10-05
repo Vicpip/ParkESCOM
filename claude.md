@@ -55,7 +55,7 @@ dart test                          # todavía sin pruebas: llegan con el motor d
 cd backend && dart pub get         # [listo]
 dart run bin/migrate.dart          # [listo] aplica las migraciones pendientes de db/migrations
 dart run bin/migrate.dart --seed   # [listo] además aplica los catálogos de db/seeds (idempotente)
-dart_frog dev                      # API en http://localhost:8080 (por ahora solo la ruta de ejemplo)
+dart_frog dev --port 8081          # API en http://localhost:8081 (todavía sin rutas: llegan con la API de auth)
 dart test                          # [listo] incluye test/db contra DATABASE_URL_TEST (la base se recrea)
 dart analyze                       # [listo]
 
@@ -72,6 +72,10 @@ dart format .
 
 El backend lee las variables del entorno del proceso y, si faltan, del `.env` de la raíz (`backend/lib/config/entorno.dart`).
 
+Puertos en este equipo:
+- La API corre en el **8081** (`dart_frog dev --port 8081`) porque el 8080 está ocupado.
+- `POSTGRES_PORT` es opcional (5432 por defecto); en este equipo es **5433** y `DATABASE_URL` y `DATABASE_URL_TEST` usan ese mismo puerto.
+
 Si un comando de esta lista todavía no existe, créalo como parte de la fase que lo necesite y actualiza esta sección.
 
 ## Dependencias permitidas
@@ -84,6 +88,8 @@ Si un comando de esta lista todavía no existe, créalo como parte de la fase qu
 `flutter_local_notifications`, `qr_flutter`, `otp`, `flutter_datawedge`, `mobile_scanner`, `nfc_manager`,
 `nfc_host_card_emulation`, `image_picker`, `flutter_image_compress`, `cached_network_image`, `geolocator`,
 `connectivity_plus`, `fl_chart`, `uuid`, `intl`, `shared` (path).
+
+**Dependencias de desarrollo (análisis estático):** `dart_frog_lint` (backend), `lints` (shared), `flutter_lints` (app).
 
 ## Arquitectura de la app (MVVM)
 
@@ -218,10 +224,10 @@ Fase 2 y toda pantalla con datos remotos usa los cuatro estados: carga, vacío, 
 - **Bajas:** el usuario nunca da de baja directamente; en M7 *solicita* la baja y Administración la ejecuta desde el panel web (W3, W4). Toda baja es lógica y el texto de confirmación dice que las credenciales dejan de funcionar en las casetas en su próxima sincronización y que el historial se conserva.
 
 **Notas por pantalla**
-- **M5:** debajo del QR solo el contador ("Se actualiza en 12 s"). El botón NFC dice que es para la caseta peatonal de motos, bicis y scooters.
+- **M5:** debajo del QR solo el contador ("Se actualiza en 12 s"). El botón NFC dice "Acerca tu celular al lector NFC de la caseta" (sin "peatonal").
 - **M7:** un auto muestra solo tag RFID y QR como credenciales; NFC aplica a motos, bicis y scooters. Aquí vive "Reportar credencial perdida".
 - **M8:** la sección "Fotografía de placa" solo aparece si el tipo es Moto. Sin etiqueta de estado de la placa (CDMX/EdoMex).
-- **G2:** el texto de lectores activos sale de la configuración de G1 y del equipo (MC33xR: RFID y lector QR; ET401: NFC y cámara).
+- **G2:** el texto de lectores activos sale de la configuración de G1 y del equipo (MC33xR: RFID y lector QR; ET401: NFC y cámara). Cada equipo (MC33xR o ET401) puede estar en cualquiera de las dos puertas; la puerta y el sentido salen de la configuración de G1.
 - **G3:** fondo verde o rojo a **pantalla completa**, cierre automático a los 3 s, sin texto cortado en el MC33xR (pantalla de 4"). El título va en dos líneas si no cabe.
 - **G7:** el paso de lectura cambia según el tipo elegido (UHF para tags en el MC33xR, NFC para calcomanía). No mostrar potencia ni rango de antena.
 - **G8:** sin botón "Regresar a modo caseta" (ya está la pestaña).
@@ -243,16 +249,48 @@ Fase 2 y toda pantalla con datos remotos usa los cuatro estados: carga, vacío, 
 ## Base de datos (PostgreSQL)
 
 - Llaves primarias UUID. Fechas en `timestamptz`. Nombres de tablas y columnas en español y `snake_case`.
-- Estados y tipos como `ENUM` de PostgreSQL.
+- Estados y tipos como `ENUM` de PostgreSQL. `estado_credencial` es `activa`, `perdida`, `revocada` o `vencida`
+  (no existe "pendiente": una credencial nace activa cuando Administración la emite o enrola).
 - Bajas lógicas (cambio de `estado`); nunca `DELETE` de datos de negocio.
 - Reglas garantizadas por la base:
   - **Anti-passback:** `CREATE UNIQUE INDEX ... ON estancias (vehiculo_id) WHERE salida_id IS NULL;`
+    y, para visitantes, el mismo índice sobre `(pase_id)`.
+  - **Estancias de un vehículo o de un pase:** `estancias` tiene `vehiculo_id` y `pase_id` opcionales, con un CHECK
+    de que exactamente uno de los dos tenga valor.
   - **Una credencial activa por identificador:** `CREATE UNIQUE INDEX ... ON credenciales (tipo, identificador) WHERE estado = 'activa';`
+  - **Credenciales siempre de un vehículo:** `vehiculo_id` es obligatorio para todos los tipos; si `tipo = 'qr'`,
+    `usuario_id` también es obligatorio (un QR por cada par usuario-vehículo).
+  - **Placa única entre vehículos vigentes:** índice único parcial en `vehiculos (placa) WHERE estado <> 'baja'`.
   - **Movimientos idempotentes:** el `id` del movimiento es el UUID generado en el dispositivo; un reintento con el mismo id no duplica.
 - `incidentes` tiene además una columna `folio` con secuencia propia (único), que la interfaz muestra como `INC-0001`.
   Sirve para citar un incidente de viva voz; la llave primaria sigue siendo UUID.
 - Tablas: `usuarios`, `vehiculos`, `vehiculo_usuarios`, `credenciales`, `solicitudes`, `pases`, `puertas`, `zonas`,
   `movimientos`, `estancias`, `incidentes`, `dispositivos`, `sesiones`, `restablecimientos`, `archivos`, `auditoria`.
+
+### Decisiones de esquema
+
+Fase 1A (`001_init.sql`):
+- **Fotos como FK a `archivos`:** `usuarios.foto_titular_id` y `foto_credencial_id`, `vehiculos.foto_id` y
+  `foto_placa_id`, `incidentes.foto_id`. Ninguna tabla guarda rutas de archivo sueltas.
+- **`tipos_vehiculo` como arreglo** (`tipo_vehiculo[]`) en `puertas` y `zonas`, en vez de tablas intermedias.
+- **`vehiculo_usuarios.activo`:** baja lógica de la autorización de un usuario sobre un vehículo, con `actualizado_en`
+  para que la sincronización la vea. Un solo titular por vehículo (índice único parcial `WHERE es_titular`).
+- **Restricciones extra:** correo en minúsculas y único; boleta o número de empleado único; formato de placa
+  (`^[A-Z0-9-]+$`) en `vehiculos` y `pases`; `archivos` solo JPEG o PNG de hasta 2 MB; `ventana_fin > ventana_inicio`
+  en `pases`; `cupo > 0` en `zonas`; un movimiento no lleva credencial y pase a la vez, y todo rechazo o registro
+  manual lleva motivo; latitud y longitud de un incidente van juntas; `entrada_id` y `salida_id` únicos en `estancias`.
+- **Auditoría de solo inserción:** un trigger rechaza `UPDATE` y `DELETE` sobre `auditoria`.
+- **`sslmode=disable` en local:** si la URL de conexión no trae `sslmode`, `abrirConexion` usa `disable` (la base se
+  alcanza por localhost o por la red interna de Docker). Para otro caso se agrega `?sslmode=require` a la URL.
+
+Fase 1A.1 (`002_ajustes.sql`):
+- **Placa única solo entre vehículos activos o pendientes:** la placa de un vehículo dado de baja se puede volver a registrar.
+- **Credenciales:** `vehiculo_id` obligatorio; el QR exige además `usuario_id`. Sustituye al CHECK de "al menos uno".
+- **Estancias de visitantes:** `vehiculo_id` opcional, `pase_id` nuevo, exactamente uno de los dos, y anti-passback por pase.
+- **`tipo_incidente` como enum:** `antipassback`, `credencial_invalida`, `lectura_fallida`, `inconsistencia_vehiculo`, `otro`.
+- **`dispositivos.tipo`** restringido a `mc33xr`, `et401` u `otro`.
+- **Puertas sin restricción por tipo:** todo tipo de vehículo entra y sale por cualquiera de las dos puertas; un
+  vehículo puede entrar por la Puerta A y salir por la Puerta B. Ambas se siembran con los cuatro tipos.
 
 ## Motor de validación (shared)
 
