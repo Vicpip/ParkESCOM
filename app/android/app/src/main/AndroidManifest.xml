@@ -1,4 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- La app habla con la API en todos los tipos de compilación. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Fotos del titular, de la credencial, de vehículos y de incidentes. -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-feature android:name="android.hardware.camera" android:required="false"/>
     <application
         android:label="ParkESCOM"
         android:name="${applicationName}"
