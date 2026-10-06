@@ -14,11 +14,21 @@ String aHex(List<int> bytes) =>
 /// Bitácora cronológica de todo lo que pasa en las pestañas.
 class Bitacora extends ChangeNotifier {
   final List<String> _lineas = [];
+  int _marcas = 0;
 
   List<String> get lineas => List.unmodifiable(_lineas);
 
   void agregar(String origen, String texto) {
     _lineas.add('${formatoHora(DateTime.now())} [$origen] $texto');
+    notifyListeners();
+  }
+
+  /// Separador numerado para ubicar un momento de la prueba; el consecutivo
+  /// no se reinicia con [limpiar], para que no se repita en `logcat`.
+  void marcar() {
+    final linea = '---- MARCA ${++_marcas} ----';
+    _lineas.add(linea);
+    debugPrint(linea);
     notifyListeners();
   }
 

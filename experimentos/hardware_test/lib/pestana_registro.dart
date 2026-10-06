@@ -42,6 +42,11 @@ class PestanaRegistro extends StatelessWidget {
                     onPressed: lineas.isEmpty ? null : bitacora.limpiar,
                     child: const Text('Limpiar'),
                   ),
+                  OutlinedButton.icon(
+                    onPressed: bitacora.marcar,
+                    icon: const Icon(Icons.flag),
+                    label: const Text('Marca'),
+                  ),
                   Text('${lineas.length} líneas'),
                 ],
               ),
