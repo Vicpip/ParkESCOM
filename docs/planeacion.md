@@ -121,7 +121,7 @@ Son 32 pantallas en total: 21 en la app móvil y 11 en el panel web. Las 24 marc
 | G4 | Registro manual | Búsqueda por placa o usuario, motivo obligatorio | P1 |
 | G5 | Incidentes | Lista con filtros por estado | P1 |
 | G6 | Formulario de incidente | Foto, descripción, ubicación GPS opcional | P1 |
-| G7 | Enrolar credencial | Leer TID con el MC33xR o UID del NFC y ligarlo a un vehículo (solo admin) | P1 |
+| G7 | Enrolar credencial | Leer el EPC con el MC33xR o el UID del NFC y ligarlo a un vehículo (solo admin) | P1 |
 | G8 | Turno | Vehículos dentro ahora, ocupación por zona y movimientos del turno con búsqueda por placa | P1 |
 
 El panel web no puede leer el MC33xR, por eso el enrolamiento de tags vive en la app móvil con rol de administrador.
@@ -150,7 +150,7 @@ Toda lectura, venga de RFID, QR, NFC o HCE, termina en el mismo motor de validac
 
 **Motor de validación (orden de revisión)**
 
-1. Normalizar la lectura a un identificador: TID, UID de NFC o token de QR/HCE.
+1. Normalizar la lectura a un identificador: EPC del tag RFID, UID de NFC o token de QR/HCE.
 2. Ignorar la misma credencial si se leyó hace menos de 5 s. Va antes que todo lo demás porque el RFID lee el mismo tag varias veces y, si no, cada repetición dispararía un falso anti-passback.
 3. Si es QR o HCE, verificar el código TOTP con tolerancia de una ventana (±30 s) o la firma del pase de visitante.
 4. Buscar la credencial en la lista local. No existe → rojo "credencial desconocida".
@@ -165,7 +165,7 @@ Toda lectura, venga de RFID, QR, NFC o HCE, termina en el mismo motor de validac
 1. El usuario se registra con correo institucional, boleta o número de empleado, foto suya y foto de su credencial escolar.
 2. Captura el vehículo en M8 con foto; en motos, también foto de la placa. Se crea una solicitud.
 3. Administración compara la credencial con los datos y aprueba en W2; el usuario recibe una notificación local.
-4. En sitio, el administrador abre G7, lee el TID del tag (propio o de casetas) o el UID de la calcomanía NFC y lo liga al vehículo. Las motos sin calcomanía quedan solo con QR del dueño.
+4. En sitio, el administrador abre G7, lee el EPC del tag (propio o de casetas) o el UID de la calcomanía NFC y lo liga al vehículo. Las motos sin calcomanía quedan solo con QR del dueño.
 5. La credencial queda activa con vigencia al fin del semestre y entra a la lista local de las casetas en la siguiente sincronización.
 
 **Entrada de auto**
@@ -214,7 +214,7 @@ PostgreSQL es la fuente de verdad con 16 tablas; dos reglas críticas, anti-pass
 | `usuarios` | correo, hash\_password, nombre, boleta\_o\_empleado, rol, foto\_titular, foto\_credencial, estado, vigencia | correo y boleta únicos; rol como enum |
 | `vehiculos` | tipo, placa o número de serie, marca, modelo, color, foto, foto\_placa, estado | placa única entre vehículos que no están de baja; solo letras, números y guiones |
 | `vehiculo_usuarios` | vehiculo\_id, usuario\_id, es\_titular | llave compuesta; un titular por vehículo |
-| `credenciales` | vehiculo\_id (obligatorio), usuario\_id (obligatorio en QR), tipo (tag\_propio, tag\_caseta, nfc, qr), identificador, semilla\_totp cifrada, estado, vigencia, consentimiento | único (tipo, identificador) WHERE estado = activa |
+| `credenciales` | vehiculo\_id (obligatorio), usuario\_id (obligatorio en QR), tipo (tag\_propio, tag\_caseta, nfc, qr), identificador (EPC en los tags RFID, UID en NFC), semilla\_totp cifrada, estado, vigencia, consentimiento | único (tipo, identificador) WHERE estado = activa |
 | `solicitudes` | usuario\_id, vehiculo\_id, tipo (alta, cambio, baja), datos propuestos en JSONB, estado, comentario, resuelta\_por | estado como enum |
 | `pases` | solicitante\_id, visitante, placa, ventana\_inicio, ventana\_fin, estado, jti | jti único (id del token firmado) |
 | `puertas` | nombre, tipos de vehículo que atiende | — |
@@ -284,7 +284,7 @@ Se descartó Serverpod: trae autenticación y ORM para PostgreSQL, pero su gener
 | Segundo plano | `workmanager` | Revisa cambios cada 15 min (mínimo de Android) y dispara notificaciones locales |
 | Notificaciones | `flutter_local_notifications` | Solicitudes, pases y alertas |
 | QR | `otp` + `qr_flutter` | Código de 30 s, verificable sin red |
-| RFID y lector Zebra | `flutter_datawedge` | Perfil DataWedge con RFID Input (TID) e Intent Output |
+| RFID y lector Zebra | `flutter_datawedge` | Perfil DataWedge con RFID Input (banco de memoria "Ninguno": entrega el EPC; no se requiere TID) e Intent Output |
 | QR por cámara | `mobile_scanner` | Respaldo en ET401 y celulares |
 | NFC lector | `nfc_manager` | Calcomanías NFC y lectura de HCE |
 | NFC emulación | `nfc_host_card_emulation` | HCE solo en Android |
@@ -324,7 +324,7 @@ La entrega es el 15 de noviembre: el hardware se prueba el 5 de octubre y se dec
 
 **Fase 1 — base (5 a 11 de octubre)**
 
-- [ ] Prueba de viabilidad: perfil DataWedge con RFID + TID, lectura de QR, HCE celular → ET401, tag de casetas
+- [ ] Prueba de viabilidad: perfil DataWedge con RFID (EPC), lectura de QR, HCE celular → ET401, tag de casetas
 - [ ] Monorepo en Git (app, backend, shared) y Docker Compose local con PostgreSQL
 - [ ] Migración inicial con las 16 tablas, índices parciales y datos de prueba
 - [ ] API: registro, login, JWT con renovación, recuperación por correo, middleware por rol, subida de fotos
@@ -370,7 +370,8 @@ Los tres riesgos técnicos más altos se prueban el día 1; ninguno tumba el pro
 
 | Riesgo | Probabilidad | Impacto | Plan B |
 | --- | --- | --- | --- |
-| DataWedge no entrega RFID en el MC33xR (hay reportes tras actualizaciones de DataWedge) | Media | Alto | Botón "simular lectura" con TIDs de prueba; RFID documentado como diseño |
+| DataWedge no entrega RFID en el MC33xR (hay reportes tras actualizaciones de DataWedge) | Media | Alto | Botón "simular lectura" con EPC de prueba; RFID documentado como diseño |
+| El EPC es reescribible y un tag podría clonarse (el TID se descartó como identificador) | Baja | Medio | El guardia ve la foto del titular y del vehículo en cada validación |
 | Los tags de casetas no responden o no son EPC Gen2 | Media | Medio | Tag propio de ESCOM para todos; casetas como opción futura |
 | `nfc_host_card_emulation` falla con la versión actual de Flutter (tiene unos 3 años sin actualizarse) | Media | Medio | Solo QR dinámico + calcomanía NFC |
 | La ET401 no trae NFC | Por confirmar | Medio | NFC en el MC33xR si su modelo lo trae; si no, QR con foto |

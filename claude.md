@@ -167,7 +167,7 @@ P1 = obligatoria; P2 = se recorta primero si falta tiempo.
 | G4 | Registro manual | Búsqueda por placa o usuario, motivo obligatorio | P1 |
 | G5 | Incidentes | Lista con filtro por estado | P1 |
 | G6 | Formulario de incidente | Foto, descripción, GPS opcional | P1 |
-| G7 | Enrolar credencial | Leer TID (MC33xR) o UID NFC y ligarlo a un vehículo; solo admin | P1 |
+| G7 | Enrolar credencial | Leer el EPC con el MC33xR o el UID NFC y ligarlo a un vehículo; solo admin | P1 |
 | G8 | Turno | Dentro ahora, ocupación por zona, movimientos del turno con búsqueda por placa | P1 |
 
 **Panel web** (Flutter Web, menú lateral)
@@ -469,7 +469,7 @@ Fase 1C (`004_archivos_proposito.sql`):
 
 Función pura en `shared/`, sin IO, con pruebas unitarias para cada rama. Recibe la lectura, la lista de acceso y el estado local; devuelve `Aceptado` o `Rechazado(motivo)`. Orden obligatorio:
 
-1. Normalizar la lectura a un identificador (TID, UID de NFC, código QR/HCE).
+1. Normalizar la lectura a un identificador (EPC del tag RFID, UID de NFC, código QR/HCE).
 2. Ignorar la misma credencial si se leyó hace menos de 5 s (el RFID repite lecturas).
 3. QR/HCE: verificar TOTP con tolerancia de ±1 ventana de 30 s; pase de visitante: verificar firma y ventana de horario.
 4. Credencial existe en la lista local → si no, `CREDENCIAL_DESCONOCIDA`.
@@ -482,7 +482,8 @@ Función pura en `shared/`, sin IO, con pruebas unitarias para cada rama. Recibe
 ## Hardware (sin código nativo)
 
 - **MC33xR:** RFID y QR llegan por DataWedge a `flutter_datawedge`. El perfil de DataWedge se configura **a mano en el equipo**:
-  RFID Input habilitado con TID, Barcode Input habilitado e Intent Output con la acción que espera el paquete (ver su README).
+  RFID Input habilitado con banco de memoria "Ninguno" (entrega el EPC; no se requiere TID), Barcode Input habilitado e
+  Intent Output con la acción que espera el paquete (ver su README).
   La fuente de cada lectura (`rfid` o código de barras) se distingue en el resultado.
 - **ET401 y celulares:** QR con `mobile_scanner`; NFC con `nfc_manager`.
 - **HCE (celular del usuario):** `nfc_host_card_emulation`. Requiere `res/xml/apduservice.xml` y el servicio en `AndroidManifest.xml` (configuración, no código). El paquete tiene años sin actualizarse: si falla, se usa solo QR.
@@ -491,7 +492,7 @@ Función pura en `shared/`, sin IO, con pruebas unitarias para cada rama. Recibe
 
 ### Hallazgos de hardware
 
-Verificados el **5 de octubre de 2026** en un **MC3300x con Android 14**, con la app de `experimentos/hardware_test/`.
+Verificados el **5 de octubre de 2026** en un **MC3300x (MC33xR) con Android 14**, con la app de `experimentos/hardware_test/`.
 
 - **Fuente de la lectura:** `flutter_datawedge` 3.2.0 con el perfil de DataWedge creado a mano: `ScanResult.source`
   distingue `rfid` de `scanner`.
@@ -508,6 +509,15 @@ Verificados el **5 de octubre de 2026** en un **MC3300x con Android 14**, con la
 **Decisión (6 de octubre de 2026):** el identificador de los tags RFID es el **EPC**. Se descarta el TID.
 
 **Pruebas cerradas:** RFID, código 2D y NFC quedaron probados en el MC33xR con Android 14.
+
+**NO PROBADOS (no bloquean):**
+
+- HCE.
+- Plan B de teclado.
+- Tag de casetas.
+- Gatillo físico con RFID.
+- Paso de un tag en movimiento.
+- QR leído desde la pantalla de un celular.
 
 **Limitación conocida:** el EPC es reescribible, así que un tag podría clonarse. Se mitiga con la foto del titular y
 del vehículo que ve el guardia.
