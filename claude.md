@@ -496,8 +496,8 @@ Verificados el **5 de octubre de 2026** en un **MC3300x con Android 14**, con la
 - **Fuente de la lectura:** `flutter_datawedge` 3.2.0 con el perfil de DataWedge creado a mano: `ScanResult.source`
   distingue `rfid` de `scanner`.
 - **Formato de la lectura RFID:** cada lectura llega como `<24 hex> <RSSI>` (ejemplo: `E2801190A5030064033DC8B7 -46`).
-  El identificador es el primer fragmento antes del espacio; el RSSI es un entero negativo y se usará como filtro de
-  umbral configurable.
+  El identificador es el **EPC**: el primer fragmento, antes del espacio. El RSSI va aparte; es un entero negativo y
+  se usará como filtro de umbral configurable.
 - **Gatillo RFID por software:** `SOFT_RFID_TRIGGER` con `START` y `STOP` funciona por el canal interno del plugin
   (no es API documentada del paquete). Responde `SUCCESS` en ~0.6 s, la primera lectura llega ~0.8 s después del
   comando y puede llegar una lectura hasta ~0.5 s después de `STOP`.
@@ -505,16 +505,12 @@ Verificados el **5 de octubre de 2026** en un **MC3300x con Android 14**, con la
 - **Código de barras CODE128:** funciona con el gatillo físico y con `SOFT_SCAN_TRIGGER`.
 - **NFC:** `nfc_manager` lee el UID (7 bytes) y las tecnologías; la detección NDEF tarda 3 s en tags sin NDEF.
 
-**PENDIENTE** (aún sin verificar; no darlo por hecho):
+**Decisión (6 de octubre de 2026):** el identificador de los tags RFID es el **EPC**. Se descarta el TID.
 
-- Identificador TID contra EPC.
-- Gatillo físico con RFID.
-- QR desde la pantalla de un celular.
-- Tag de casetas.
-- Prueba de paso de un tag en movimiento.
-- Calcomanía NFC real.
-- Plan B de teclado.
-- HCE.
+**Pruebas cerradas:** RFID, código 2D y NFC quedaron probados en el MC33xR con Android 14.
+
+**Limitación conocida:** el EPC es reescribible, así que un tag podría clonarse. Se mitiga con la foto del titular y
+del vehículo que ve el guardia.
 
 **Regla:** la Fase 4 usa `flutter_datawedge` filtrando `source == 'rfid'`; el perfil de DataWedge de producción se
 asocia al `applicationId` real de la app.
