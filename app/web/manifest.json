@@ -1,11 +1,11 @@
 {
-    "name": "parkescom",
-    "short_name": "parkescom",
+    "name": "ParkESCOM",
+    "short_name": "ParkESCOM",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#006699",
+    "theme_color": "#006699",
+    "description": "ParkESCOM: control de acceso vehicular de ESCOM-IPN.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
