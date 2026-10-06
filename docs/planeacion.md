@@ -30,7 +30,7 @@ Tres roles usan el mismo código Flutter en dispositivos distintos, y todos cons
 | Actor | Dispositivo | Qué hace |
 | --- | --- | --- |
 | Usuario (alumno, docente, personal) | Su celular Android | Registra vehículos, muestra su QR o HCE, consulta su historial |
-| Guardia | MC33xR en la entrada vehicular; ET401 en el acceso peatonal y de bicis | Opera el modo caseta, registra entradas manuales e incidentes |
+| Guardia | MC33xR o ET401 en cualquiera de las dos puertas; todo tipo de vehículo entra y sale por ambas, y cada equipo se configura con su puerta y sentido al iniciar turno | Opera el modo caseta, registra entradas manuales e incidentes |
 | Administrador | Navegador (panel web) + MC33xR para enrolar tags | Aprueba solicitudes, gestiona credenciales, usuarios y reportes |
 
 &#91;embedded content: arquitectura · 3 clientes, API en Dart y PostgreSQL en el VPS\]
@@ -46,7 +46,7 @@ Son 25 requerimientos; los marcados como P1 son obligatorios y los P2 se recorta
 | RF-01 | Registro con correo institucional, boleta o número de empleado y contraseña; inicio de sesión | Todos | RF1 Registro e ingreso | P1 |
 | RF-02 | Recuperación de contraseña por correo | Todos | RF1 Control de sesión | P1 |
 | RF-03 | Sesión con JWT de acceso y de renovación; cierre de sesión que invalida el token | Todos | RF1 Control de sesión | P1 |
-| RF-04 | Perfil: datos, foto del titular (obligatoria) y preferencias | Todos | RF1 Gestión de perfil | P1 |
+| RF-04 | Perfil: datos, foto del titular (obligatoria), preferencias y cambio de contraseña | Todos | RF1 Gestión de perfil | P1 |
 | RF-05 | Acceso por rol: usuario, guardia, administrador | Todos | RF1 | P1 |
 | RF-06 | CRUD de vehículos con foto, tipo, placa, color y modelo; en motos, foto de la placa | Usuario | RF2 CRUD | P1 |
 | RF-07 | Foto de la credencial escolar o de empleado en el registro, validada por administración | Usuario | RF3 Cámara | P1 |
@@ -109,7 +109,7 @@ Son 32 pantallas en total: 21 en la app móvil y 11 en el panel web. Las 24 marc
 | M10 | Historial | Entradas y salidas, filtros por fecha, vehículo y puerta | P1 |
 | M11 | Pases de visitante | Lista de pases y su estado | P2 |
 | M12 | Nuevo pase | Nombre, placa, fecha y ventana de horario | P2 |
-| M13 | Perfil | Avatar, datos, preferencias de notificaciones, cerrar sesión | P1 |
+| M13 | Perfil | Avatar, datos, preferencias de notificaciones, cambiar contraseña (diálogo que pide la actual y la nueva), cerrar sesión | P1 |
 
 **App móvil — guardia y administrador en sitio (MC33xR y ET401)**
 
@@ -212,16 +212,16 @@ PostgreSQL es la fuente de verdad con 16 tablas; dos reglas críticas, anti-pass
 | Tabla | Campos clave | Restricciones |
 | --- | --- | --- |
 | `usuarios` | correo, hash\_password, nombre, boleta\_o\_empleado, rol, foto\_titular, foto\_credencial, estado, vigencia | correo y boleta únicos; rol como enum |
-| `vehiculos` | tipo, placa o número de serie, marca, modelo, color, foto, foto\_placa, estado | placa única cuando existe |
+| `vehiculos` | tipo, placa o número de serie, marca, modelo, color, foto, foto\_placa, estado | placa única entre vehículos que no están de baja; solo letras, números y guiones |
 | `vehiculo_usuarios` | vehiculo\_id, usuario\_id, es\_titular | llave compuesta; un titular por vehículo |
-| `credenciales` | vehiculo\_id, usuario\_id, tipo (tag\_propio, tag\_caseta, nfc, qr), identificador, semilla\_totp cifrada, estado, vigencia, consentimiento | único (tipo, identificador) WHERE estado = activa |
+| `credenciales` | vehiculo\_id (obligatorio), usuario\_id (obligatorio en QR), tipo (tag\_propio, tag\_caseta, nfc, qr), identificador, semilla\_totp cifrada, estado, vigencia, consentimiento | único (tipo, identificador) WHERE estado = activa |
 | `solicitudes` | usuario\_id, vehiculo\_id, tipo (alta, cambio, baja), datos propuestos en JSONB, estado, comentario, resuelta\_por | estado como enum |
 | `pases` | solicitante\_id, visitante, placa, ventana\_inicio, ventana\_fin, estado, jti | jti único (id del token firmado) |
 | `puertas` | nombre, tipos de vehículo que atiende | — |
 | `zonas` | nombre, tipo de vehículo, cupo | cupo > 0 |
 | `movimientos` | id (UUID del dispositivo), vehiculo\_id, credencial\_id o pase\_id, puerta\_id, sentido, hora\_dispositivo, hora\_servidor, fuente, dispositivo\_id, resultado, motivo | el UUID como llave evita duplicados al reintentar |
-| `estancias` | vehiculo\_id, entrada\_id, salida\_id, zona\_id | único (vehiculo\_id) WHERE salida\_id IS NULL = anti-passback |
-| `incidentes` | tipo, descripción, foto, latitud, longitud, estado, movimiento\_id | estado como enum |
+| `estancias` | vehiculo\_id o pase\_id (exactamente uno), entrada\_id, salida\_id, zona\_id | único (vehiculo\_id) y único (pase\_id) WHERE salida\_id IS NULL = anti-passback, también para visitantes |
+| `incidentes` | folio (secuencia propia, se muestra como INC-0001), tipo, descripción, foto, latitud, longitud, estado, movimiento\_id | estado como enum |
 | `dispositivos` | nombre, tipo, puerta\_id, hash del token, última sincronización, activo | revocable si se pierde el equipo |
 | `sesiones` | usuario\_id, hash del refresh token, expira, revocada | para cerrar sesión de verdad |
 | `restablecimientos` | usuario\_id, hash del token, expira, usado | uso único |
@@ -392,7 +392,7 @@ Cada criterio de la rúbrica tiene evidencia concreta que se puede mostrar en la
 | --- | --- | --- |
 | Cumplimiento funcional (40%) | Login por rol, CRUD de vehículos y solicitudes, lectura RFID/QR/NFC, notificaciones, modo offline | Demo en vivo con guion y datos de prueba |
 | Arquitectura y código (30%) | MVVM por funcionalidad, motor de validación aislado con pruebas unitarias | Monorepo Git (app, backend, shared) con commits diarios, migraciones y README |
-| UI/UX y RNF (20%) | Responsivo en celular, MC33xR, tablet y web; estados de carga; carga < 2 s | Capturas en los 4 tamaños y medición con DevTools |
+| UI/UX y RNF (20%) | Responsivo en celular, MC33xR, tablet y web; estados de carga; carga < 2 s | Mockups de Stitch en docs/design/, capturas en los 4 tamaños y medición con DevTools |
 | Documentación y exposición (10%) | Requerimientos, diagramas UML, arquitectura y trabajo futuro | Documento técnico + presentación |
 
 **Diagramas UML a entregar**
@@ -401,7 +401,7 @@ Cada criterio de la rúbrica tiene evidencia concreta que se puede mostrar en la
 - [ ] Clases del modelo de datos
 - [ ] Secuencia: entrada de auto por RFID
 - [ ] Secuencia: alta de vehículo y enrolamiento de credencial
-- [ ] Estados de la credencial: pendiente, activa, perdida, revocada, vencida
+- [ ] Estados de la credencial: activa, perdida, revocada, vencida
 - [ ] Actividad del motor de validación
 - [ ] Despliegue: dispositivos, VPS (Nginx, API, PostgreSQL) y panel web
 
