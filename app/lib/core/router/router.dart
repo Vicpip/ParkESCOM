@@ -20,8 +20,11 @@ final routerProvider = Provider<GoRouter>((ref) {
   final router = GoRouter(
     initialLocation: Rutas.arranque,
     refreshListenable: cambios,
-    redirect: (_, estado) =>
-        redirigirPorSesion(ref.read(sesionProvider), estado.matchedLocation),
+    redirect: (_, estado) => redirigirPorSesion(
+      ref.read(sesionProvider),
+      estado.matchedLocation,
+      origen: estado.uri.queryParameters[parametroOrigen],
+    ),
     errorBuilder: (_, _) => const MarcadorView(
       titulo: 'Página no encontrada',
       icono: Icons.search_off,

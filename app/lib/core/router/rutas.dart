@@ -39,21 +39,40 @@ String inicioDe(Rol rol) => switch (rol) {
   Rol.admin => Rutas.admin,
 };
 
+/// Parámetro con el que el arranque recuerda la ruta que se quería abrir.
+const parametroOrigen = 'de';
+
 /// A dónde debe ir quien está en [ubicacion] con la sesión [sesion], o
 /// `null` si puede quedarse.
-String? redirigirPorSesion(EstadoSesion sesion, String ubicacion) {
+///
+/// Mientras se comprueba la sesión todo pasa por el arranque, que guarda en
+/// [parametroOrigen] la ruta pedida; [origen] es ese valor y, ya con la
+/// sesión resuelta, se vuelve a esa ruta si el rol puede verla.
+String? redirigirPorSesion(
+  EstadoSesion sesion,
+  String ubicacion, {
+  String? origen,
+}) {
+  final enArranque = ubicacion == Rutas.arranque;
   switch (sesion) {
     case SesionVerificando() || SesionSinVerificar():
-      return ubicacion == Rutas.arranque ? null : Rutas.arranque;
+      if (enArranque) return null;
+      return Uri(
+        path: Rutas.arranque,
+        queryParameters: {parametroOrigen: ubicacion},
+      ).toString();
     case SinSesion():
-      return _publicas.contains(ubicacion) ? null : Rutas.login;
+      if (_publicas.contains(ubicacion)) return null;
+      return enArranque && _publicas.contains(origen) ? origen : Rutas.login;
     case ConSesion(:final usuario):
       // Quien dejó el registro a medias puede volver a subir sus fotos.
       if (ubicacion == Rutas.registro && usuario.debeCompletarRegistro) {
         return null;
       }
-      return _porRol[usuario.rol]!.contains(ubicacion)
-          ? null
+      final permitidas = _porRol[usuario.rol]!;
+      if (permitidas.contains(ubicacion)) return null;
+      return enArranque && permitidas.contains(origen)
+          ? origen
           : inicioDe(usuario.rol);
   }
 }

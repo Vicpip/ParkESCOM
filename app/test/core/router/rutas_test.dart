@@ -15,8 +15,8 @@ void main() {
     ];
     for (final sesion in estados) {
       expect(redirigirPorSesion(sesion, Rutas.arranque), isNull);
-      expect(redirigirPorSesion(sesion, Rutas.inicio), Rutas.arranque);
-      expect(redirigirPorSesion(sesion, Rutas.login), Rutas.arranque);
+      expect(redirigirPorSesion(sesion, Rutas.perfil), '/?de=%2Fperfil');
+      expect(redirigirPorSesion(sesion, Rutas.login), '/?de=%2Flogin');
     }
   });
 
@@ -63,5 +63,32 @@ void main() {
       usuarioDePrueba(estado: EstadoCuenta.activo),
     );
     expect(redirigirPorSesion(activoSinFotos, Rutas.registro), Rutas.inicio);
+  });
+
+  test('tras comprobar la sesión se vuelve a la ruta que se pidió', () {
+    final usuario = ConSesion(usuarioCompleto());
+    expect(
+      redirigirPorSesion(usuario, Rutas.arranque, origen: Rutas.perfil),
+      Rutas.perfil,
+    );
+    // Una ruta de otro rol o desconocida no se respeta.
+    expect(
+      redirigirPorSesion(usuario, Rutas.arranque, origen: Rutas.admin),
+      Rutas.inicio,
+    );
+    expect(
+      redirigirPorSesion(usuario, Rutas.arranque, origen: 'https://x.mx'),
+      Rutas.inicio,
+    );
+
+    const sinSesion = SinSesion();
+    expect(
+      redirigirPorSesion(sinSesion, Rutas.arranque, origen: Rutas.recuperar),
+      Rutas.recuperar,
+    );
+    expect(
+      redirigirPorSesion(sinSesion, Rutas.arranque, origen: Rutas.perfil),
+      Rutas.login,
+    );
   });
 }
