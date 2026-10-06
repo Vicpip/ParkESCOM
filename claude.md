@@ -60,12 +60,16 @@ dart_frog dev --port 8090          # [listo] API en http://localhost:8090 (/auth
 dart test                          # [listo] test/db y test/routes contra DATABASE_URL_TEST (la base se recrea)
 dart analyze                       # [listo]
 
-# App
+# App (API_BASE_URL apunta a la API; ver "URL de la API en la app")
 cd app && flutter pub get          # [listo]
 flutter analyze                    # [listo]
-flutter test                       # [listo] solo la prueba de la plantilla
-flutter run                        # Android (MC33xR, ET401 o celular)
-flutter run -d chrome              # panel web
+flutter test                       # [listo] viewmodels de auth, interceptor de sesión, rutas, componentes y widgets de M1–M4
+flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8090                             # Android: emulador
+flutter run --dart-define=API_BASE_URL=http://<IP-de-la-laptop>:8090                    # Android: MC33xR, ET401 o celular
+flutter run -d chrome --web-port 8082 --dart-define=API_BASE_URL=http://localhost:8090  # [listo] web (el puerto importa por CORS)
+flutter build apk --debug          # [listo]
+flutter build apk --release --dart-define=API_BASE_URL=https://...                      # [listo] exige HTTPS
+flutter build web --dart-define=API_BASE_URL=https://...                                # [listo]
 
 # Formato (antes de cada commit)
 dart format .
@@ -95,6 +99,16 @@ Puertos en este equipo:
 - La API corre en el **8090** (`dart_frog dev --port 8090`) porque el 8080 y el 8081 están ocupados.
 - `POSTGRES_PORT` es opcional (5432 por defecto); en este equipo es **5433** y `DATABASE_URL` y `DATABASE_URL_TEST` usan ese mismo puerto.
 
+URL de la API en la app (`--dart-define=API_BASE_URL=...`; si falta se usa `http://localhost:8090`):
+- **Emulador de Android:** `http://10.0.2.2:8090` (así ve el emulador al `localhost` de la laptop).
+- **Equipo físico** (MC33xR, ET401, celular): `http://<IP de la laptop>:8090`, con ambos en la misma red.
+- **Web:** `http://localhost:8090`, y la app **debe correr con `flutter run -d chrome --web-port 8082`**: CORS solo acepta
+  el origen de `APP_WEB_URL`, que en este equipo es `http://localhost:8082`. En otro puerto el navegador bloquea todo.
+- **HTTP sin cifrar solo en depuración:** `android/app/src/debug/AndroidManifest.xml` pone `usesCleartextTraffic`.
+  Un APK de release rechaza `http://`: necesita una API con HTTPS.
+- `--dart-define=ALLOWED_EMAIL_DOMAINS=...` (por defecto `ipn.mx,alumno.ipn.mx`) es la lista con la que la app valida
+  en vivo el correo del registro. Debe coincidir con la de la API, que es la que decide.
+
 Si un comando de esta lista todavía no existe, créalo como parte de la fase que lo necesite y actualiza esta sección.
 
 ## Dependencias permitidas
@@ -107,7 +121,10 @@ Si un comando de esta lista todavía no existe, créalo como parte de la fase qu
 **app:** `flutter_riverpod`, `go_router`, `dio`, `flutter_secure_storage`, `sqflite_sqlcipher`, `workmanager`,
 `flutter_local_notifications`, `qr_flutter`, `otp`, `flutter_datawedge`, `mobile_scanner`, `nfc_manager`,
 `nfc_host_card_emulation`, `image_picker`, `flutter_image_compress`, `cached_network_image`, `geolocator`,
-`connectivity_plus`, `fl_chart`, `uuid`, `intl`, `shared` (path).
+`connectivity_plus`, `fl_chart`, `uuid`, `intl`, `shared` (path). Del SDK de Flutter: `flutter_localizations`
+(textos de Material en español) y `flutter_web_plugins` (`usePathUrlStrategy`).
+Instaladas hasta la Fase 2A: `flutter_riverpod`, `go_router`, `dio`, `intl`, `uuid`, `shared`, `flutter_secure_storage`,
+`image_picker`, `flutter_image_compress` y las dos del SDK. Las demás se agregan en la fase que las use.
 
 **Dependencias de desarrollo (análisis estático):** `dart_frog_lint` (backend), `lints` (shared), `flutter_lints` (app).
 
@@ -133,6 +150,33 @@ app/lib/
 - Rutas por rol con `go_router`: usuario, guardia y admin ven shells distintos.
 - Código solo Android (`sqflite_sqlcipher`, DataWedge, NFC, HCE, workmanager) se aísla con importaciones condicionales y `kIsWeb`, para que `flutter build web` compile.
 - Diseño responsivo: probar en celular, MC33xR (pantalla chica), ET401 (tablet) y navegador.
+
+### Base de la app (Fase 2A)
+
+- **Tema:** `core/theme/` (`colores.dart`, `medidas.dart`, `tema.dart`). Ningún color ni tamaño se escribe fuera de ahí;
+  éxito y advertencia van en el `ThemeExtension` `ColoresEstado`. Inter 4.1 está en `app/assets/fonts/` con su licencia
+  (`OFL.txt`).
+- **Componentes compartidos** (`core/componentes/`): `Skeleton` y `SkeletonLista`, `Cargando`, `EstadoVacio`, `ErrorRed`
+  (con "Reintentar"), `FranjaSinConexion`, `mostrarDialogoDestructivo`, `CampoTexto` y `CampoPassword` (error bajo el
+  campo, con ícono), `Aviso` y `VistaAsync` (recibe un `AsyncValue` y muestra carga, error, vacío o datos).
+- **Errores:** todo llega a los ViewModels como `ExcepcionApi` (`core/errores/`). Los códigos se traducen a texto en un
+  solo archivo, `mensajes_error.dart`; `DEMASIADOS_INTENTOS` tiene texto distinto en inicio de sesión y en recuperación.
+  `SIN_CONEXION` es el código local para "no hubo respuesta".
+- **Sesión:** `sesionProvider` (`features/auth/viewmodel/sesion_viewmodel.dart`) tiene cuatro estados: verificando, sin
+  verificar (hay tokens pero no hubo red: se conserva la sesión y se ofrece reintentar), sin sesión y con sesión. El
+  router (`core/router/`) redirige con `redirigirPorSesion` cada vez que cambia.
+- **Renovación de tokens:** `InterceptorSesion` (`core/red/`) hace una sola renovación aunque lleguen varios 401 a la
+  vez. Solo cierra la sesión si la API rechaza el refresh token (401); una falla de red al renovar la conserva. No
+  hay ningún interceptor de registro: nunca se imprimen cuerpos, cabeceras ni tokens.
+- **Rutas:** `/` (M1), `/login` (M2), `/login/registro` (M3), `/login/recuperar` (M4); usuario: `/inicio`, `/vehiculos`,
+  `/historial`, `/perfil` (barra inferior, o riel lateral desde 600 dp); guardia: `/caseta`; admin: `/admin`. Las
+  pestañas, `/caseta` y `/admin` son pantallas marcadoras; Perfil, Caseta y Administración ya tienen "Cerrar sesión".
+- **Registro en dos pasos:** `POST /auth/registro` → se guardan los tokens → se suben las dos fotos → `PATCH /perfil`.
+  Si falla una subida o el `PATCH`, la cuenta ya existe: la pantalla pasa al paso de fotos, conserva la sesión y
+  "Subir fotos" reintenta solo lo que faltó (una foto con id no se vuelve a subir). Quien cierra la app a medias ve
+  en Inicio "Te faltan fotos" y regresa a ese paso; solo aplica con la cuenta `pendiente`.
+- **Fotos:** `SelectorFotos` (`data/sources/local/`) las reduce a 1600 px y a JPEG, bajando la calidad hasta quedar en
+  2 MB o menos, antes de subirlas.
 
 ## Pantallas (32)
 
@@ -551,6 +595,10 @@ asocia al `applicationId` real de la app.
 
 - [x] Fase 1 — base: monorepo, Docker, migración inicial, API de auth (5–11 oct)
 - [ ] Fase 2 — app de usuario: M1–M10, M13 (12–18 oct)
+  - [x] 2A — base de la app (tema, componentes, cliente HTTP, router) y autenticación: M1–M4
+  - [ ] 2B — perfil (M13) y backend de vehículos y solicitudes
+  - [ ] 2C — vehículos y solicitudes: M6–M9
+  - [ ] 2D — QR dinámico (M5), historial (M10) y notificaciones locales
 - [ ] Fase 3 — panel web: W2–W5, W7–W11 (19–23 oct)
 - [ ] Fase 4 — caseta y motor de validación: G1–G8 (24–31 oct)
 - [ ] Fase 5 — offline, sincronización y corte de hardware (1–4 nov)
