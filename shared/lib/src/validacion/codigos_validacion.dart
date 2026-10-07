@@ -36,4 +36,41 @@ abstract final class CodigoValidacion {
 
   /// El nombre pasa de 120 caracteres.
   static const nombreMuyLargo = 'NOMBRE_MUY_LARGO';
+
+  /// El tipo de vehículo no es `auto`, `moto`, `bici` ni `scooter`.
+  static const tipoVehiculoInvalido = 'TIPO_VEHICULO_INVALIDO';
+
+  /// Falta la placa, obligatoria en autos y motos.
+  static const placaRequerida = 'PLACA_REQUERIDA';
+
+  /// La placa tiene algo más que letras, números y guiones, o pasa de 15
+  /// caracteres.
+  static const placaInvalida = 'PLACA_INVALIDA';
+
+  /// El número de serie pasa de 60 caracteres.
+  static const numeroSerieMuyLargo = 'NUMERO_SERIE_MUY_LARGO';
+
+  /// La marca está vacía o solo tiene espacios.
+  static const marcaVacia = 'MARCA_VACIA';
+
+  /// La marca pasa de 60 caracteres.
+  static const marcaMuyLarga = 'MARCA_MUY_LARGA';
+
+  /// El modelo está vacío o solo tiene espacios.
+  static const modeloVacio = 'MODELO_VACIO';
+
+  /// El modelo pasa de 60 caracteres.
+  static const modeloMuyLargo = 'MODELO_MUY_LARGO';
+
+  /// El color está vacío o solo tiene espacios.
+  static const colorVacio = 'COLOR_VACIO';
+
+  /// El color pasa de 60 caracteres.
+  static const colorMuyLargo = 'COLOR_MUY_LARGO';
+
+  /// Falta la foto del vehículo.
+  static const fotoVehiculoRequerida = 'FOTO_VEHICULO_REQUERIDA';
+
+  /// Falta la foto de la placa, obligatoria en motos.
+  static const fotoPlacaRequerida = 'FOTO_PLACA_REQUERIDA';
 }
