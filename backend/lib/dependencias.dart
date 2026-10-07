@@ -5,11 +5,14 @@ import 'package:backend/auth/tokens.dart';
 import 'package:backend/config/configuracion.dart';
 import 'package:backend/config/entorno.dart';
 import 'package:backend/correo/enviador_correo.dart';
+import 'package:backend/credenciales/servicio_credenciales.dart';
 import 'package:backend/db/conexion.dart';
 import 'package:backend/middleware/cors.dart';
 import 'package:backend/middleware/errores.dart';
 import 'package:backend/middleware/ruta_no_encontrada.dart';
 import 'package:backend/perfil/servicio_perfil.dart';
+import 'package:backend/solicitudes/servicio_solicitudes.dart';
+import 'package:backend/vehiculos/servicio_vehiculos.dart';
 import 'package:dart_frog/dart_frog.dart';
 
 /// Objetos que viven lo que vive el servidor y que las rutas reciben por el
@@ -26,7 +29,10 @@ class Dependencias {
          pool: pool,
          almacen: AlmacenArchivos(config.uploadsDir),
        ),
-       perfil = ServicioPerfil(pool: pool) {
+       perfil = ServicioPerfil(pool: pool),
+       vehiculos = ServicioVehiculos(pool: pool),
+       solicitudes = ServicioSolicitudes(pool: pool),
+       credenciales = ServicioCredenciales(pool: pool) {
     auth = ServicioAuth(
       pool: pool,
       config: config,
@@ -68,6 +74,15 @@ class Dependencias {
 
   /// Reglas del perfil propio.
   final ServicioPerfil perfil;
+
+  /// Consulta de los vehículos de un usuario.
+  final ServicioVehiculos vehiculos;
+
+  /// Reglas de las solicitudes de alta, cambio y baja de vehículo.
+  final ServicioSolicitudes solicitudes;
+
+  /// Reglas de las credenciales desde el lado del usuario.
+  final ServicioCredenciales credenciales;
 }
 
 Dependencias? _deProduccion;
@@ -78,7 +93,8 @@ Dependencias dependenciasDeProduccion() =>
 
 /// Middleware de la raíz de la API. De afuera hacia adentro: CORS, errores,
 /// 404 uniforme e inyección de [PoolDb], [Configuracion], [ServicioTokens],
-/// [ServicioAuth], [ServicioArchivos] y [ServicioPerfil].
+/// [ServicioAuth], [ServicioArchivos], [ServicioPerfil], [ServicioVehiculos],
+/// [ServicioSolicitudes] y [ServicioCredenciales].
 Middleware middlewareRaiz(Dependencias dependencias) =>
     (handler) => handler
         .use(provider<PoolDb>((_) => dependencias.pool))
@@ -87,6 +103,9 @@ Middleware middlewareRaiz(Dependencias dependencias) =>
         .use(provider<ServicioAuth>((_) => dependencias.auth))
         .use(provider<ServicioArchivos>((_) => dependencias.archivos))
         .use(provider<ServicioPerfil>((_) => dependencias.perfil))
+        .use(provider<ServicioVehiculos>((_) => dependencias.vehiculos))
+        .use(provider<ServicioSolicitudes>((_) => dependencias.solicitudes))
+        .use(provider<ServicioCredenciales>((_) => dependencias.credenciales))
         .use(rutaNoEncontrada())
         .use(errores())
         .use(cors(dependencias.config.origenWeb));
