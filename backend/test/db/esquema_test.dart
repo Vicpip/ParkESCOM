@@ -132,7 +132,7 @@ void main() {
       return filas.single[0]! as int;
     }
 
-    expect(await contar('schema_migrations'), 4);
+    expect(await contar('schema_migrations'), 5);
     expect(await contar('puertas'), 2);
     expect(await contar('zonas'), 3);
   });
@@ -383,6 +383,103 @@ void main() {
 
     // Con la estancia cerrada, el vehículo puede volver a entrar.
     await expectLater(abrirEstancia(vehiculo: vehiculo), completes);
+  });
+
+  group('solicitudes', () {
+    Future<String> crearSolicitud(
+      String usuario,
+      String? vehiculo, {
+      String tipo = 'cambio',
+      String estado = 'pendiente',
+    }) => insertar(
+      'INSERT INTO solicitudes (usuario_id, vehiculo_id, tipo, estado) '
+      'VALUES (@usuario:uuid, @vehiculo:uuid, '
+      'CAST(@tipo:text AS tipo_solicitud), '
+      'CAST(@estado:text AS estado_solicitud))',
+      {
+        'usuario': usuario,
+        'vehiculo': vehiculo,
+        'tipo': tipo,
+        'estado': estado,
+      },
+    );
+
+    test('dos solicitudes pendientes sobre el mismo vehículo fallan', () async {
+      final usuario = await crearUsuario();
+      final vehiculo = await crearVehiculo();
+
+      await crearSolicitud(usuario, vehiculo);
+      await expectLater(
+        crearSolicitud(usuario, vehiculo, tipo: 'baja'),
+        _fallaCon(_unicidad),
+      );
+      // Tampoco si la pide otro usuario: la regla es por vehículo.
+      await expectLater(
+        crearSolicitud(await crearUsuario(), vehiculo),
+        _fallaCon(_unicidad),
+      );
+    });
+
+    test('una aprobada y una pendiente conviven', () async {
+      final usuario = await crearUsuario();
+      final vehiculo = await crearVehiculo();
+
+      await crearSolicitud(usuario, vehiculo, tipo: 'alta', estado: 'aprobada');
+      await crearSolicitud(usuario, vehiculo, estado: 'rechazada');
+      await expectLater(crearSolicitud(usuario, vehiculo), completes);
+    });
+
+    test('al resolverse la pendiente se puede crear otra', () async {
+      final usuario = await crearUsuario();
+      final vehiculo = await crearVehiculo();
+      final primera = await crearSolicitud(usuario, vehiculo);
+
+      await db.execute(
+        Sql.named(
+          "UPDATE solicitudes SET estado = 'aprobada' WHERE id = @id:uuid",
+        ),
+        parameters: {'id': primera},
+      );
+
+      await expectLater(crearSolicitud(usuario, vehiculo), completes);
+    });
+
+    test('vehículos distintos tienen cada uno su pendiente', () async {
+      final usuario = await crearUsuario();
+
+      await crearSolicitud(usuario, await crearVehiculo());
+      await expectLater(
+        crearSolicitud(usuario, await crearVehiculo()),
+        completes,
+      );
+    });
+
+    test('las solicitudes sin vehículo no chocan entre sí', () async {
+      final usuario = await crearUsuario();
+
+      await crearSolicitud(usuario, null, tipo: 'alta');
+      await expectLater(crearSolicitud(usuario, null, tipo: 'alta'), completes);
+    });
+
+    test('existen los dos índices de la migración 005', () async {
+      final filas = await db.execute(
+        'SELECT indexname, indexdef FROM pg_indexes WHERE tablename = '
+        "'solicitudes' AND indexname <> 'solicitudes_pkey' ORDER BY indexname",
+      );
+      final indices = {
+        for (final fila in filas) fila[0]! as String: fila[1]! as String,
+      };
+
+      expect(indices.keys, [
+        'solicitudes_una_pendiente',
+        'solicitudes_usuario_creado_idx',
+      ]);
+      expect(indices['solicitudes_una_pendiente'], contains('UNIQUE'));
+      expect(
+        indices['solicitudes_usuario_creado_idx'],
+        contains('(usuario_id, creado_en DESC)'),
+      );
+    });
   });
 
   group('archivos.proposito', () {
