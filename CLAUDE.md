@@ -49,14 +49,14 @@ docker compose up -d db            # [listo] PostgreSQL 16 en 127.0.0.1 (puerto 
 # Paquete compartido
 cd shared && dart pub get          # [listo]
 dart analyze                       # [listo]
-dart test                          # [listo] validadores de registro (el motor de validación llega en la Fase 4)
+dart test                          # [listo] validadores de registro y de vehículo, y modelos (el motor de validación llega en la Fase 4)
 
 # Backend
 cd backend && dart pub get         # [listo]
 dart run bin/migrate.dart          # [listo] aplica las migraciones pendientes de db/migrations
 dart run bin/migrate.dart --seed   # [listo] además aplica los catálogos de db/seeds (idempotente)
 dart run bin/seed_usuarios.dart    # [listo] cuentas de demostración con la contraseña de SEED_PASSWORD (idempotente)
-dart_frog dev --port 8090          # [listo] API en http://localhost:8090 (/auth, /archivos, /perfil)
+dart_frog dev --port 8090          # [listo] API en http://localhost:8090 (/auth, /archivos, /perfil, /vehiculos, /solicitudes, /credenciales)
 dart test                          # [listo] test/db y test/routes contra DATABASE_URL_TEST (la base se recrea)
 dart analyze                       # [listo]
 
@@ -429,6 +429,90 @@ Códigos por campo dentro de `VALIDACION`: `NOMBRE_VACIO`, `NOMBRE_MUY_LARGO`, `
 
 Códigos por campo dentro de `VALIDACION`: `ARCHIVO_FALTANTE`, `PROPOSITO_INVALIDO`, `FOTO_INVALIDA`.
 
+### Vehículos y solicitudes (Fase 2B)
+
+Todas exigen token de acceso. Las respuestas usan los modelos de `shared/lib/src/modelos/` (`VehiculoResumen`,
+`VehiculoDetalle`, `Solicitud`, `CredencialResumen`, `UsuarioAutorizado`), que la app lee con `fromJson`.
+
+| Ruta | Cuerpo o consulta | Respuesta |
+| --- | --- | --- |
+| `GET /vehiculos` | `?tipo=` (`auto`, `moto`, `bici`, `scooter`), `?q=` (fragmento de placa o marca) | 200 con `vehiculos` |
+| `GET /vehiculos/{id}` | | 200 con `vehiculo` (detalle) |
+| `POST /solicitudes` | `tipo` (`alta`, `cambio`, `baja`), `vehiculo_id` (cambio y baja), `datos` (alta y cambio) | 201 con `solicitud` |
+| `GET /solicitudes` | `?estado=` (`pendiente`, `aprobada`, `rechazada`) | 200 con `solicitudes`, la más reciente primero |
+| `GET /solicitudes/{id}` | | 200 con `solicitud` |
+| `POST /solicitudes/{id}/resolver` | `decision` (`aprobar`, `rechazar`), `comentario` (obligatorio al rechazar); **solo admin** | 200 con `solicitud` |
+| `POST /credenciales/{id}/reportar-perdida` | | 200 con `credencial` |
+
+`datos` trae `tipo`, `placa`, `numero_serie`, `marca`, `modelo`, `color`, `foto_id` y `foto_placa_id`. Lo valida
+`DatosVehiculo` (`shared/lib/src/validacion/datos_vehiculo.dart`), que además normaliza: textos sin espacios alrededor,
+placa en mayúsculas y sin espacios, opcionales vacíos como `null`. Así quedan guardados en `solicitudes.datos_propuestos`.
+
+- **"Mis vehículos":** `GET /vehiculos` y `GET /vehiculos/{id}` solo muestran los vehículos donde el usuario tiene
+  `vehiculo_usuarios.activo = true` y que no están de baja. Un admin o un guardia no ven vehículos ajenos por estas
+  rutas (las del panel web llegan en la Fase 3).
+- **404 uniforme:** un vehículo, una solicitud o una credencial ajenos responden el mismo 404 que si no existieran.
+- **Detalle:** el titular ve todas las credenciales del vehículo; un usuario autorizado ve tags y calcomanías, y solo
+  su propio QR. De cada credencial salen `id`, `tipo`, `estado`, `vigencia` y `terminacion` (los últimos 4 caracteres
+  del identificador). La semilla del QR ni siquiera se consulta.
+- **El alta crea el vehículo en `pendiente`**, con el usuario como titular, en la misma transacción que la solicitud.
+  Aparece en "Mis vehículos" con ese estado desde el primer momento.
+- **El cambio no toca el vehículo hasta aprobarse:** solo guarda los datos propuestos. Manda todos los datos del
+  vehículo, no solo los que cambian, y no puede cambiar el tipo (`TIPO_NO_MODIFICABLE`).
+- **Cambio y baja solo los pide el titular**; un usuario autorizado recibe 403 `SOLO_TITULAR`.
+- **Una solicitud pendiente por vehículo** (índice de `005_solicitudes.sql`): con el alta en revisión no se puede pedir
+  un cambio ni la baja.
+- **Fotos del vehículo:** `foto_id` exige un archivo propio con propósito `vehiculo` y `foto_placa_id` uno con
+  `placa` (`FOTO_INVALIDA` si no; es el mismo helper `esFotoPropia` del perfil). Una foto que ya es de otro vehículo
+  vigente da `FOTO_YA_ASIGNADA`; las de un vehículo dado de baja (por ejemplo, un alta rechazada) se pueden reutilizar.
+- **Quién puede solicitar:** cuentas `pendiente` o `activo`. El estado se lee de la base: una cuenta de `baja` con
+  token todavía vigente recibe 401 `NO_AUTENTICADO`.
+- **Resolver** corre en una transacción y deja un renglón en `auditoria` (`solicitud.aprobar` o `solicitud.rechazar`,
+  con el antes y el después de la solicitud, el vehículo, el estado del solicitante, sus usuarios autorizados y sus
+  credenciales activas). Guarda `resuelta_por` y `resuelta_en`.
+  - **Alta aprobada:** el vehículo pasa a `activo` y, **si el solicitante estaba `pendiente`, su cuenta también**
+    (con lo que `PATCH /perfil` queda bloqueado).
+  - **Alta rechazada:** el vehículo pasa a `baja`; su placa y sus fotos quedan libres para un nuevo intento.
+  - **Cambio aprobado:** los datos propuestos se aplican al vehículo. Si mientras tanto otro vehículo tomó la placa,
+    responde 409 `PLACA_YA_REGISTRADA` y la solicitud sigue pendiente.
+  - **Baja aprobada:** vehículo a `baja`, `vehiculo_usuarios.activo = false` para todos y sus credenciales activas
+    pasan a `revocada`.
+  - **Cambio o baja rechazados:** solo cambian el estado y el comentario.
+- **Reportar credencial perdida:** el titular del vehículo, o el usuario dueño de un QR, la pasa de `activa` a
+  `perdida`, con renglón en `auditoria` (`credencial.reportar_perdida`).
+- **Auditoría:** `registrarAuditoria` (`backend/lib/auditoria/auditoria.dart`) se llama dentro de la transacción del
+  cambio.
+
+| Código | HTTP | Cuándo |
+| --- | --- | --- |
+| `VEHICULO_NO_ENCONTRADO` | 404 | El vehículo no existe, está de baja o el usuario no tiene autorización activa sobre él |
+| `SOLICITUD_NO_ENCONTRADA` | 404 | La solicitud no existe o es de otro usuario |
+| `CREDENCIAL_NO_ENCONTRADA` | 404 | La credencial no existe o es de un vehículo ajeno |
+| `SOLO_TITULAR` | 403 | Un usuario autorizado que no es titular pide un cambio, una baja o reporta una credencial que no es su QR |
+| `SIN_PERMISO` | 403 | `POST /solicitudes/{id}/resolver` sin rol de admin |
+| `PLACA_YA_REGISTRADA` | 409 | La placa ya es de otro vehículo que no está de baja (al crear el alta o el cambio, o al aprobar el cambio) |
+| `SOLICITUD_PENDIENTE_EXISTENTE` | 409 | El vehículo ya tiene una solicitud pendiente |
+| `SOLICITUD_YA_RESUELTA` | 409 | Se intenta resolver una solicitud que ya no está pendiente |
+| `CREDENCIAL_NO_ACTIVA` | 409 | Se reporta como perdida una credencial que ya no está activa |
+| `VALIDACION` | 422 | Campos inválidos; `error.campos` trae el código de cada campo |
+
+Códigos por campo dentro de `VALIDACION`:
+- De la solicitud: `TIPO_SOLICITUD_INVALIDO` (`tipo`), `DATOS_REQUERIDOS` (`datos`), `VEHICULO_REQUERIDO`
+  (`vehiculo_id`), `DECISION_INVALIDA` (`decision`), `COMENTARIO_REQUERIDO` y `COMENTARIO_MUY_LARGO` (`comentario`,
+  máximo 500 caracteres), `ESTADO_SOLICITUD_INVALIDO` (`?estado=`).
+- De los datos del vehículo, con el nombre del campo tal cual (`placa`, `marca`…): `TIPO_VEHICULO_INVALIDO`
+  (también en `?tipo=`), `TIPO_NO_MODIFICABLE`, `PLACA_REQUERIDA` (auto y moto), `PLACA_INVALIDA` (formato, o más de
+  15 caracteres), `NUMERO_SERIE_MUY_LARGO`, `MARCA_VACIA`, `MARCA_MUY_LARGA`, `MODELO_VACIO`, `MODELO_MUY_LARGO`,
+  `COLOR_VACIO`, `COLOR_MUY_LARGO` (máximo 60 caracteres), `FOTO_VEHICULO_REQUERIDA`, `FOTO_PLACA_REQUERIDA` (solo
+  moto), `FOTO_INVALIDA`, `FOTO_YA_ASIGNADA`.
+- El campo `tipo` puede traer un código de la solicitud o del vehículo; el código dice de cuál.
+
+**Pendientes que dejó la Fase 2B:**
+- **Credencial QR (Fase 2E):** aprobar un alta todavía **no crea la credencial QR** del titular. El vehículo queda
+  activo y sin credenciales hasta que la 2E la emita.
+- **Bandeja de Administración (Fase 3):** no hay ruta para que un admin liste las solicitudes de todos ni vea una
+  ajena; `GET /solicitudes` y `GET /solicitudes/{id}` son las del propio usuario. W2 necesita esas rutas.
+
 ### Limitaciones conocidas
 
 - **Límites de intentos en memoria y por correo:** el de inicio de sesión (5 fallidos en 15 min) y el de recuperación
@@ -441,6 +525,10 @@ Códigos por campo dentro de `VALIDACION`: `ARCHIVO_FALTANTE`, `PROPOSITO_INVALI
   siguiente sincronización.
 - **Archivos sin referencia:** una foto subida que nunca se asigna a un perfil, vehículo o incidente se queda en
   disco y en `archivos`; no hay limpieza automática.
+- **Fotos de un vehículo compartido:** las fotos de vehículo y de placa las ven su dueño (quien las subió, es decir,
+  el titular), un admin y un guardia. Un usuario autorizado que no es el titular recibe 403 `SIN_PERMISO` al pedirlas,
+  aunque `GET /vehiculos/{id}` le dé sus ids. Se resuelve con el vehículo compartido (Fase 6).
+- **Baja de un vehículo que está dentro:** aprobar la baja no revisa si el vehículo tiene una estancia abierta.
 
 ### Notas para la Fase 2 (app)
 
@@ -455,6 +543,12 @@ Códigos por campo dentro de `VALIDACION`: `ARCHIVO_FALTANTE`, `PROPOSITO_INVALI
 - El código de contraseña demasiado larga es `PASSWORD_MUY_LARGA` (todos los de contraseña son `PASSWORD_*`).
 - `PATCH /perfil` responde 409 `PERFIL_BLOQUEADO` con la cuenta activa: M13 solo deja editar nombre y fotos mientras
   `usuario.estado` es `pendiente`; después muestra el mensaje de contactar a Administración.
+- Aprobar el primer vehículo activa la cuenta, pero el token de acceso y el `usuario` guardado en la app siguen
+  diciendo `pendiente`: la app debe volver a pedir `GET /auth/me` (o `GET /perfil`) para enterarse.
+- M8 primero sube las fotos (`POST /archivos` con propósito `vehiculo` o `placa`) y luego manda sus ids en
+  `POST /solicitudes`. En un cambio manda **todos** los datos, incluida la foto actual si no se reemplaza.
+- M7 muestra "Reportar credencial perdida" con el `id` de cada credencial; solo el titular (`es_titular`) puede
+  reportar tags y calcomanías. Con `solicitud_pendiente` en `true` se ocultan "Editar" y "Solicitar baja".
 
 ## Base de datos (PostgreSQL)
 
@@ -508,6 +602,11 @@ Fase 1C (`004_archivos_proposito.sql`):
 - **`archivos.proposito`** (`proposito_archivo`: `perfil`, `credencial_escolar`, `vehiculo`, `placa`, `incidente`),
   obligatorio. Decide quién puede descargar el archivo y a qué campo se puede asignar. `archivos.ruta` guarda la ruta
   relativa a `UPLOADS_DIR` (`<id>.jpg` o `<id>.png`).
+
+Fase 2B (`005_solicitudes.sql`):
+- **Una sola solicitud pendiente por vehículo:** índice único parcial `solicitudes_una_pendiente` en
+  `solicitudes (vehiculo_id) WHERE estado = 'pendiente' AND vehiculo_id IS NOT NULL`.
+- **Índice de "Mis solicitudes":** `solicitudes (usuario_id, creado_en DESC)`.
 
 ## Motor de validación (shared)
 
@@ -596,10 +695,10 @@ asocia al `applicationId` real de la app.
 - [x] Fase 1 — base: monorepo, Docker, migración inicial, API de auth (5–11 oct)
 - [ ] Fase 2 — app de usuario: M1–M10, M13 (12–18 oct)
   - [x] 2A — base de la app (tema, componentes, cliente HTTP, router) y autenticación: M1–M4
-  - [ ] 2B — backend de vehículos y solicitudes
+  - [x] 2B — backend de vehículos y solicitudes
   - [ ] 2C — app de vehículos y solicitudes: M6–M9
   - [ ] 2D — perfil (M13) e historial (M10)
-  - [ ] 2E — QR dinámico (M5) y notificaciones locales
+  - [ ] 2E — QR dinámico (M5), emisión de la credencial QR al aprobar un alta y notificaciones locales
 - [ ] Fase 3 — panel web: W2–W5, W7–W11 (19–23 oct)
 - [ ] Fase 4 — caseta y motor de validación: G1–G8 (24–31 oct)
 - [ ] Fase 5 — offline, sincronización y corte de hardware (1–4 nov)
