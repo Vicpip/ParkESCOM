@@ -236,15 +236,15 @@ Inicio de sesión y perfil se comparten entre móvil y web. El enrolamiento de t
 
 ```
 docs/design/
-  DESIGN.md              # tokens de diseño (colores, tipografía, radios, componentes)
-  00-sistema/            # hoja de estilo: screen.png + code.html
+  00-sistema/            # hoja de estilo: DESIGN.md (tokens: colores, tipografía, radios, componentes),
+                         # screen.png y code.html
   M5-mi-credencial/      # una carpeta por pantalla, nombrada por ID
     screen.png           # captura del mockup
     code.html            # HTML con Tailwind exportado de Stitch
   ...
 ```
 
-- **Orden de prioridad:** `CLAUDE.md` > `docs/planeacion.md` > `docs/design/DESIGN.md` > mockups.
+- **Orden de prioridad:** `CLAUDE.md` > `docs/planeacion.md` > `docs/design/00-sistema/DESIGN.md` > mockups.
 - Los mockups (`screen.png` y `code.html`) son **referencia visual**, no fuente de verdad del texto ni del comportamiento.
 - `code.html` sirve para ver jerarquía, espaciado y componentes. **No se traduce literal a Flutter:** cada pantalla se
   reconstruye con los widgets compartidos y el tema de `core/theme`.
@@ -596,9 +596,10 @@ asocia al `applicationId` real de la app.
 - [x] Fase 1 — base: monorepo, Docker, migración inicial, API de auth (5–11 oct)
 - [ ] Fase 2 — app de usuario: M1–M10, M13 (12–18 oct)
   - [x] 2A — base de la app (tema, componentes, cliente HTTP, router) y autenticación: M1–M4
-  - [ ] 2B — perfil (M13) y backend de vehículos y solicitudes
-  - [ ] 2C — vehículos y solicitudes: M6–M9
-  - [ ] 2D — QR dinámico (M5), historial (M10) y notificaciones locales
+  - [ ] 2B — backend de vehículos y solicitudes
+  - [ ] 2C — app de vehículos y solicitudes: M6–M9
+  - [ ] 2D — perfil (M13) e historial (M10)
+  - [ ] 2E — QR dinámico (M5) y notificaciones locales
 - [ ] Fase 3 — panel web: W2–W5, W7–W11 (19–23 oct)
 - [ ] Fase 4 — caseta y motor de validación: G1–G8 (24–31 oct)
 - [ ] Fase 5 — offline, sincronización y corte de hardware (1–4 nov)
