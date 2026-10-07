@@ -314,6 +314,44 @@ void main() {
       },
     );
 
+    test('fotos de vehículo y de placa: las ven su dueño, un admin y un '
+        'guardia; otro usuario → 403 SIN_PERMISO', () async {
+      for (final proposito in ['vehiculo', 'placa']) {
+        final foto = await subir(dueno, proposito: proposito);
+
+        for (final cuenta in [dueno, admin, guardia]) {
+          final respuesta = await descargar(foto, cuenta);
+          expect(respuesta.estado, HttpStatus.ok, reason: proposito);
+          expect(respuesta.bytes, _png, reason: proposito);
+        }
+        _esperarError(
+          await descargar(foto, otro),
+          HttpStatus.forbidden,
+          'SIN_PERMISO',
+        );
+      }
+    });
+
+    test('un guardia ve las fotos de vehículo y placa de cualquier dueño, '
+        'pero otro usuario ni las de un guardia', () async {
+      for (final proposito in ['vehiculo', 'placa']) {
+        final deOtro = await subir(otro, proposito: proposito);
+        final deGuardia = await subir(guardia, proposito: proposito);
+
+        expect((await descargar(deOtro, guardia)).estado, HttpStatus.ok);
+        _esperarError(
+          await descargar(deOtro, dueno),
+          HttpStatus.forbidden,
+          'SIN_PERMISO',
+        );
+        _esperarError(
+          await descargar(deGuardia, dueno),
+          HttpStatus.forbidden,
+          'SIN_PERMISO',
+        );
+      }
+    });
+
     test('admin ve ambas', () async {
       expect((await descargar(fotoVehiculo, admin)).estado, HttpStatus.ok);
       final credencial = await descargar(fotoCredencial, admin);
