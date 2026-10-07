@@ -50,6 +50,35 @@ final _uuid = RegExp(
 /// Indica si [valor] tiene forma de UUID.
 bool esUuid(String valor) => _uuid.hasMatch(valor);
 
+/// Código de campo: la foto no existe, es de otro usuario o se subió con otro
+/// propósito. Es uno solo para no revelar archivos ajenos.
+const codigoFotoInvalida = 'FOTO_INVALIDA';
+
+/// Indica si [foto] es el id de un archivo que subió [usuarioId] con ese
+/// [proposito]. Cualquier otra cosa (otro tipo de dato, un id mal formado,
+/// un archivo ajeno o inexistente) da `false`.
+Future<bool> esFotoPropia(
+  Session db, {
+  required String usuarioId,
+  required Object? foto,
+  required PropositoArchivo proposito,
+}) async {
+  if (foto is! String || !esUuid(foto)) return false;
+  final filas = await db.execute(
+    Sql.named(
+      'SELECT 1 FROM archivos WHERE id = @foto:uuid '
+      'AND dueno_id = @usuario:uuid '
+      'AND proposito = CAST(@proposito:text AS proposito_archivo)',
+    ),
+    parameters: {
+      'foto': foto,
+      'usuario': usuarioId,
+      'proposito': proposito.nombre,
+    },
+  );
+  return filas.isNotEmpty;
+}
+
 /// Reglas de las fotos: validación del contenido, guardado y permisos de
 /// lectura.
 ///

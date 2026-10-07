@@ -18,7 +18,7 @@ class ServicioPerfil {
 
   /// Código de campo: la foto no existe, es de otro usuario o se subió con
   /// otro propósito. Es uno solo para no revelar archivos ajenos.
-  static const fotoInvalida = 'FOTO_INVALIDA';
+  static const fotoInvalida = codigoFotoInvalida;
 
   /// 409: la cuenta ya está activa y el usuario no puede cambiar su perfil.
   static const perfilBloqueado = ErrorApi(
@@ -79,7 +79,13 @@ class ServicioPerfil {
       for (final MapEntry(key: campo, value: proposito) in _fotos.entries) {
         if (!cambios.containsKey(campo)) continue;
         final Object? foto = cambios[campo];
-        if (foto != null && !await _esFotoPropia(tx, id, foto, proposito)) {
+        if (foto != null &&
+            !await esFotoPropia(
+              tx,
+              usuarioId: id,
+              foto: foto,
+              proposito: proposito,
+            )) {
           errores[campo] = fotoInvalida;
           continue;
         }
@@ -101,27 +107,5 @@ class ServicioPerfil {
       if (fila == null) throw const ErrorApi.noAutenticado();
       return Usuario.deFila(fila);
     });
-  }
-
-  Future<bool> _esFotoPropia(
-    Session db,
-    String usuarioId,
-    Object foto,
-    PropositoArchivo proposito,
-  ) async {
-    if (foto is! String || !esUuid(foto)) return false;
-    final filas = await db.execute(
-      Sql.named(
-        'SELECT 1 FROM archivos WHERE id = @foto:uuid '
-        'AND dueno_id = @usuario:uuid '
-        'AND proposito = CAST(@proposito:text AS proposito_archivo)',
-      ),
-      parameters: {
-        'foto': foto,
-        'usuario': usuarioId,
-        'proposito': proposito.nombre,
-      },
-    );
-    return filas.isNotEmpty;
   }
 }
