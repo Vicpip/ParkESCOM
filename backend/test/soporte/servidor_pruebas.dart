@@ -22,7 +22,14 @@ import '../../routes/auth/olvide-password.dart' as olvide_password;
 import '../../routes/auth/refresh.dart' as refresh;
 import '../../routes/auth/registro.dart' as registro;
 import '../../routes/auth/restablecer.dart' as restablecer;
+import '../../routes/credenciales/[id]/reportar-perdida.dart'
+    as reportar_perdida;
 import '../../routes/perfil/index.dart' as perfil;
+import '../../routes/solicitudes/[id]/index.dart' as solicitud;
+import '../../routes/solicitudes/[id]/resolver.dart' as resolver;
+import '../../routes/solicitudes/index.dart' as solicitudes;
+import '../../routes/vehiculos/[id].dart' as vehiculo;
+import '../../routes/vehiculos/index.dart' as vehiculos;
 import 'base_pruebas.dart';
 
 /// Origen que las pruebas configuran como panel web.
@@ -117,6 +124,15 @@ class ServidorPruebas {
       ..all('/archivos', archivos.onRequest)
       ..all('/archivos/<id>', archivo.onRequest)
       ..all('/perfil', perfil.onRequest)
+      ..all('/vehiculos', vehiculos.onRequest)
+      ..all('/vehiculos/<id>', vehiculo.onRequest)
+      ..all('/solicitudes', solicitudes.onRequest)
+      ..all('/solicitudes/<id>', solicitud.onRequest)
+      ..all('/solicitudes/<id>/resolver', resolver.onRequest)
+      ..all(
+        '/credenciales/<id>/reportar-perdida',
+        reportar_perdida.onRequest,
+      )
       // Rutas que solo existen en las pruebas.
       ..all(
         '/pruebas/solo-admin',
